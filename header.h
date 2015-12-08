@@ -7,6 +7,12 @@
 #include <map>
 #include <list>
 #include <string>
+#include <memory>
+#include <cassert>
+#include <typeinfo>
+#include <mutex>
+#include <thread>
+#include <chrono>
 
 using namespace std;
 

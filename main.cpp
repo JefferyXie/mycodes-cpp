@@ -1,10 +1,20 @@
 #include "header.h"
-#include "classtest.h"
 #include "./UseLib/LibClass.h"
+#include "./language/classtest.h"
+#include "./test/Test_language.h"
+#include "./test/Test_algorithm.h"
 
 void runLib();
 
 int main() {
+
+    Test_thread();
+    //Test_auto();
+    //Test_typeinfo();
+    //Test_dynamic_cast();
+    //Test_constructorOrder();
+    //Test_FindCommonAncestor();
+/*
     runLib();
 
 	cout << "hello world, from CentOS." << endl;
@@ -33,10 +43,10 @@ int main() {
 	lam(&b);
 	lam1(&b);
 	lam1(&a);
-
+*/
 	return 0;
 }
-
+/*
 void runLib() {
     SharedClass shObj;
     shObj.Fo();
@@ -46,5 +56,5 @@ void runLib() {
     aObj.Fo();
     aObj.Go();
 }
-
+*/
 

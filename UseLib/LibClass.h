@@ -7,7 +7,7 @@
 extern "C" {
 #endif
 
-#include "../classtest.h"
+#include "../language/classtest.h"
 
 class SharedClass : public B {
     
