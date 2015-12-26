@@ -2,17 +2,17 @@
 #include "../algorithm/FindCommonAncestor.h"
 
 void Test_FindCommonAncestor() {
-    auto_ptr<Node<int> > root(new Node<int>(10));
-    auto_ptr<Node<int> > n1(new Node<int>(2));
-    auto_ptr<Node<int> > n2(new Node<int>(4));
-    auto_ptr<Node<int> > n3(new Node<int>(8));
-    auto_ptr<Node<int> > n4(new Node<int>(1));
-    auto_ptr<Node<int> > n5(new Node<int>(12));
-    auto_ptr<Node<int> > n6(new Node<int>(111));
-    auto_ptr<Node<int> > n7(new Node<int>(43));
-    auto_ptr<Node<int> > n8(new Node<int>(40));
-    auto_ptr<Node<int> > n9(new Node<int>(14));
-    auto_ptr<Node<int> > n0(new Node<int>(11));
+    auto_ptr<TreeNode<int> > root(new TreeNode<int>(10));
+    auto_ptr<TreeNode<int> > n1(new TreeNode<int>(2));
+    auto_ptr<TreeNode<int> > n2(new TreeNode<int>(4));
+    auto_ptr<TreeNode<int> > n3(new TreeNode<int>(8));
+    auto_ptr<TreeNode<int> > n4(new TreeNode<int>(1));
+    auto_ptr<TreeNode<int> > n5(new TreeNode<int>(12));
+    auto_ptr<TreeNode<int> > n6(new TreeNode<int>(111));
+    auto_ptr<TreeNode<int> > n7(new TreeNode<int>(43));
+    auto_ptr<TreeNode<int> > n8(new TreeNode<int>(40));
+    auto_ptr<TreeNode<int> > n9(new TreeNode<int>(14));
+    auto_ptr<TreeNode<int> > n0(new TreeNode<int>(11));
     
     root->left = n1.get();
     root->right = n2.get();

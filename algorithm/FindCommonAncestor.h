@@ -1,24 +1,8 @@
 #include "../header.h"
-
-template<class T> class Node {
-public:
-   T data;
-   Node* left;
-   Node* right;
-   
-   Node(T value) {
-    data = value;
-    left = nullptr;
-    right = nullptr;
-   }
-   Node(T value, Node<T>* l, Node<T>* r) : Node(value) {
-    left = l;
-    right = r;
-   }
-};
+#include "../node.h"
 
 // http://stackoverflow.com/questions/1484473/how-to-find-the-lowest-common-ancestor-of-two-nodes-in-any-binary-tree
-template<class T> Node<T>* FindCommonAncestor(Node<T>* root, Node<T>* n1, Node<T>* n2) {
+template<class T> TreeNode<T>* FindCommonAncestor(TreeNode<T>* root, TreeNode<T>* n1, TreeNode<T>* n2) {
     // if root is a or b, it is the common ancestor
     if (root == nullptr || root == n1 || root == n2) return root;
 

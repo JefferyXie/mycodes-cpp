@@ -1,75 +1,127 @@
-#include "../header.h"
-#include "../language/auto.h"
-#include "../language/classtest.h"
-#include "../language/speed-dynamic-cast.cpp"
-#include "../language/thread.h"
+/*
+* Copyright 2010 Tino Didriksen <tino@didriksen.cc>
+* http://tinodidriksen.com/
+*/
 
-void Test_constructorOrder() {
-    // always call base constructor no matter how the object is created
-    A* a = new A();
-    B* b = new B();
-    A* c = new B();
-    // since c is A* and destructor is not virtual, only base destructor is called!
-    // ~B() won't be called here!
-    delete c;
-    delete b;
-    delete a;
+#ifdef _MSC_VER
+    #define _SECURE_SCL 0
+    #define _CRT_SECURE_NO_DEPRECATE 1
+    #define WIN32_LEAN_AND_MEAN
+    #define VC_EXTRALEAN
+    #define NOMINMAX
+#endif
+
+#include <cstdlib>
+#include <cstdint>
+#include <cmath>
+#include <iostream>
+#include <algorithm>
+#include <limits>
+#include <vector>
+#include <iomanip>
+#include "cycle.h"
+
+const size_t N = 1000000;
+const size_t R = 7;
+std::vector<uint32_t> numbers;
+
+void PrintStats(std::vector<double> timings) {
+    double fastest = std::numeric_limits<double>::max();
+
+    std::cout << std::fixed << std::setprecision(2);
+    std::cout << "[";
+    for (size_t i = 1 ; i<timings.size()-1 ; ++i) {
+        fastest = std::min(fastest, timings[i]);
+        std::cout << timings[i] << ",";
+    }
+    std::cout << timings.back();
+    std::cout << "]";
+
+    double sum = 0.0;
+    for (size_t i = 1 ; i<timings.size() ; ++i) {
+        sum += timings[i];
+    }
+    double avg = sum / double(timings.size()-1);
+
+    sum = 0.0;
+    for (size_t i = 1 ; i<timings.size() ; ++i) {
+        timings[i] = pow(timings[i]-avg, 2);
+        sum += timings[i];
+    }
+    double var = sum/(timings.size()-2);
+    double sdv = sqrt(var);
+
+    std::cout << " with fastest " << fastest << ", average " << avg << ", stddev " << sdv;
 }
 
-void Test_auto() {
-    int i = 5;
-    const int ci = 0;
-    const int *pci = &i;
+enum TYPES {
+    T_ONE_BASE,
+    T_ONE_LEVEL1,
+    T_ONE_LEVEL2,
+    T_ONE_LEVEL3,
+    T_TWO_BASE,
+    T_TWO_LEVEL1,
+};
 
-    auto& b1 = i;       // b1 is of type int&
-    auto& b2 = ci;      // b2 is of type const int&
-    auto& b3 = *pci;    // b3 is also of type const int&
-    auto& b4 = pci;     // b4 is of type const int&, too
+struct OneBase {
+    TYPES type;
 
-    int &r = i;
+    OneBase() : type(T_ONE_BASE) {}
+    virtual ~OneBase() {}
 
-    auto a1 = i;
-    auto a2 = r;
-    auto a3 = bar();
+    virtual TYPES getType() {
+        return T_ONE_BASE;
+    }
+};
 
-    A_auto<decltype(i)>::foo();
-    A_auto<decltype(r)>::foo();
-    A_auto<decltype(a1)>::foo();
-    A_auto<decltype(a2)>::foo();
-    A_auto<decltype(bar())>::foo();
-    A_auto<decltype(a3)>::foo();
+struct OneLevel1 : OneBase {
+    OneLevel1() {
+        type = T_ONE_LEVEL1;
+    }
+    virtual TYPES getType() {
+        return T_ONE_LEVEL1;
+    }
+};
 
-    A_auto<decltype(i)>::goo(i);
-    A_auto<decltype(r)>::goo(r);
-    A_auto<decltype(a1)>::goo(a1);
-    A_auto<decltype(a2)>::goo(a2);
-    A_auto<decltype(bar())>::goo(bar());
-    A_auto<decltype(a3)>::goo(a3);
-}
+struct OneLevel2 : OneLevel1 {
+    OneLevel2() {
+        type = T_ONE_LEVEL2;
+    }
+    virtual TYPES getType() {
+        return T_ONE_LEVEL2;
+    }
+};
 
-void Test_typeinfo() {
-    OneBase a;
-    OneLevel1 b;
-    OneLevel2 c;
-    OneLevel3 d;
-    //OneBase* ones[] = {&a, &b, &c, &d};
+struct OneLevel3 : OneLevel2 {
+    OneLevel3() {
+        type = T_ONE_LEVEL3;
+    }
+    TYPES getType() {
+        return T_ONE_LEVEL3;
+    }
+};
 
-    auto& ti_a = typeid(a);
-    auto& ti_b = typeid(b);
-    const type_info& ti_c = typeid(c);
-    const type_info& ti_d = typeid(d);
+struct TwoBase {
+    TYPES type;
 
-    cout << "OneBase:[" << typeid(OneBase).name() << ", " << typeid(OneBase).hash_code() 
-        << "]\t a:[" << ti_a.name() << ", " << ti_a.hash_code() << "]" << endl;
-    cout << "OneLevel1:[" << typeid(OneLevel1).name() << ", " << typeid(OneLevel1).hash_code() 
-        << "]\t b:[" << ti_b.name() << ", " << ti_b.hash_code() << "]" << endl;
-    cout << "OneLevel2:[" << typeid(OneLevel2).name() << ", " << typeid(OneLevel2).hash_code() 
-        << "]\t c:[" << ti_c.name() << ", " << ti_c.hash_code() << "]" << endl;
-    cout << "OneLevel3:[" << typeid(OneLevel3).name() << ", " << typeid(OneLevel3).hash_code() 
-        << "]\t d:[" << ti_d.name() << ", " << ti_d.hash_code() << "]" << endl;
-}
+    TwoBase() : type(T_TWO_BASE) {}
+    virtual ~TwoBase() {}
 
-void Test_dynamic_cast() {
+    virtual TYPES getType() {
+        return T_TWO_BASE;
+    }
+};
+
+struct TwoLevel1 : TwoBase {
+    TwoLevel1() {
+        type = T_TWO_LEVEL1;
+    }
+    virtual TYPES getType() {
+        return T_TWO_LEVEL1;
+    }
+};
+
+int main() {
     std::vector< std::vector<double> > timings(17);
 
     for (size_t r=0 ; r<R ; ++r) {
@@ -375,10 +427,3 @@ void Test_dynamic_cast() {
 
     std::cout << std::endl;
 }
-
-void Test_thread() {
-    Recurisve_Mutex oo;
-    oo.run();
-}
-
-
