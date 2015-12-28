@@ -18,9 +18,9 @@ int Sherlock() {
     int M = 0;
     cin >> N >> M;
     if (N < 1 || M < 1 || N > 100000 || M > 100000) return -1;
-    int A[N] = {0};
-    int B[M] = {0};
-    int C[M] = {0};
+    int A[N];// = {0};
+    int B[M];// = {0};
+    int C[M];// = {0};
 
     std::string line;
     std::istringstream ss(line);
@@ -63,7 +63,7 @@ int Sherlock() {
         if (index >= M) break;
     }
     
-    int B_divisor[N+1] = {0};
+    int B_divisor[N+1];// = {0};
     for (int i = 0; i < M; ++i) {
         // use B[i] as index, multipled by C[i], in this way, duplicate elements
         // in B are removed without information loss from C.
