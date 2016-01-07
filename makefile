@@ -18,14 +18,14 @@ CFLAGS_DEBUG = -g $(CFLAGS)
 # http://stackoverflow.com/questions/9253200/undefined-reference-to-pthread-create
 # when linking object files, add dependent library params after object files
 $(EXE): $(OBJ_FILES)
-	$(CC) $< -o $@ $(CFLAGS) 
+	$(CC) $< -o $@ $(CFLAGS_DEBUG) 
 #	echo $(OBJ_FILES)
 
 #$(OBJ_FILES): $(CPP_FILES)
 #	$(CC) $(CFLAGS) -c  
 # below lines are same as above rule
 .cpp.o:
-	$(CC) $(CFLAGS) -c $< -o $@
+	$(CC) $(CFLAGS_DEBUG) -c $< -o $@
 
 #%.o: $(CPP_FILES) $(H_FILES)
 #	$(CC) $(CFLAGS) -c -o $@ $< 

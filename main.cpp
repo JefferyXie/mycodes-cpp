@@ -18,7 +18,8 @@ using namespace std;
 
 int main() {
 
-    Test_thread();
+    Test_copy_elision();
+    //Test_thread();
     //Test_auto();
     //Test_typeinfo();
     //Test_dynamic_cast();

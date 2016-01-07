@@ -3,6 +3,7 @@
 #include "../language/classtest.h"
 #include "../language/speed-dynamic-cast.cpp"
 #include "../language/thread.h"
+#include "../language/copy_elision.h"
 
 void Test_constructorOrder() {
     // always call base constructor no matter how the object is created
@@ -379,6 +380,45 @@ void Test_dynamic_cast() {
 void Test_thread() {
     Recurisve_Mutex oo;
     oo.run();
+}
+
+void Test_copy_elision() {
+    
+    vector<Test> vv = getVector();
+
+    std::cout << "=============RVO==============" << std::endl; 
+    std::cout << "++Test obj rvo for copy construct" << std::endl;
+    auto obj1 = getTest();
+
+    std::cout << "--------------" << std::endl;
+    std::cout << "++Test obj rvo for move construct" << std::endl;
+    auto obj111 = std::move(getTest());
+
+    std::cout << "--------------" << std::endl;  
+    std::cout << "++Test obj rvo for copy assignment" << std::endl;
+    Test obj11; obj11 = getTest();
+  
+    std::cout << "--------------" << std::endl;
+    std::cout << "++Test object rvo for move assignment" << std::endl;
+    Test obj1111; obj1111 = std::move(getTest());
+    
+
+    std::cout << "=============NRVO==============" << std::endl; 
+    std::cout << "++Test obj nrvo for copy construct" << std::endl;
+    auto obj2 = getTestWithName();
+    
+    std::cout << "--------------" << std::endl;
+    std::cout << "++Test obj nrvo for move construct" << std::endl;
+    auto obj222 = std::move(getTestWithName());
+    
+    std::cout << "--------------" << std::endl;
+    std::cout << "++Test obj nrvo for copy assignment" << std::endl;
+    Test obj22; obj22 = getTestWithName();
+
+    std::cout << "--------------" << std::endl;
+    std::cout << "++Test obj nrvo for move assignment" << std::endl;
+    Test obj2222; obj2222 = std::move(getTestWithName());
+    std::cout << "==============================" << std::endl;
 }
 
 
