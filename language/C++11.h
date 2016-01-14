@@ -288,6 +288,7 @@ public:
         ~A_share() { cout << "~A_share()" << endl; }
         // if we use shared_ptr here, both A_share and B_share objects wont' destory
         // the solution is to use weak_ptr. Use in either A_share or B_share.
+        // http://stackoverflow.com/questions/4984381/shared-ptr-and-weak-ptr-differences
         //shared_ptr<B_share> b;
         weak_ptr<B_share> b;
     };
@@ -307,6 +308,8 @@ public:
             p_b.get()->a = p_a;
         }
 
+        // difference between unique_ptr and shared_ptr
+        // http://stackoverflow.com/questions/6876751/differences-between-unique-ptr-and-shared-ptr
         unique_ptr<Fo, Fo_D> up(new Fo(), Fo_D());
         auto del = up.get_deleter();
         del.goo();
