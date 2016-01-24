@@ -10,22 +10,15 @@ CONFIG += thread
 
 # to support C++11, will give warning with C++14 line
 #CONFIG += C++11
+#CONFIG += C++14
 
 # to support C++14
 QMAKE_CXXFLAGS += -std=c++1y
 
-
 SOURCES += main.cpp
-
 
 HEADERS += \
     ../header.h \
-    ../MyDictionary.h \
-    ../MyList.h \
-    ../sizeofClass.h \
-    ../stlClass.h \
-    ../C++11.h \
-    ../sherlock.h \
     ../utility.h \
     ../language/stlClass.h \
     ../language/sizeofClass.h \
