@@ -6,3 +6,4 @@
 gdb.txt
 tags
 main_exe
+build/*
