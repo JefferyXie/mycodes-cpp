@@ -1,11 +1,15 @@
+#include <gtest/gtest.h>
 #include "../header.h"
 #include "../language/auto.h"
 #include "../language/classtest.h"
 #include "../language/speed-dynamic-cast.cpp"
 #include "../language/thread.h"
 #include "../language/copy_elision.h"
+#include "../language/matrix.h"
+#include "../language/sizeofClass.h"
+#include "../language/MyList.h"
 
-void Test_constructorOrder() {
+TEST(language, constructorOrder) {
     // always call base constructor no matter how the object is created
     A* a = new A();
     B* b = new B();
@@ -17,7 +21,7 @@ void Test_constructorOrder() {
     delete a;
 }
 
-void Test_auto() {
+TEST(language, auto) {
     int i = 5;
     const int ci = 0;
     const int *pci = &i;
@@ -48,7 +52,7 @@ void Test_auto() {
     A_auto<decltype(a3)>::goo(a3);
 }
 
-void Test_typeinfo() {
+TEST(language, typeinfo) {
     OneBase a;
     OneLevel1 b;
     OneLevel2 c;
@@ -70,7 +74,7 @@ void Test_typeinfo() {
         << "]\t d:[" << ti_d.name() << ", " << ti_d.hash_code() << "]" << endl;
 }
 
-void Test_dynamic_cast() {
+TEST(language, dynamic_cast) {
     std::vector< std::vector<double> > timings(17);
 
     for (size_t r=0 ; r<R ; ++r) {
@@ -377,48 +381,144 @@ void Test_dynamic_cast() {
     std::cout << std::endl;
 }
 
-void Test_thread() {
+TEST(language, thread) {
     Recurisve_Mutex oo;
     oo.run();
 }
 
-void Test_copy_elision() {
-    
-    vector<Test> vv = getVector();
+TEST(language, copy_elision) {
+    vector<Plain> vv = getVector();
 
     std::cout << "=============RVO==============" << std::endl; 
-    std::cout << "++Test obj rvo for copy construct" << std::endl;
-    auto obj1 = getTest();
+    std::cout << "++Plain obj rvo for copy construct" << std::endl;
+    auto obj1 = getPlain();
 
     std::cout << "--------------" << std::endl;
-    std::cout << "++Test obj rvo for move construct" << std::endl;
-    auto obj111 = std::move(getTest());
+    std::cout << "++Plain obj rvo for move construct" << std::endl;
+    auto obj111 = std::move(getPlain());
 
     std::cout << "--------------" << std::endl;  
-    std::cout << "++Test obj rvo for copy assignment" << std::endl;
-    Test obj11; obj11 = getTest();
+    std::cout << "++Plain obj rvo for copy assignment" << std::endl;
+    Plain obj11; obj11 = getPlain();
   
     std::cout << "--------------" << std::endl;
-    std::cout << "++Test object rvo for move assignment" << std::endl;
-    Test obj1111; obj1111 = std::move(getTest());
+    std::cout << "++Plain object rvo for move assignment" << std::endl;
+    Plain obj1111; obj1111 = std::move(getPlain());
     
 
     std::cout << "=============NRVO==============" << std::endl; 
-    std::cout << "++Test obj nrvo for copy construct" << std::endl;
-    auto obj2 = getTestWithName();
+    std::cout << "++Plain obj nrvo for copy construct" << std::endl;
+    auto obj2 = getPlainWithName();
     
     std::cout << "--------------" << std::endl;
-    std::cout << "++Test obj nrvo for move construct" << std::endl;
-    auto obj222 = std::move(getTestWithName());
+    std::cout << "++Plain obj nrvo for move construct" << std::endl;
+    auto obj222 = std::move(getPlainWithName());
     
     std::cout << "--------------" << std::endl;
-    std::cout << "++Test obj nrvo for copy assignment" << std::endl;
-    Test obj22; obj22 = getTestWithName();
+    std::cout << "++Plain obj nrvo for copy assignment" << std::endl;
+    Plain obj22; obj22 = getPlainWithName();
 
     std::cout << "--------------" << std::endl;
-    std::cout << "++Test obj nrvo for move assignment" << std::endl;
-    Test obj2222; obj2222 = std::move(getTestWithName());
+    std::cout << "++Plain obj nrvo for move assignment" << std::endl;
+    Plain obj2222; obj2222 = std::move(getPlainWithName());
     std::cout << "==============================" << std::endl;
 }
 
+TEST(language, matrix) {
+    Matrix<int> m(2,3);
+    m(0,0) = 1;
+    m(1,1) = 3;
+    
+    cout << m[0][0] << "," << m[1][1] << endl;
+}
+
+TEST(language, sizeofClass) {
+    sizeofClass::CheckBasicTypes();
+    sizeofClass::CheckClass(stlClass("temp", 1000));
+
+    stlClass stlObj("test", 43);
+    stlClass stlObj_1 = stlObj;
+    cout << "**stlObj_1**" << endl;
+    //	cout << stlObj_1;
+    //	cout << "stlObj_1 == stlObj: " << (stlObj==stlObj_1) << endl;
+
+    set<stlClass> data;
+    data.insert(stlClass("hello", 5));
+    //	data.insert(stlClass("any", 1));
+    //	data.insert(stlClass("nobody", 11));
+    //	data.insert(stlClass("hahah", 0));
+    //	data.insert(stlObj);
+    //	data.insert(stlObj_1);
+
+    //	copy(data.begin(), data.end(), ostream_iterator<stlClass>(cout, " * "));
+}
+
+TEST(language, MyList) {
+    MyList<int> olist;
+    int i_2 = 2;
+    int i_3 = 3;
+    int i_5 = 5;
+    int i_8 = 8;
+    int i_7 = 7;
+    int i_0 = 0;
+    int i_11 = 11;
+    int i_10 = 10;
+    olist.Add(i_3);
+    olist.Add(i_5);
+//    olist.Add(i_2);
+    ListNode<int>* p = olist.Find(i_3);
+    p = olist.Insert(p, i_8);
+    olist.Insert(p, i_7);
+    olist.Insert2Head(i_0);
+    olist.Insert(p, i_11);
+    olist.Insert2End(i_5);
+    olist.Insert2End(i_3);
+    olist.Remove(i_8);
+    p = olist.Insert2Head(i_10);
+    olist.Remove(i_10);
+
+//    olist.Display();
+
+    olist.Reverse();
+    olist.Display();
+}
+
+TEST(language, lib) {
+/*
+    SharedClass shObj;
+    shObj.Fo();
+    shObj.Process("first string", "second input string");
+
+    A& aObj = shObj;
+    aObj.Fo();
+    aObj.Go();
+*/
+}
+
+TEST(language, lambda) {
+    A a;
+    A aa = A();
+	
+    auto lam = [](A* a) { a->Go(); };
+    auto lam1 = [](A* a) { 
+	auto temp = static_cast<B*>(a);
+	if (nullptr == temp)
+	    a->Go();
+	else
+	    temp->Go();
+    };
+    vector<int> v = { 2, 3, };
+    v.push_back(10);
+    list<string> ll;
+    ll.push_back("1st ele");
+    ll.push_back("2nd ele");
+    ll.push_back("3rd ele");
+    //A a = A();
+    //a.foo();
+    B b;
+    b.Calc(4, 5);
+	lam(&b);
+	lam1(&b);
+	lam1(&a);
+}
 

@@ -47,5 +47,28 @@ struct MyMember {
 	string name;
 };
 
+struct Plain {
+    Plain() {
+        std::cout << "construct a Plain object" << std::endl;
+    }
+    Plain(const Plain&) {
+        std::cout << "copy construct a Plain object" << std::endl;
+    }
+    Plain& operator=(const Plain&) {
+        std::cout << "copy assignment a Plain object" << std::endl;
+        return *this;
+    }
+    Plain(Plain&&) {
+        std::cout << "move construct a Plain object" << std::endl;
+    }
+    Plain& operator=(Plain&&) {
+        std::cout << "move assignment a Plain object" << std::endl;
+        return *this;
+    }
+    ~Plain() {
+        std::cout << "destruct a Plain object" << std::endl;
+    }
+};
+
 #endif
 
