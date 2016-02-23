@@ -25,7 +25,8 @@ HEADERS += \
     ../language/MyList.h \
     ../language/MyDictionary.h \
     ../language/C++11.h \
-    ../algorithm/sherlock.h
+    ../algorithm/sherlock.h \
+    ../language/stl.h
 
 OTHER_FILES += \
     ../Python/socket_client.py \

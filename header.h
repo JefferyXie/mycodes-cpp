@@ -18,6 +18,7 @@
 
 // head files for posix thread
 #include <pthread.h>
+#include <semaphore.h>
 
 // head files for std
 #include <iostream>

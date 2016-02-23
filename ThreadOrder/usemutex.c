@@ -1,21 +1,22 @@
+#ifndef USEMUTEX_C
+#define USEMUTEX_C
+
 // 使用互斥变量mutex
 
-#include <stdio.h>
-#include <unistd.h>
-#include <pthread.h>
+#include "../header.h"
 
 pthread_mutex_t  g_mutex;
-int count = 0;
+int n_count = 0;
 int num_count = 0;
 void *thread_fun1(void* arg)
 {	
 	while(1)
 	{
 		pthread_mutex_lock(&g_mutex);
-		if(count % 3 == 0 && num_count < 10)
+		if(n_count % 3 == 0 && num_count < 10)
 		{
 			//pthread_mutex_lock(&g_mutex);
-			count++;
+			n_count++;
 			printf("thread1's id is %d\n",pthread_self()); 
 			//pthread_mutex_unlock(&g_mutex);
 		}
@@ -30,10 +31,10 @@ void* thread_fun2(void* arg)
 	while(1)
 	{
 		pthread_mutex_lock(&g_mutex);
-		if(count %3 == 1 && num_count < 10)
+		if(n_count %3 == 1 && num_count < 10)
 		{
 			//pthread_mutex_lock(&g_mutex);
-			count++;
+			n_count++;
 			printf("thread2's id is %d\n",pthread_self()); 
 			//pthread_mutex_unlock(&g_mutex);
 		}
@@ -48,10 +49,10 @@ void* thread_fun3(void* arg)
 	while(1)
 	{
 		pthread_mutex_lock(&g_mutex);		
-		if(count %3 == 2)
+		if(n_count %3 == 2)
 		{
 			//pthread_mutex_lock(&g_mutex);		
-			count++;
+			n_count++;
 			printf("thread3's id is %d\n\n", pthread_self());
 			num_count++;
 			//pthread_mutex_unlock(&g_mutex);
@@ -63,7 +64,7 @@ void* thread_fun3(void* arg)
 	return (void*) 0;
 }
 
-int main()
+void UseMutex()
 {
 	pthread_t thread1, thread2, thread3;
 	int res = 0;
@@ -90,4 +91,5 @@ int main()
 	pthread_join(thread3, NULL);		
 }
 
+#endif
 

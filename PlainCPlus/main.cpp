@@ -4,250 +4,69 @@
 #include "../language/MyList.h"
 #include "../language/MyDictionary.h"
 #include "../language/C++11.h"
-#include "../algorithm/sherlock.h"
 #include "../language/stl.h"
+#include "../algorithm/sherlock.h"
+#include "../algorithm/judgeBiTree.h"
 
-struct NodePair {
-    char parent;
-    char child;
-};
-
-class Node {
-public:
-    char value;
-    Node* left;
-    Node* right;
-
-    string GetSExpression() {
-        return getSExpression(this);
-    }
-private:
-    string getSExpression(Node* pNode) {
-        string exp;
-        if (pNode == NULL) {
-            exp += ')';
-            return exp;
-        }
-        exp += '(';
-        exp += pNode->value;
-        exp += getSExpression(pNode->left);
-        exp += getSExpression(pNode->right);
-        return exp;
-    }
-};
-
-class Parser {
-public:
-    static bool Parse(const string& input, vector<NodePair>& pairs) {
-        if (input.length() < 5) return false;
-        int pos = 0;
-        pairs.clear();
-        while (true) {
-            int pos1 = input.find(' ', pos);
-            string strNode = input.substr(pos, pos1-pos);
-
-            // parse and get a Node info
-            if (strNode.length() != 5 || strNode.at(0) != '(' ||
-               strNode.at(1) > 'Z' || strNode.at(1) < 'A' ||
-               strNode.at(2) != ',' ||
-               strNode.at(3) > 'Z' || strNode.at(3) < 'A' ||
-               strNode.at(4) != ')') {
-                return false;
-            }
-            NodePair nodePair;
-            nodePair.parent = strNode.at(1);
-            nodePair.child = strNode.at(3);
-            pairs.push_back(nodePair);
-            pos = pos1+1;
-            if (pos1 < 0) break;
-        }
-        return true;
+#define EXPECT_EQ(actual, expected) \
+    if (actual == expected) { \
+        cout << "[Success] "	<< expected << endl; \
+    } else { \
+        cout << "[Fail] " << actual << " [Expected] " << expected << endl; \
     }
 
-    static bool haveDuplicatePairs(const vector<NodePair>& pairs) {
-        for (int i = 0; i < pairs.size(); ++i) {
-            const NodePair& pair1 = pairs.at(i);
-            for (int j = i+1; j < pairs.size(); ++j) {
-                const NodePair& pair2 = pairs.at(j);
-                if ((pair1.parent == pair2.parent && pair1.child == pair2.child) ||
-                    (pair1.parent == pair2.child && pair1.child == pair2.parent)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    static bool haveMoreChildren(const vector<NodePair>& pairs) {
-        for (int i = 0; i < pairs.size(); ++i) {
-            int numChildren = 1;
-            const NodePair& pair1 = pairs.at(i);
-            for (int j = i+1; j < pairs.size(); ++j) {
-                const NodePair& pair2 = pairs.at(j);
-                if (pair1.parent == pair2.parent) {
-                    numChildren++;
-                }
-                if (numChildren > 2) return true;
-            }
-        }
-        return false;
-    }
-    static bool haveMultipleRoots(const vector<NodePair>& pairs) {
-        char root = 0;
-        for (int i = 0; i < pairs.size(); ++i) {
-            vector<NodePair> cp_pairs;
-            char tempRoot = pairs.at(i).parent;
-            copy(pairs.begin(), pairs.end(), back_inserter(cp_pairs));
-            string path;
-            tempRoot = findRoot(cp_pairs, tempRoot, path);
-            if (root != 0 && root != tempRoot) return true;
-            root = tempRoot;
-        }
-        return false;
-    }
-    static bool haveCycleChain(const vector<NodePair>& pairs) {
-        vector<string> paths = getAllPaths(pairs);
-        for (int i = 0; i < paths.size(); ++i) {
-            string path = paths.at(i);
-            char c1 = path.at(0);
-            char c2 = path.at(path.size()-1);
-            for (int j = i+1; j < paths.size(); ++j) {
-                string path1 = paths.at(j);
-                char d1 = path1.at(0);
-                char d2 = path1.at(path1.size()-1);
-                if (path == path1) continue;
-                if ((path.find(d1) != string::npos && path.find(d2) != string::npos) ||
-                    (path1.find(c1) != string::npos && path1.find(c2) != string::npos)) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-    static Node* BuildTree(const vector<NodePair>& pairs) {
-        vector<NodePair> cp_pairs = pairs;
-        char tempRoot = pairs.at(0).parent;
-        string path;
-        char root = findRoot(cp_pairs, tempRoot, path);
-        Node* pRoot = new Node();
-        pRoot->value = root;
-        buildNode(pairs, pRoot);
-        return pRoot;
-    }
-    static void ReleaseNode(Node* p) {
-        if (p != NULL) {
-            ReleaseNode(p->left);
-            ReleaseNode(p->right);
-            delete p;
-            p = NULL;
-        }
-    }
-
-private:
-    static char findRoot(vector<NodePair> &pairs, char root, string& path) {
-        // update path
-        path = root + path;
-        for (vector<NodePair>::iterator it = pairs.begin(); it != pairs.end(); ++it) {
-            if (root == it->child) {
-                root = it->parent;
-                pairs.erase(it);
-                return findRoot(pairs, root, path);
-            }
-        }
-        return root;
-    }
-
-   static vector<string> getAllPaths(const vector<NodePair>& pairs) {
-        vector<string> paths;
-        for (int i = 0; i < pairs.size(); ++i) {
-            vector<NodePair> cp_pairs;
-            const NodePair& curPair = pairs.at(i);
-            char tempRoot = curPair.parent;
-            copy(pairs.begin(), pairs.end(), back_inserter(cp_pairs));
-
-            string path;
-            findRoot(cp_pairs, tempRoot, path);
-            cp_pairs.clear();
-            copy(pairs.begin(), pairs.end(), back_inserter(cp_pairs));
-            // since one parnet may have 2 children, we need to make sure
-            // current pair's child is appended to the path!
-            path += curPair.child;
-            addChildPath(cp_pairs, path.at(path.length()-1), path);
-            paths.push_back(path);
-        }
-        return paths;
-    }
-   static char addChildPath(vector<NodePair>& pairs, char child, string& path) {
-        for (vector<NodePair>::iterator it = pairs.begin(); it != pairs.end(); ++it) {
-            if (child == it->parent) {
-                child = it->child;
-                pairs.erase(it);
-                path += child;
-                return addChildPath(pairs, child, path);
-            }
-        }
-        return child;
-   }
-
-   static void buildNode(const vector<NodePair>& pairs, Node* pRoot) {
-        if (pRoot == NULL) return;
-        for (int i = 0; i < pairs.size(); ++i) {
-            const NodePair& pair = pairs.at(i);
-            if (pRoot->value == pair.parent) {
-                Node* p = new Node();
-                p->value = pair.child;
-                if (pRoot->left == NULL) {
-                    pRoot->left = p;
-                } else if (pRoot->right == NULL) {
-                    if (p->value > pRoot->left->value) {
-                        pRoot->right = p;
-                    } else {
-                        pRoot->right = pRoot->left;
-                        pRoot->left = p;
-                    }
-                } else break;
-            }
-        }
-        // boths children nodes are ready
-        buildNode(pairs, pRoot->left);
-        buildNode(pairs, pRoot->right);
-    }
-};
-
-int main() {
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */
-    string input;
-    getline(cin, input);
-    //char input[1024];
-    //memset(input, 0, 1024);
-    //cin >> input;
-    vector<NodePair> pairs;
-    bool success = Parser::Parse(input, pairs);
-    if (!success) {
-        cout << "E1" << endl;
-    }
-    bool duplicatePairs = Parser::haveDuplicatePairs(pairs);
-    bool moreChildren = Parser::haveMoreChildren(pairs);
-    bool multipleRoots = Parser::haveMultipleRoots(pairs);
-    bool cycleChain = Parser::haveCycleChain(pairs);
-    if (duplicatePairs)
-        cout << "E2" << endl;
-    if (moreChildren)
-        cout << "E3" << endl;
-    if (multipleRoots)
-        cout << "E4" << endl;
-    if (cycleChain)
-        cout << "E5" << endl;
-    if (!duplicatePairs && !moreChildren && !multipleRoots && !cycleChain) {
-        Node* pRoot = Parser::BuildTree(pairs);
-        string exp = pRoot->GetSExpression();
-        cout << exp << endl;
-    }
-    return 0;
-}
 void Test();
-/*
 int main()
 {
+    string tc1 = JudgeBiTree("(B,D) (D,E) (A,B) (C,F) (E,G) (A,C)");
+    EXPECT_EQ(tc1, "(A(B(D(E(G))))(C(F)))");
+
+    string tc2 = JudgeBiTree("(A,B) (A,C) (B,D) (D,C)");
+    EXPECT_EQ(tc2, "E5");
+
+    string tc3 = JudgeBiTree("(A,B) (A,C) (B,D) (E,F) (F,G) (F,H)");
+    EXPECT_EQ(tc3, "E4");
+    
+    string tc4 = JudgeBiTree("(A,B) (B,D) (B,C) (C,A)");
+    EXPECT_EQ(tc4, "E5");
+
+    string tc5 = JudgeBiTree("(A,B) (B,C) (A,B) (A,C)");
+    EXPECT_EQ(tc5, "E2");
+
+    string tc6 = JudgeBiTree("(A,B) (A,C) (A,D) (B,E)");
+    EXPECT_EQ(tc6, "E3");
+    
+    string tc7 = JudgeBiTree("(U,P) (O,L) (A,S) (N,O) (S,T) (U,M) (A,N) (S,U) (L,D)");
+    EXPECT_EQ(tc7, "(A(N(O(L(D))))(S(T)(U(M)(P))))");
+
+    string tc8 = JudgeBiTree("(A,B) (B,C) (A,B)");
+    EXPECT_EQ(tc8, "E2");
+
+    string tc9 = JudgeBiTree("(A,C) (A,B) (B,Q) (B,P) (C,D) (Q,Z) (Q,X)");
+    EXPECT_EQ(tc9, "(A(B(P)(Q(X)(Z)))(C(D)))");
+    
+    string tc10 = JudgeBiTree("(A,B)   (A,C) (B, E) (B,F)");
+    EXPECT_EQ(tc10, "E1");
+
+    string tc11 = JudgeBiTree("(P,J) (X,T) (R,E) (P,C) (X,B) (R,X)");
+    EXPECT_EQ(tc11, "E4");
+
+    string tc12 = JudgeBiTree("(X,Y) (R,D) (D,P) (R,A) (X,Z) (Z,T) (Z,B) (R,G)");
+    EXPECT_EQ(tc12, "E3");
+
+    string tc13 = JudgeBiTree("(R,N) (U,T) (C,H) (Y,B) (R,A) (Y,C) (K,Y) (B,R) (H,E) (H,S) (K,U) (T,M)");
+    EXPECT_EQ(tc13, "(K(U(T(M)))(Y(B(R(A)(N)))(C(H(E)(S)))))");
+
+    string tc14 = JudgeBiTree("(K,M) (P,L) (L,S) (Y,A) (T,P) (T,K) (L,E) (K,Y)");
+    EXPECT_EQ(tc14, "(T(K(M)(Y(A)))(P(L(E)(S))))");
+
+    string tc15 = JudgeBiTree("(A,B) (A,C (B,D) B,E)");
+    EXPECT_EQ(tc15, "E1");
+
+    string tc16 = JudgeBiTree("    (P,B) (E,X) (P,D) (E,Y) (P,A)");
+    EXPECT_EQ(tc16, "E1");
+    return 0;
+
     STL::Swap();
     STL::ostream_vector();
     STL::ostream_array();
@@ -278,7 +97,7 @@ int main()
     //cin >> a;
     return 0;
 }
-*/
+
 void Test()
 {
     int i_0 = 0, i_1 = 1, i_2 = 2, i_3 = 3, i_4 = 4, i_5 = 5, i_6 = 6, i_7 = 7, i_8 = 8, i_10 = 10, i_11 = 11;

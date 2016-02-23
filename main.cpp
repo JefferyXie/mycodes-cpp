@@ -2,6 +2,7 @@
 #include "header.h"
 #include "./test/Test_language.h"
 #include "./test/Test_algorithm.h"
+#include "./test/Test_multithreading.h"
 
 //
 // googletest articles:

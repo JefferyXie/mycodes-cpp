@@ -1,12 +1,11 @@
+#ifndef USESEMAPHORE_C
+#define USESEMAPHORE_C
+
 // 使用信号量semaphore
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <semaphore.h>
-#include <unistd.h>
-#include <pthread.h>
+#include "../header.h"
 
-int count = 0;
+int m_count = 0;
 
 struct th_Arg {
 	sem_t* s_wait;
@@ -24,12 +23,12 @@ struct th_Arg {
 void *thread_fun(void* arg)
 {
 	th_Arg* pThArg = (th_Arg*)arg;
-	while (count < 10) {
+	while (m_count < 10) {
 		sem_wait(pThArg->s_wait);
-		if (count < 10) {
+		if (m_count < 10) {
 			printf("%s's id is %d\n", pThArg->message, pthread_self());
 			if (pThArg->bIncreaseCount) {
-				count++;
+				m_count++;
 				printf("\n");
 			}
 		}
@@ -37,7 +36,7 @@ void *thread_fun(void* arg)
 	}
 }
 
-int main()
+void UseSemaphore()
 {
 	sem_t sem_th1;
 	sem_t sem_th2;
@@ -45,20 +44,20 @@ int main()
 	sem_t sem_th4;
 	int res = sem_init(&sem_th1, 0, 0);
 	if (res) {
-		return -1;
+		return;
 	}
 	res = sem_init(&sem_th2, 0, 0);
 	if (res) {
-		return -1;
+		return;
 	}
 	res = sem_init(&sem_th3, 0, 0);
 	if (res) {
-		return -1;
+		return;
 	}
 	res = sem_init(&sem_th4, 0, 0);
 	if (res) {
 		printf("Semaphore initilization failed\n");	
-		return -1;
+		return;
 	}
 
 	th_Arg arg1(&sem_th1, &sem_th2, "thread 1", false);
@@ -105,4 +104,5 @@ int main()
 	sem_destroy(&sem_th4);
 }
 
+#endif
 
