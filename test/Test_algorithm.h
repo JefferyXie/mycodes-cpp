@@ -2,7 +2,8 @@
 #include "../header.h"
 #include "../algorithm/FindCommonAncestor.h"
 #include "../algorithm/traversetree.h"
-#include "../algorithm/judgeBiTree.h"
+#include "../algorithm/judgebitree.h"
+#include "../algorithm/numdaysbetween.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -123,5 +124,17 @@ TEST(algorithm, judgeBiTree) {
     string tc16 = JudgeBiTree("   (P,B) (E,X) (P,D) (E,Y) (P,A)");
     EXPECT_EQ(tc16, "E1");
 }
+
+TEST(algorithm, numdaysbetween) {
+    int a = NumDaysBetween(2010,5,1,2011,5,1);
+    EXPECT_EQ(a, 365);
+    int b = NumDaysBetween(1900,1,10,1901,3,1);
+    EXPECT_EQ(b, 415);
+    int c = NumDaysBetween(1999,10,1,2015,12,10);
+    EXPECT_EQ(c, 5914);
+    int d = NumDaysBetween(1644,3,21,2016,2,23);
+    EXPECT_EQ(d, 135843);
+    cout << a << ", " << b << ", " << c << ", " << d << endl;
+ }
 
 
