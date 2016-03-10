@@ -1,10 +1,7 @@
-#include <cmath>
-#include <cstdio>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-using namespace std;
+#ifndef COUNTSHERLOCK_H
+#define COUNTSHERLOCK_H
+
+#include "../header.h"
 
 // https://www.hackerrank.com/challenges/sherlock-and-gcd
 // this is upgraded version of above question -
@@ -30,13 +27,13 @@ void print(int arr[], int size) {
 
 int CountSherlock(int arr_original[], int size_original, int pos_original, int target[], int size) {
     if (size_original < size || pos_original > size_original) return 0;
-    
+
     int count = 0;
     if (gcd(target, size, 0) == 1) {
         print(target, size);
         ++count;
     }
-   
+
     for (int k = pos_original; k < size_original; ++k) {
         target[size] = arr_original[k];
         count += CountSherlock(arr_original, size_original, k+1, target, size+1);
@@ -63,4 +60,5 @@ int runCountSherlock() {
     return 0;
 }
 
+#endif
 

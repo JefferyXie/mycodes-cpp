@@ -1,7 +1,7 @@
-#include <iostream>
-#include <algorithm>
-#include <cstring>
-using namespace std;
+#ifndef GEMSTONES_H
+#define GEMSTONES_H
+
+#include "../header.h"
 
 // https://www.hackerrank.com/challenges/gem-stones
 int Gemstones() {
@@ -31,3 +31,4 @@ int Gemstones() {
     return 0;
 }
 
+#endif

@@ -1,3 +1,6 @@
+#ifndef FINDCOMMONANCESTOR_H
+#define FINDCOMMONANCESTOR_H
+
 #include "../header.h"
 #include "../node.h"
 
@@ -16,4 +19,6 @@ template<class T> TreeNode<T>* FindCommonAncestor(TreeNode<T>* root, TreeNode<T>
 
     return left != nullptr ? left : right;
 }
+
+#endif
 

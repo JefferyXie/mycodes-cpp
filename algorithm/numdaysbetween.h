@@ -19,26 +19,16 @@ int NumDaysInMonth(int year, int month) {
 }
 
 int NumDaysBetween(int s_year, int s_month, int s_day, int e_year, int e_month, int e_day) {
-    int numDays = 0;
+    int numDays = -s_day + e_day;
+    int m = s_month;
     for (int tYear = s_year; tYear <= e_year; ++tYear) {
-        if (tYear == s_year) {
-            numDays += NumDaysInMonth(tYear, s_month) - s_day;
-            int m = s_month;
-            while (++m <= 12) {
-                numDays += NumDaysInMonth(tYear, m);
-            }
-            continue;
+        int n = (tYear == e_year ? (e_month-1) : 12);
+        while (m <= n){
+            numDays += NumDaysInMonth(tYear, m);
+            ++m;
         }
-        if (tYear == e_year) {
-            int m = 0;
-            while (++m < e_month) {
-                numDays += NumDaysInMonth(tYear, m);
-            }
-            numDays += e_day;
-            continue;
-        }
-        numDays += IsLeapYear(tYear) ? 366 : 365;
-    }
+        m = 1;
+   }
     return numDays;
 }
 

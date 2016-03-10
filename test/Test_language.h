@@ -8,6 +8,7 @@
 #include "../language/matrix.h"
 #include "../language/sizeofClass.h"
 #include "../language/MyList.h"
+#include "../language/MyQueue.h"
 
 TEST(language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -521,4 +522,87 @@ TEST(language, lambda) {
 	lam1(&b);
 	lam1(&a);
 }
+
+TEST(language, MyQuque_int) {
+    MyQueue<int> q1, q2;
+    for (int i = 0; i < 100; ++i) {
+        q1.Push(i);
+        cout << q1.ToString() << endl;
+    }
+    while (q1.Length() > 0) {
+        cout << q1.Pop() << ", ";
+        cout << q1.ToString() << endl;
+    }
+    cout << endl;
+
+    cout << "--------------------------------------------------" << endl;
+
+    auto writer = [&q2] {
+        this_thread::sleep_for(chrono::seconds(10));
+        for (int i = 0; i < 100; ++i) {
+            q2.Push(i);
+            cout << i << " pushed * " << q2.ToString() << endl;
+            this_thread::sleep_for(chrono::milliseconds(100));
+        }
+    };
+    auto reader = [&q2] {
+        while (1) {
+            int i = q2.Pop();
+            cout << i << " poped * " << q2.ToString() << endl;
+            this_thread::sleep_for(chrono::milliseconds(30));
+        }
+    };
+
+    thread th_writer(writer); 
+    thread th_reader(reader);
+
+    th_writer.join();
+    th_reader.join();
+}
+
+TEST(language, MyQuque_class) {
+    {
+        MyQueue<MyMember> q1;
+        for (int i = 0; i < 100; ++i) {
+            q1.Push(MyMember());
+            cout << q1.ToString() << endl;
+        }
+        while (q1.Length() > 0) {
+            cout << q1.Pop().ToString() << ", ";
+            cout << q1.ToString() << endl;
+        }
+    }
+    cout << endl;
+
+    cout << "--------------------------------------------------" << endl;
+
+    {
+        bool writter_finished = false;
+        MyQueue<MyMember> q2;
+        auto writer = [&q2, &writter_finished] {
+            this_thread::sleep_for(chrono::seconds(10));
+            for (int i = 0; i < 100; ++i) {
+                q2.Push(MyMember());
+                cout << i << " pushed * " << q2.ToString() << endl;
+                this_thread::sleep_for(chrono::milliseconds(100));
+            }
+            writter_finished = true;
+        };
+        auto reader = [&q2, &writter_finished] {
+            while (!writter_finished || q2.Length() > 0) {
+                auto i = q2.Pop().ToString();
+                cout << i << " poped * " << q2.ToString() << endl;
+                this_thread::sleep_for(chrono::milliseconds(30));
+            }
+        };
+
+        thread th_writer(writer); 
+        thread th_reader(reader);
+
+        th_writer.join();
+        th_reader.join();
+    }
+    cout << "test end!" << endl;
+}
+
 

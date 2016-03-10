@@ -1,14 +1,7 @@
-#ifndef SHERLOCK
-#define SHERLOCK
+#ifndef SHERLOCK_H
+#define SHERLOCK_H
 
-#include <cmath>
-#include <cstdio>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <sstream>
-using namespace std;
-
+#include "../header.h"
 
 // https://www.hackerrank.com/challenges/sherlock-and-queries
 // http://codereview.stackexchange.com/questions/77975/time-limit-exceeded-for-sherlock-and-queries-hackerrank-challenge

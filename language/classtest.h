@@ -43,9 +43,24 @@ public:
 };
 
 struct MyMember {
+    static int s_count;
 	int value;
 	string name;
+    //list<int> ls;
+    MyMember() {
+        value = s_count++;
+        name = "name[" + to_string(value) + "]";
+        cout << "MyMember() " << value << endl;
+    }
+    ~MyMember() {
+        cout << "~MyMember() " << value << endl;
+    }
+    string ToString() {
+        return "value:" + to_string(value) + ",name:" + name;
+    }
+    MyMember& operator=(const MyMember&) = delete;
 };
+int MyMember::s_count = 0;
 
 struct Plain {
     Plain() {

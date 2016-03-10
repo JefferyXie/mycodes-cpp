@@ -134,7 +134,12 @@ TEST(algorithm, numdaysbetween) {
     EXPECT_EQ(c, 5914);
     int d = NumDaysBetween(1644,3,21,2016,2,23);
     EXPECT_EQ(d, 135843);
-    cout << a << ", " << b << ", " << c << ", " << d << endl;
+    int e = NumDaysBetween(2016,3,21,2016,3,30);
+    EXPECT_EQ(e, 9);
+    int f = NumDaysBetween(1644,3,21,1644,3,21);
+    EXPECT_EQ(f, 0);
+    cout << a << ", " << b << ", " << c << ", " 
+        << d << ", " << e << ", " << f << endl;
  }
 
 

@@ -1,11 +1,7 @@
-#include <cmath>
-#include <cstdio>
-#include <vector>
-#include <iostream>
-#include <algorithm>
-#include <cstring>
-using namespace std;
+#ifndef BIGGERISGREATER_H
+#define BIGGERISGREATER_H
 
+#include "../header.h"
 
 // https://www.hackerrank.com/challenges/bigger-is-greater
 // 1), starting from end of string, find the character which is smaller than its right side one
@@ -47,4 +43,6 @@ void BiggerIsGreater() {
         cout << (bExist ? arr : "no answer") << endl;
     }
 }
+
+#endif
 
