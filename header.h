@@ -28,6 +28,7 @@
 #include <list>
 #include <iterator>
 #include <map>
+#include <unordered_map>
 #include <memory>
 #include <algorithm>
 #include <typeinfo>

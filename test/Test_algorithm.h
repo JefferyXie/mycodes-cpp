@@ -4,6 +4,8 @@
 #include "../algorithm/traversetree.h"
 #include "../algorithm/judgebitree.h"
 #include "../algorithm/numdaysbetween.h"
+#include "../algorithm/similarpair.h"
+#include "../algorithm/kdiffpairs.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -140,6 +142,38 @@ TEST(algorithm, numdaysbetween) {
     EXPECT_EQ(f, 0);
     cout << a << ", " << b << ", " << c << ", " 
         << d << ", " << e << ", " << f << endl;
- }
+}
+
+TEST(algorithm, similarpair) {
+    int arr[][2] = {
+        {1,7},
+        {1,10},
+        {10,15},
+        {15,4},
+        {15,16},
+        {16,18},
+        {16,17},
+        {17,2},
+        {10,5},
+        {5,3},
+        {3,19},
+        {1,9},
+        {9,11},
+        {11,13},
+        {11,12},
+        {12,8},
+        {12,20},
+        {11,14},
+        {1,6},
+    };
+    int a = SimilarPair(5, arr);
+    EXPECT_EQ(a, 23);
+}
+
+TEST(algorithm, kdiffparis) {
+    vector<int> arr = { 1,5,3,4,2 };
+    int a = KDiffPairs(arr, 2);
+    EXPECT_EQ(a, 3);
+}
 
 
