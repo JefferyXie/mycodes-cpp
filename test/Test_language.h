@@ -523,7 +523,7 @@ TEST(language, lambda) {
 	lam1(&a);
 }
 
-TEST(language, MyQuque_int) {
+TEST(DISABLED_language, MyQuque_int) {
     MyQueue<int> q1, q2;
     for (int i = 0; i < 100; ++i) {
         q1.Push(i);
@@ -560,7 +560,7 @@ TEST(language, MyQuque_int) {
     th_reader.join();
 }
 
-TEST(language, MyQuque_class) {
+TEST(DISABLED_language, MyQuque_class) {
     {
         MyQueue<MyMember> q1;
         for (int i = 0; i < 100; ++i) {

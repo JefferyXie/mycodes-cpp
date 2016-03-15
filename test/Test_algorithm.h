@@ -6,6 +6,7 @@
 #include "../algorithm/numdaysbetween.h"
 #include "../algorithm/similarpair.h"
 #include "../algorithm/kdiffpairs.h"
+#include "../algorithm/connectedcells.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -174,6 +175,25 @@ TEST(algorithm, kdiffparis) {
     vector<int> arr = { 1,5,3,4,2 };
     int a = KDiffPairs(arr, 2);
     EXPECT_EQ(a, 3);
+}
+
+TEST(algorithm, maxconnectedcells) {
+    vector<vector<int> > mt1 = {
+        {0,1,1},
+        {1,0,0},
+        {0,1,0},
+    };
+    int a = MaxConnectedCells(mt1);
+    EXPECT_EQ(a, 4);
+    vector<vector<int> > mt2 = {
+        {0,1,1,1,1},
+        {1,0,0,0,1},
+        {1,1,0,1,0},
+        {0,1,0,1,1},
+        {0,1,1,1,0},
+    };
+    int b = MaxConnectedCells(mt2);
+    EXPECT_EQ(b, 15);
 }
 
 

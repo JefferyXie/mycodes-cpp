@@ -9,6 +9,7 @@ protected:
 	string _name = "object A";
 public:
 	A() = default;
+    A(int n, string name) : _n(n), _name(name) {}
 	A(A&& ref) {
 		cout << "A(A&&)" << endl;
 		_n = ref._n;
@@ -22,6 +23,9 @@ public:
     }
 	void Go() {
         cout << "A::Go()" << endl;
+    }
+    virtual string ToString() {
+        return "_n:" + to_string(_n) + ",_name:" + _name;
     }
 };
 
