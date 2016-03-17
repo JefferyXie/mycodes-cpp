@@ -3,6 +3,7 @@
 
 #include "../header.h"
 
+// https://www.hackerrank.com/challenges/connected-cell-in-a-grid
 struct MatrixInfo {
     int m, n; // rows, columns
     vector<vector<int> > arr;
