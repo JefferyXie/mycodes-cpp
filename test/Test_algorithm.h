@@ -8,6 +8,9 @@
 #include "../algorithm/kdiffpairs.h"
 #include "../algorithm/connectedcells.h"
 #include "../algorithm/maxsubarraymod.h"
+#include "../algorithm/missingnumbers.h"
+#include "../algorithm/bikeracer.h"
+#include "../algorithm/countluck.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -212,6 +215,254 @@ TEST(algorithm, maxsubarraymod) {
         1129566414 };
     auto b = MaxSubarrayMod(arr1, sizeof(arr)/sizeof(arr[0]), 1804289384);
     EXPECT_EQ(b, 1745498720);
- }
+}
 
+TEST(algorithm, missingnumbers) {
+    int A[] = {203, 204, 205, 206, 207, 208, 203, 204, 205, 206};
+    int B[] = {203, 204, 204, 205, 206, 207, 205, 208, 203, 206, 205, 206, 204};
+    auto s = FindMissingNumbers(A, sizeof(A)/sizeof(A[0]), B, sizeof(B)/sizeof(B[0]));
+    set<int> ss{204,205,206};
+    EXPECT_EQ(s, ss);
+}
+
+TEST(algorithm, bikeracer) {
+    vector<Coordinate> bikers1 = {
+        {0,1},
+        {0,2},
+        {0,3},
+    };
+    vector<Coordinate> bikes1 = {
+        {100,1},
+        {200,2},
+        {300,3},
+    };
+    int K1 = 2;
+    auto shortestTime1 = BikeRacerShortestTime(bikers1, bikes1, K1);
+    EXPECT_EQ(shortestTime1, 40000);
+
+    vector<Coordinate> bikers2 = {
+        {286, 686},
+        {439, 775},
+        {34, 471},
+        {116, 512},
+        {206, 632},
+        {549, 365},
+        {961, 702},
+        {999, 514},
+        {81, 249},
+        {538, 268},
+    };
+    vector<Coordinate> bikes2 = {
+        {261, 789},
+        {929, 217},
+        {909, 187},
+        {729, 411},
+        {309, 147},
+        {185, 184},
+        {960, 947},
+        {770, 624},
+        {136, 346},
+        {979, 238},
+    };
+    /*
+    // the algorithm needs to be optimized so that this case won't time out
+    int K2 = 5;
+    auto shortestTime2 = BikeRacerShortestTime(bikers2, bikes2, K2);
+    EXPECT_EQ(shortestTime2, 42565);*/
+
+    vector<Coordinate> bikers3 = {
+        {411, 353},
+        {162, 727},
+        {6, 293},
+        {370, 16},
+        {334, 610},
+        {201, 999},
+        {354, 272},
+        {475, 73},
+        {474, 356},
+        {651, 607},
+    };
+    vector<Coordinate> bikes3 = {
+        {213, 835},
+        {871, 716},
+        {161, 707},
+        {348, 439},
+        {163, 847},
+        {200, 67},
+        {146, 926},
+        {571, 714},
+        {82, 152},
+        {115, 293},
+    };
+    int K3 = 2;
+    auto shortestTime3 = BikeRacerShortestTime(bikers3, bikes3, K3);
+    EXPECT_EQ(shortestTime3, 8354);
+
+    vector<Coordinate> bikers4 = {
+        {145, 862},
+        {533, 105},
+        {34, 192},
+        {897, 656},
+    };
+    vector<Coordinate> bikes4 = {
+        {902, 518},
+        {78, 108},
+        {658, 369},
+        {127, 364},
+    };
+    int K4 = 2;
+    auto shortestTime4 = BikeRacerShortestTime(bikers4, bikes4, K4);
+    EXPECT_EQ(shortestTime4, 19069);
+}
+
+TEST(algorithm, permutation) {
+    vector<int> source = {1,2,3,4};
+    vector<int> target;
+    int a = PossiblePermutation_WithOrder(source, 0, 4, target);
+    EXPECT_EQ(a, 24);
+}
+
+TEST(algorithm, countluck) {
+    vector<vector<char> > forest;
+    auto fillforest = [&forest](vector<string>& ar) {
+        forest.clear();
+        for_each(ar.begin(), ar.end(), [&forest](string s) {
+            vector<char> v;
+            for_each(s.begin(), s.end(), [&v](char c) {
+                v.push_back(c);
+            });
+            forest.push_back(v);
+        });
+    };
+    vector<string> arr1 = {
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"M........................................"},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {".XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"........................................."},
+        {"XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX."},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {".*......................................."},
+    }; // 280
+    fillforest(arr1);
+    int a1 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a1, 280);
+
+    vector<string> arr2 = {
+        {"XXXXXXXXXXXXXXXXX"},
+        {"XXX.XX.XXXXXXXXXX"},
+        {"XX.*..M.XXXXXXXXX"},
+        {"XXX.XX.XXXXXXXXXX"},
+        {"XXXXXXXXXXXXXXXXX"},
+    }; // 1*/
+    fillforest(arr2);
+    int a2 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a2, 1);
+
+    vector<string> arr3 = {
+        {".X.X......X"},
+        {".X*.X.XXX.X"},
+        {".XX.X.XM..."},
+        {"......XXXX."},
+    }; // 3
+    fillforest(arr3);
+    int a3 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a3, 3);
+
+    vector<string> arr4 = {
+        {"..........*"},
+        {".XXXXXXXXXX"},
+        {"..........."},
+        {"XXXXXXXXXX."},
+        {"M.........."},
+    }; // 0
+    fillforest(arr4);
+    int a4 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a4, 0);
+
+    vector<string> arr5 = {
+        {"X.XXXX.XX....X.XX...X.XXXXXXXXX"},
+        {"X.XXX...XXX.X..XXX.XX..XXXXXXXX"},
+        {"...X.XX..X...X..XX.X..XXXXXXXXX"},
+        {"X.X..X..X.X.X..X.....XX.XXXXXXX"},
+        {"...X..X.X....X.X.X.X.X..XXXXXXX"},
+        {".X..X....X.X.....XX....XXXXXXXX"},
+        {"..X..XX.X.X..XX.X..XX.XXXXXXXXX"},
+        {".XXX.X.....X.X.X*.X.XX.XXXXXXXX"},
+        {"X..X..X.X.X.....X....X..XXXXXXX"},
+        {"..X.X....X..XXXX..XXX..XXXXXXXX"},
+        {"X....XXX..X.....X...X.XXXXXXXXX"},
+        {"..XX.....X.X.X.X..X.X..XXXXXXXX"},
+        {"XX.X.X.X...X.XX.X..X..X..XXXXXX"},
+        {".M...XXXX.X.....X.X.X...XXXXXXX"},
+        {"X.XXX..X...X.X.X..X..X.XXXXXXXX"},
+        {".XX...X.XX..X..X.X.X....XXXXXXX"},
+        {"....X......X..X......XXX.XXXXXX"},
+        {"X.X.XX.XXX..X.X.XX.XX.....XXXXX"},
+        {"X..X..X....XX.....X...X.X..XXXX"},
+        {"..X.X...XX....X.XX..X.X..XX.XXX"},
+        {".X..X.X.X.X.XX...X.X.X.XX...XXX"},
+        {"XX.X...X....X..X........XX.X.XX"},
+        {".....XX..X.X.XX..XX.X.X......XX"},
+        {"X.X.XX..X.XX....X..XXXXX.XXXX.X"},
+        {"XX..X.XX....XXX...X.X.X........"},
+        {".XXXX...XXX.....X......XX.XX.XX"},
+        {"......XX....X.X..XX.XX...XX.XXX"},
+        {"X.X.X....X.X...X...X...X.....X."},
+        {"XX...X.X..X..X.XXXX.XX.X.X.X..."},
+        {"XXXX..X..XXX.X......X.X...X..XX"},
+        {"XXX..XXX..X..XX.X.X....XX..X..X"},
+        {"X.XX..XX.X..X...X..X.X.XX.X..XX"},
+        {"...XXXX..X.X..X..X..XXX...XXXXX"},
+        {"XX...X..XX.XX..X..X.XX..X..XXXX"},
+        {"XX.XX..XXXXX.X.X.X...X.XXXXXXXX"},
+        {"X.....X.XXX..X.X..X.XXXXXXXXXXX"},
+        {"..X.X......X...X.X..XXXXXXXXXXX"},
+    };// 21
+    fillforest(arr5);
+    int a5 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a5, 21);
+
+    vector<string> arr6 = {
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+        {"M.......................................*"},
+        {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
+    };// 20 
+    fillforest(arr6);
+    int a6 = CalcWaveHandTimes(forest);
+    EXPECT_EQ(a6, 20);
+ }
 
