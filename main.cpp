@@ -55,39 +55,85 @@ struct OrderAck : Order {
 };
 struct OrderFill : Order {
 };
+
+class FileReader {
+public:
+    ~FileReader() {
+        if (_fs.is_open()) _fs.close();
+    }
+    bool Open(char* file) {
+        _fs.open(file);
+        return _fs.is_open();
+    }
+    template<class T>
+    bool Read(T& buf) {
+        return Read(buf, sizeof(buf));
+    }
+    template<class T>
+    bool Read(T& buf, int length) {
+        if (_fs.is_open()) {
+            _fs.read((char*)&buf, length);
+            return IsGood();
+        }
+        return false;
+    }
+    bool IsGood() {
+        return _fs.good();
+    }
+
+private:
+    ifstream _fs;
+};
+
 class OrderHelper {
 public:
-    static Header ParseHeader(ifstream& fs) {
+    //static Header ParseHeader(ifstream& fs) {
+    static Header ParseHeader(FileReader& reader) {
         Header header;
+        reader.Read(header.marker);
+        reader.Read(header.msg_type);
+        reader.Read(header.sequence_id);
+        reader.Read(header.timestamp);
+        reader.Read(header.msg_direction);
+        reader.Read(header.msg_len);
+        /*
         fs.read((char*)&header.marker, sizeof(header.marker));
         fs.read((char*)&header.msg_type, sizeof(header.msg_type));
         fs.read((char*)&header.sequence_id, sizeof(header.sequence_id));
         fs.read((char*)&header.timestamp, sizeof(header.timestamp));
         fs.read((char*)&header.msg_direction, sizeof(header.msg_direction));
         fs.read((char*)&header.msg_len, sizeof(header.msg_len));
+        */
         return header;
     }
-    static OrderEntry ParseEntry(ifstream& fs, const Header& header) {
+    static void ParseTermination(FileReader& reader, Order& order) {
+        reader.Read(order.termination);
+    }
+    //static OrderEntry ParseEntry(ifstream& fs, const Header& header) {
+    static OrderEntry ParseEntry(FileReader& reader, const Header& header) {
         OrderEntry entry;
         entry.header = header;
-        fs.read((char*)&entry.price, sizeof(entry.price));
-        fs.read((char*)&entry.quantity, sizeof(entry.quantity));
-        fs.read((char*)&entry.instrument, sizeof(entry.instrument));
-        fs.read((char*)&entry.side, sizeof(entry.side));
-        fs.read((char*)&entry.clientId, sizeof(entry.clientId));
-        fs.read((char*)&entry.time_in_force, sizeof(entry.time_in_force));
-        fs.read(entry.trader_tag, sizeof(entry.trader_tag));
-        fs.read((char*)&entry.firm_id, sizeof(entry.firm_id));
-        fs.read(entry.firm, entry.Num_Firm());
+        reader.Read(entry.price);
+        reader.Read(entry.quantity);
+        reader.Read(entry.instrument);
+        reader.Read(entry.side);
+        reader.Read(entry.clientId);
+        reader.Read(entry.time_in_force);
+        reader.Read(entry.trader_tag);
+        reader.Read(entry.firm_id);
+        reader.Read(entry.firm, entry.Num_Firm());
+        ParseTermination(reader, entry);
         return entry;
     }
-    static OrderAck ParseAck(ifstream& fs, const Header& header) {
+    //static OrderAck ParseAck(ifstream& fs, const Header& header) {
+    static OrderAck ParseAck(FileReader& reader, const Header& header) {
         OrderAck entry;
         entry.header = header;
         // ...
         return entry;
     }
-    static OrderFill ParseFill(ifstream& fs, const Header& header) {
+    //static OrderFill ParseFill(ifstream& fs, const Header& header) {
+    static OrderFill ParseFill(FileReader& reader, const Header& header) {
         OrderFill entry;
         entry.header = header;
         // ...
@@ -98,40 +144,33 @@ public:
 int main(int argc, char** argv) {
     if (argc < 2) return -1;
 
-    ifstream fs;
-    fs.open(argv[1]);
-    if (!fs.is_open()) return -1;
+    FileReader reader;
+    reader.Open(argv[1]);
 
     vector<Order*> orderContainer;
     try {
-        while (fs.good()) {
-            Header header = OrderHelper::ParseHeader(fs);
+        //while (fs.good()) {
+        while (reader.IsGood()) {
+            Header header = OrderHelper::ParseHeader(reader);
             Order* pOrder = NULL;
             switch (header.msg_type) {
             case 1: //order entry
-                pOrder = new OrderEntry(OrderHelper::ParseEntry(fs, header));
+                pOrder = new OrderEntry(OrderHelper::ParseEntry(reader, header));
                 break;
             case 2: //order ack
-                pOrder = new OrderAck(OrderHelper::ParseAck(fs, header));
+                pOrder = new OrderAck(OrderHelper::ParseAck(reader, header));
                 break;
             case 3: //order fill
-                pOrder = new OrderFill(OrderHelper::ParseFill(fs, header));
+                pOrder = new OrderFill(OrderHelper::ParseFill(reader, header));
                 break;
             default:
                 cout << "unrecognized message type!" << endl;
                 break;
             }
-            char termination[8] = {0};
-            fs.read(termination, 8);
-            if (strcmp(termination, "DBDBDBDB") != 0) {
-                cout << "wrong termination code!" << endl;
-                throw;
-            }
         }
     } catch (...) {
         cout << "exception happens!" << endl;
     }
-    fs.close();
 
     // calculate and output...
     
