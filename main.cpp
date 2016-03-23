@@ -31,8 +31,8 @@ struct Header {
     uint16_t    msg_len;
 };
 struct Order {
-    Header header;
-    string termination;
+    Header  header;
+    char    termination[8];
 };
 struct OrderEntry : Order {
     uint64_t    price;
@@ -47,7 +47,8 @@ struct OrderEntry : Order {
     int Num_Firm() {
         return header.msg_len - sizeof(price) - sizeof(quantity) - 
             sizeof(instrument) - sizeof(side) - sizeof(clientId) -
-            sizeof(time_in_force) - sizeof(trader_tag) - sizeof(firm_id);
+            sizeof(time_in_force) - sizeof(trader_tag) - sizeof(firm_id) -
+            sizeof(termination);
     }
 };
 struct OrderAck : Order {
@@ -58,26 +59,25 @@ class OrderHelper {
 public:
     static Header ParseHeader(ifstream& fs) {
         Header header;
-        fs >> header.marker;
-        fs >> header.msg_type;
-        fs >> header.sequence_id;
-        fs >> header.timestamp;
-        fs >> header.msg_direction;
-        fs >> header.msg_len;
+        fs.read((char*)&header.marker, sizeof(header.marker));
+        fs.read((char*)&header.msg_type, sizeof(header.msg_type));
+        fs.read((char*)&header.sequence_id, sizeof(header.sequence_id));
+        fs.read((char*)&header.timestamp, sizeof(header.timestamp));
+        fs.read((char*)&header.msg_direction, sizeof(header.msg_direction));
+        fs.read((char*)&header.msg_len, sizeof(header.msg_len));
         return header;
     }
     static OrderEntry ParseEntry(ifstream& fs, const Header& header) {
         OrderEntry entry;
         entry.header = header;
-        // ...
-        fs >> entry.price;
-        fs >> entry.quantity;
-        fs.read(entry.instrument, sizeof(entry.instrument));
-        fs >> entry.side;
-        fs >> entry.clientId;
-        fs >> entry.time_in_force;
+        fs.read((char*)&entry.price, sizeof(entry.price));
+        fs.read((char*)&entry.quantity, sizeof(entry.quantity));
+        fs.read((char*)&entry.instrument, sizeof(entry.instrument));
+        fs.read((char*)&entry.side, sizeof(entry.side));
+        fs.read((char*)&entry.clientId, sizeof(entry.clientId));
+        fs.read((char*)&entry.time_in_force, sizeof(entry.time_in_force));
         fs.read(entry.trader_tag, sizeof(entry.trader_tag));
-        fs >> entry.firm_id;
+        fs.read((char*)&entry.firm_id, sizeof(entry.firm_id));
         fs.read(entry.firm, entry.Num_Firm());
         return entry;
     }
