@@ -189,7 +189,6 @@ private:
 
 class OrderHelper {
 public:
-    //static Header ParseHeader(ifstream& fs) {
     static Header ParseHeader(FileReader& reader) {
         Header header;
         reader.Read(header.marker);
@@ -198,20 +197,11 @@ public:
         reader.Read(header.timestamp);
         reader.Read(header.msg_direction);
         reader.Read(header.msg_len);
-        /*
-        fs.read((char*)&header.marker, sizeof(header.marker));
-        fs.read((char*)&header.msg_type, sizeof(header.msg_type));
-        fs.read((char*)&header.sequence_id, sizeof(header.sequence_id));
-        fs.read((char*)&header.timestamp, sizeof(header.timestamp));
-        fs.read((char*)&header.msg_direction, sizeof(header.msg_direction));
-        fs.read((char*)&header.msg_len, sizeof(header.msg_len));
-        */
         return header;
     }
     static void ParseTermination(FileReader& reader, Order& order) {
         reader.Read(order.termination);
     }
-    //static OrderEntry ParseEntry(ifstream& fs, const Header& header) {
     static OrderEntry ParseEntry(FileReader& reader, const Header& header) {
         OrderEntry entry;
         entry.header = header;
@@ -227,7 +217,6 @@ public:
         ParseTermination(reader, entry);
         return entry;
     }
-    //static OrderAck ParseAck(ifstream& fs, const Header& header) {
     static OrderAck ParseAck(FileReader& reader, const Header& header) {
         OrderAck entry;
         entry.header = header;
@@ -238,7 +227,6 @@ public:
         ParseTermination(reader, entry);
         return entry;
     }
-    //static OrderFill ParseFill(ifstream& fs, const Header& header) {
     static OrderFill ParseFill(FileReader& reader, const Header& header) {
         OrderFill entry;
         entry.header = header;
@@ -298,6 +286,7 @@ int main(int argc, char** argv) {
         cout << "exception happens!" << endl;
     }
 
+    // utility lambda to do search
     auto findAckByOrderId = [&ackContainer](uint32_t id) {
         for (auto it = ackContainer.begin(); it != ackContainer.end(); ++it) {
             if (it->order_id == id) return it;
@@ -320,6 +309,17 @@ int main(int argc, char** argv) {
         if (itEntry == entryContainer.end()) continue;
         mapFillEntry.insert(make_pair(itFill->order_id, make_pair(*itFill, *itEntry)));
     }
+
+    auto num_entry = entryContainer.size();
+    auto num_ack = entryContainer.size();
+    auto num_fill = fillContainer.size();
+    auto num_all = num_entry + num_ack + num_fill;
+    // question 1)
+    cout << "# of all packets: " << num_all << endl;
+    // question 2)
+    cout << "# of entry: " << num_entry << endl;
+    cout << "# of ack: " << num_ack << endl;
+    cout << "# of fill: " << num_fill << endl;
 
     // question 3)
     map<string, uint32_t> activeTrader;
@@ -383,25 +383,21 @@ int main(int argc, char** argv) {
     cout << "most liquidity trader: " << liquiditiestTrader.first << "," << liquiditiestTrader.second << endl;
 
     // question 5)
+    map<string, uint32_t> volumes;
     map<string, uint32_t> volumesBuy;
     map<string, uint32_t> volumesSell;
     for (auto it = mapFillEntry.begin(); it != mapFillEntry.end(); ++it) {
         const OrderFill& orderFill = it->second.first;
         const OrderEntry& orderEntry = it->second.second;
         string instrument(orderEntry.instrument, sizeof(orderEntry.instrument));
+        volumes[instrument] += orderFill.fill_quantity;
         if (orderEntry.side == 1) { // buy
             volumesBuy[instrument] += orderFill.fill_quantity;
         } else if (orderEntry.side == 2) { // sell
             volumesSell[instrument] += orderFill.fill_quantity;
         }
     }
-    cout << "buy: " << volumesBuy.size() << ", sell: " << volumesSell.size() << endl;
     for (auto it = volumesBuy.begin(); it != volumesBuy.end(); ++it) {
-        if (it->second != volumesSell[it->first]) {
-            cout << "NOT equal trade: " << it->first 
-                << ", sell " << it->second 
-                << ", buy " << volumesSell[it->first] << endl;
-        }
         cout << it->first << ": " << it->second << endl;
     }
 
