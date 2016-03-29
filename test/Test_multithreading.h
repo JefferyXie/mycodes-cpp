@@ -3,11 +3,11 @@
 #include "../ThreadOrder/usemutex.c"
 #include "../ThreadOrder/usesemaphore.c"
 
-TEST(multithreading, UseMutex) {
+TEST(DISABLED_multithreading, UseMutex) {
     UseMutex();
 }
 
-TEST(multithreading, UseSemaphore) {
+TEST(DISABLED_multithreading, UseSemaphore) {
     UseSemaphore();
 }
 

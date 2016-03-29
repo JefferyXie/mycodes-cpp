@@ -10,7 +10,7 @@
 #include "../language/MyList.h"
 #include "../language/MyQueue.h"
 
-TEST(language, constructorOrder) {
+TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
     A* a = new A();
     B* b = new B();
@@ -22,7 +22,7 @@ TEST(language, constructorOrder) {
     delete a;
 }
 
-TEST(language, auto) {
+TEST(DISABLED_language, auto) {
     int i = 5;
     const int ci = 0;
     const int *pci = &i;
@@ -53,7 +53,7 @@ TEST(language, auto) {
     A_auto<decltype(a3)>::goo(a3);
 }
 
-TEST(language, typeinfo) {
+TEST(DISABLED_language, typeinfo) {
     OneBase a;
     OneLevel1 b;
     OneLevel2 c;
@@ -75,7 +75,7 @@ TEST(language, typeinfo) {
         << "]\t d:[" << ti_d.name() << ", " << ti_d.hash_code() << "]" << endl;
 }
 
-TEST(language, dynamic_cast) {
+TEST(DISABLED_language, dynamic_cast) {
     std::vector< std::vector<double> > timings(17);
 
     for (size_t r=0 ; r<R ; ++r) {
@@ -382,12 +382,12 @@ TEST(language, dynamic_cast) {
     std::cout << std::endl;
 }
 
-TEST(language, thread) {
+TEST(DISABLED_language, thread) {
     Recurisve_Mutex oo;
     oo.run();
 }
 
-TEST(language, copy_elision) {
+TEST(DISABLED_language, copy_elision) {
     vector<Plain> vv = getVector();
 
     std::cout << "=============RVO==============" << std::endl; 
@@ -425,7 +425,7 @@ TEST(language, copy_elision) {
     std::cout << "==============================" << std::endl;
 }
 
-TEST(language, matrix) {
+TEST(DISABLED_language, matrix) {
     Matrix<int> m(2,3);
     m(0,0) = 1;
     m(1,1) = 3;
@@ -433,7 +433,7 @@ TEST(language, matrix) {
     cout << m[0][0] << "," << m[1][1] << endl;
 }
 
-TEST(language, sizeofClass) {
+TEST(DISABLED_language, sizeofClass) {
     sizeofClass::CheckBasicTypes();
     sizeofClass::CheckClass(stlClass("temp", 1000));
 
@@ -454,7 +454,7 @@ TEST(language, sizeofClass) {
     //	copy(data.begin(), data.end(), ostream_iterator<stlClass>(cout, " * "));
 }
 
-TEST(language, MyList) {
+TEST(DISABLED_language, MyList) {
     MyList<int> olist;
     int i_2 = 2;
     int i_3 = 3;
@@ -484,7 +484,7 @@ TEST(language, MyList) {
     olist.Display();
 }
 
-TEST(language, lib) {
+TEST(DISABLED_language, lib) {
 /*
     SharedClass shObj;
     shObj.Fo();
@@ -496,7 +496,7 @@ TEST(language, lib) {
 */
 }
 
-TEST(language, lambda) {
+TEST(DISABLED_language, lambda) {
     A a;
     A aa = A();
 	

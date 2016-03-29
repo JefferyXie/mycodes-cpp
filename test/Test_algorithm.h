@@ -11,11 +11,14 @@
 #include "../algorithm/missingnumbers.h"
 #include "../algorithm/bikeracer.h"
 #include "../algorithm/countluck.h"
+#include "../algorithm/cuttree.h"
+#include "../algorithm/cuttree_2.h"
+#include "../algorithm/gridsearch.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
 
-TEST(algorithm, FindCommonAncestor) {
+TEST(DISABLED_algorithm, FindCommonAncestor) {
     auto_ptr<TreeNode<int> > root(new TreeNode<int>(10));
     auto_ptr<TreeNode<int> > n1(new TreeNode<int>(2));
     auto_ptr<TreeNode<int> > n2(new TreeNode<int>(4));
@@ -53,7 +56,7 @@ TEST(algorithm, FindCommonAncestor) {
     EXPECT_EQ(ancestor6, root.get());
 }
 
-TEST(algorithm, traverse) {
+TEST(DISABLED_algorithm, traverse) {
     tNode root(0);
     tNode n1(1);
     tNode n2(2);
@@ -82,7 +85,7 @@ TEST(algorithm, traverse) {
     TraversePostorder(&root);
 }
 
-TEST(algorithm, judgeBiTree) {
+TEST(DISABLED_algorithm, judgeBiTree) {
     string tc1 = JudgeBiTree("(B,D) (D,E) (A,B) (C,F) (E,G) (A,C)");
     EXPECT_EQ(tc1, "(A(B(D(E(G))))(C(F)))");
 
@@ -132,7 +135,7 @@ TEST(algorithm, judgeBiTree) {
     EXPECT_EQ(tc16, "E1");
 }
 
-TEST(algorithm, numdaysbetween) {
+TEST(DISABLED_algorithm, numdaysbetween) {
     int a = NumDaysBetween(2010,5,1,2011,5,1);
     EXPECT_EQ(a, 365);
     int b = NumDaysBetween(1900,1,10,1901,3,1);
@@ -149,7 +152,7 @@ TEST(algorithm, numdaysbetween) {
         << d << ", " << e << ", " << f << endl;
 }
 
-TEST(algorithm, similarpair) {
+TEST(DISABLED_algorithm, similarpair) {
     int arr[][2] = {
         {1,7},
         {1,10},
@@ -175,13 +178,13 @@ TEST(algorithm, similarpair) {
     EXPECT_EQ(a, 23);
 }
 
-TEST(algorithm, kdiffparis) {
+TEST(DISABLED_algorithm, kdiffparis) {
     vector<int> arr = { 1,5,3,4,2 };
     int a = KDiffPairs(arr, 2);
     EXPECT_EQ(a, 3);
 }
 
-TEST(algorithm, maxconnectedcells) {
+TEST(DISABLED_algorithm, maxconnectedcells) {
     vector<vector<int> > mt1 = {
         {0,1,1},
         {1,0,0},
@@ -200,7 +203,7 @@ TEST(algorithm, maxconnectedcells) {
     EXPECT_EQ(b, 15);
 }
 
-TEST(algorithm, maxsubarraymod) {
+TEST(DISABLED_algorithm, maxsubarraymod) {
     long long arr[] = {3,3,9,9,5};
     auto a = MaxSubarrayMod(arr, sizeof(arr)/sizeof(arr[0]), 7);
     EXPECT_EQ(a, 6);
@@ -217,7 +220,7 @@ TEST(algorithm, maxsubarraymod) {
     EXPECT_EQ(b, 1745498720);
 }
 
-TEST(algorithm, missingnumbers) {
+TEST(DISABLED_algorithm, missingnumbers) {
     int A[] = {203, 204, 205, 206, 207, 208, 203, 204, 205, 206};
     int B[] = {203, 204, 204, 205, 206, 207, 205, 208, 203, 206, 205, 206, 204};
     auto s = FindMissingNumbers(A, sizeof(A)/sizeof(A[0]), B, sizeof(B)/sizeof(B[0]));
@@ -225,7 +228,7 @@ TEST(algorithm, missingnumbers) {
     EXPECT_EQ(s, ss);
 }
 
-TEST(algorithm, bikeracer) {
+TEST(DISABLED_algorithm, bikeracer) {
     vector<Coordinate> bikers1 = {
         {0,1},
         {0,2},
@@ -315,14 +318,14 @@ TEST(algorithm, bikeracer) {
     EXPECT_EQ(shortestTime4, 19069);
 }
 
-TEST(algorithm, permutation) {
+TEST(DISABLED_algorithm, permutation) {
     vector<int> source = {1,2,3,4};
     vector<int> target;
     int a = PossiblePermutation_WithOrder(source, 0, 4, target);
     EXPECT_EQ(a, 24);
 }
 
-TEST(algorithm, countluck) {
+TEST(DISABLED_algorithm, countluck) {
     vector<vector<char> > forest;
     auto fillforest = [&forest](vector<string>& ar) {
         forest.clear();
@@ -464,5 +467,68 @@ TEST(algorithm, countluck) {
     fillforest(arr6);
     int a6 = CalcWaveHandTimes(forest);
     EXPECT_EQ(a6, 20);
- }
+}
+
+TEST(DISABLED_algorithm, cuttree) {
+    vector<int> vertices = {100,200,100,500,100,600};
+    vector<pair<int,int> > edges = {
+        {1,2},
+        {2,3},
+        {2,5},
+        {4,5},
+        {5,6},
+    };
+    int a = CutTree(vertices, edges);
+    EXPECT_EQ(a, 400);
+}
+
+TEST(DISABLED_algorithm, cuttree_2) {
+    vector<int> vertices = {100,200,100,500,100,600};
+    vector<pair<int,int> > edges = {
+        {1,2},
+        {2,3},
+        {2,5},
+        {4,5},
+        {5,6},
+    };
+    int a = CutTree_2(vertices, edges);
+    EXPECT_EQ(a, 400);
+}
+
+TEST(algorithm, gridsearch) {
+    vector<string> G = {
+        "1234567890",
+        "0987654321",
+        "1111111111",
+        "1111111111",
+        "2222222222"
+    };
+    vector<string> P = {
+        "876543",
+        "111111",
+        "111111",
+    };
+    auto a = GridSearch(G, P);
+    EXPECT_EQ(a, true);
+    /*
+    int T = 1;
+    cin >> T;
+    while (T--) {
+        string s;
+        unsigned int G_rows, G_cols, P_rows, P_cols;
+        cin >> G_rows >> G_cols;
+        getline(cin, s);
+        vector<string> G(G_rows);
+        for (unsigned int i = 0; i < G_rows; ++i) {
+            getline(cin, G[i]);
+        }
+        cin >> P_rows >> P_cols;
+        getline(cin, s);
+        vector<string> P(P_rows);
+        for (unsigned int i = 0; i < P_rows; ++i) {
+            getline(cin, P[i]);
+        }
+        cout << (GridSearch(G, P) ? "YES" : "NO") << endl;
+    }*/
+}
 
