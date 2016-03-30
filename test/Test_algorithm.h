@@ -14,6 +14,7 @@
 #include "../algorithm/cuttree.h"
 #include "../algorithm/cuttree_2.h"
 #include "../algorithm/gridsearch.h"
+#include "../algorithm/matrixrotation.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -531,4 +532,60 @@ TEST(algorithm, gridsearch) {
         cout << (GridSearch(G, P) ? "YES" : "NO") << endl;
     }*/
 }
+
+TEST(algorithm, matrixrotation) {
+    auto dumpMatrix = [](const vector<vector<int> >& m) {
+        for_each(begin(m), end(m), [](const vector<int>& v) {
+            for_each(begin(v), end(v), [](int a) {
+                cout << a << " ";
+            });
+            cout << endl;
+        });
+    };
+    int R = 1;
+    vector<vector<int> > matrix = {
+        {1, 2, 3, 4},
+        {5, 6, 7, 8},
+        {9, 10, 11, 12},
+        {13, 14, 15, 16},
+    };
+    vector<vector<int> > result = {
+        {2, 3, 4, 8},
+        {1, 7, 11, 12},
+        {5, 6, 10, 16},
+        {9, 13, 14, 15},
+    };
+    auto r1 = MatrixRotation(matrix, R);
+    dumpMatrix(r1);
+    EXPECT_EQ(r1, result);
+
+    R = 7;
+    matrix = {
+        {1, 2, 3, 4},
+        {7, 8, 9, 10},
+        {13, 14, 15, 16},
+        {19, 20, 21, 22},
+        {25, 26, 27, 28},
+    };
+    result = {
+        {28, 27, 26, 25},
+        {22, 9, 15, 19},
+        {16, 8, 21, 13},
+        {10, 14, 20, 7},
+        {4, 3, 2, 1},
+    };
+    auto r2 = MatrixRotation(matrix, R);
+    dumpMatrix(r2);
+    EXPECT_EQ(r2, result);
+
+    /*
+    int M, N, R;
+    cin >> M >> N >> R;
+    matrix = vector<vector<int> >(M, vector<int>(N,0));
+    for (int i = 0; i < M; ++i) {
+        for (int j = 0; j < N; ++j)
+            cin >> matrix[i][j];
+    }*/
+}
+
 
