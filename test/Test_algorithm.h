@@ -15,6 +15,7 @@
 #include "../algorithm/cuttree_2.h"
 #include "../algorithm/gridsearch.h"
 #include "../algorithm/matrixrotation.h"
+#include "../algorithm/deque_maxk.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -586,6 +587,20 @@ TEST(algorithm, matrixrotation) {
         for (int j = 0; j < N; ++j)
             cin >> matrix[i][j];
     }*/
+}
+
+TEST(algorithm, deque_maxk) {
+    int arr1[] = {3,4,6,3,4};
+    auto r1 = printKMax(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
+    EXPECT_EQ(r1, "4 6 6 4");
+    auto r21 = printKMax_2(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
+    EXPECT_EQ(r21, "4 6 6 4");
+
+    int arr2[] = {3,4,5,8,1,4,10};
+    auto r2 = printKMax(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
+    EXPECT_EQ(r2, "8 8 8 10");
+    auto r22 = printKMax_2(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
+    EXPECT_EQ(r22, "8 8 8 10");
 }
 
 

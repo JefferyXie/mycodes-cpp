@@ -3,6 +3,8 @@
 
 #include "../header.h"
 
+// [TBD] this problem has not yet been solved!
+//
 // https://www.hackerrank.com/challenges/similarpair
 // http://stackoverflow.com/questions/16505216/similar-pairs-in-a-tree
 // http://blog.csdn.net/tspatial_thunder/article/details/42832687
