@@ -1,3 +1,37 @@
+#include "header.h"
+
+// http://www.stroustrup.com/bs_faq2.html#constraints
+// http://www.cplusplus.com/forum/general/119205/
+template<class T, class B> struct Derived_from {
+    static void constraints(T* p) { B* pb = p; }
+    Derived_from() { void(*p)(T*) = constraints; }
+};
+struct B {};
+struct D : B {};
+struct DD : D {};
+struct X {};
+
+template<class T> class Container : Derived_from<T, B> {
+};
+
+int main() {
+    Derived_from<D, B>();
+    Derived_from<DD, B>();
+//    Derived_from<X, B>();
+//    Derived_from<int, B>();
+//    Derived_from<X, int>();
+
+    Container<B> bc;
+    Container<D> dc;
+    Container<DD> ddc;
+    Container<X> xc;
+    //Container<int> ic;
+
+    return 0;
+}
+
+
+/*
 #include <gtest/gtest.h>
 #include "header.h"
 #include "./test/Test_language.h"
@@ -61,9 +95,10 @@ int main(int argc, char **argv) {
     vector<int> v9 = {7,9,15,8,10,16,6,14,5,13,17,12,3,11,4,1,18,2}; // NO
     cout << (LarryArray(v9) ? "TRUE" : "FALSE") << endl;
     return 0;
-    /*
+
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();*/
+    return RUN_ALL_TESTS();
 }
 
+*/
 
