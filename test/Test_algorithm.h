@@ -16,6 +16,7 @@
 #include "../algorithm/gridsearch.h"
 #include "../algorithm/matrixrotation.h"
 #include "../algorithm/deque_maxk.h"
+#include "../algorithm/encryption.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -601,6 +602,20 @@ TEST(algorithm, deque_maxk) {
     EXPECT_EQ(r2, "8 8 8 10");
     auto r22 = printKMax_2(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
     EXPECT_EQ(r22, "8 8 8 10");
+}
+
+TEST(algorithm, encryption) {
+    string t1 = "ifmanwasmeanttostayonthegroundgodwouldhavegivenusroots";
+    auto a1 = Encryption(t1);
+    EXPECT_EQ(a1, "imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn sseoau");
+
+    string t2 = "haveaniceday";
+    auto a2 = Encryption(t2);
+    EXPECT_EQ(a2, "hae and via ecy");
+
+    string t3 = "chillout";
+    auto a3 = Encryption(t3);
+    EXPECT_EQ(a3, "clu hlt io");
 }
 
 

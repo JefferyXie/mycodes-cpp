@@ -9,6 +9,7 @@
 #include "../language/sizeofClass.h"
 #include "../language/MyList.h"
 #include "../language/MyQueue.h"
+#include "../language/template_constraints.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
