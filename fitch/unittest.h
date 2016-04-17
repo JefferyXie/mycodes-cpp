@@ -8,6 +8,16 @@
     UNITTEST_##functionality();
 #define UNITTEST(functionality) \
     void UNITTEST_##functionality() 
+#ifdef _MSC_VER // for visual studio
+#define EQUAL(target, expected) \
+    if (target != expected) { \
+        cout << "FAILED: " << __FUNCTION__ << "\n\t"; \
+        cout << "[TARGET]: " << target << "\n\t"; \
+        cout << "[EXPECTED]: " << expected << endl; \
+    } else { \
+        cout << "PASSED: " << __FUNCTION__ << endl; \
+    }
+#else
 #define EQUAL(target, expected) \
     if (target != expected) { \
         cout << "\033[31mFAILED: \033[0m" << __PRETTY_FUNCTION__ << "\n\t"; \
@@ -16,6 +26,7 @@
     } else { \
         cout << "\033[32mPASSED: \033[0m" << __PRETTY_FUNCTION__ << endl; \
     }
+#endif
 
 UNITTEST(proximitysearch) {
     cout << "[Unit test starts...]" << endl;
@@ -27,18 +38,16 @@ UNITTEST(proximitysearch) {
     EQUAL(c2, 1);
 
     int c3 = o.RunSearch("tc2.txt", "the", "canal", 6);
-    //EQUAL(c3, 5);
-    EQUAL(c3, 4);
+    EQUAL(c3, 5);
 
     int c4 = o.RunSearch("tc2.txt", "the", "canal", 1000);
     EQUAL(c4, 48);
 
     int c5 = o.RunSearch("tc3.txt", "buffalo", "buffalo", 20);
-    EQUAL(c5, 20);
+    EQUAL(c5, 52);
 
     int c6 = o.RunSearch("tc3.txt", "buffalo", "had", 5);
-    //EQUAL(c6, 0);
-    EQUAL(c6, 10);
+    EQUAL(c6, 0);
 
     int c7 = o.RunSearch("tc3.txt", "buffalo", "had", 100);
     EQUAL(c7, 462);
