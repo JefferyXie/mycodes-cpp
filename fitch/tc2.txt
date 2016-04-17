@@ -1,0 +1,42 @@
+Design and develop a solution to proximity search. Given a sample document (text file), two keywords and a numeric range, return the number of times the keywords exist in the document within the given range, or 0 if your search is not successful. In other words, you should return the occurrence count of two given words appearing within N words of each other.
+
+For the sake of simplicity, assume all words are separated with whitespace.
+
+- Example:
+
+Contents of sample input text file:
+
+the man the plan the canal Panama
+
+Sample program invocation:
+
+application_name <keyword1> <keyword2> <range> <input_file> myproximitycode the canal 6 input.txt
+
+Expected result:
+
+-> 3
+
+application_name <keyword1> <keyword2> <range> <input_file> myproximitycode the canal 3 input.txt
+
+Expected result:
+
+-> 1
+
+Additional Notes:
+
+Please also describe your algorithm in plain english and state its complexity. Feel free to grab some input text from the web and define your own keyword searches.
+
+Your solution should be a command-line program written in C++. If you use any external libraries in developing your solution (i.e. libraries necessary to compile your solution) then you should bundle these libraries with your code so that we can run your solution. Make sure your program works correctly for all combinations of inputs.
+
+The exercise will be evaluated on the following criteria:
+
+ Correctness
+
+ Application of SOLID principles
+
+ Application of Design Patterns
+
+ Quality of unit tests
+
+Please submit a zip file with the whatever you would commit to source control for this project. Please do not post the solution on the internet.
+

@@ -10,6 +10,7 @@
 #include "../language/MyList.h"
 #include "../language/MyQueue.h"
 #include "../language/template_constraints.h"
+#include "../language/operatornewdelete.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -606,4 +607,21 @@ TEST(DISABLED_language, MyQuque_class) {
     cout << "test end!" << endl;
 }
 
+TEST(DISABLED_language, operatornewdelete) {
+    int* a = new int;
+    delete a;
+    int* b = new int(10);
+    delete b;
+    int* c = new int[10];
+    delete[] c;
+    char* ch = new char[10];
+    delete[] ch;
+    char* cc = new ('m') char[10];
+    delete[] cc;
+
+    auto p1 = new OpNewDelete();
+    delete p1;
+    auto p2 = new OpNewDelete[2];
+    delete[] p2;
+}
 

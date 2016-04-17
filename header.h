@@ -22,6 +22,7 @@
 
 // head files for std
 #include <iostream>
+#include <fstream>
 #include <sstream>
 #include <set>
 #include <vector>
