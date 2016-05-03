@@ -27,10 +27,27 @@ int XSocketClient::Launch(const char* addr, unsigned short port) {
         return -1;
     }
 
+    // dump connection information
+    printf("\t**origin server %s:%d\n", inet_ntoa(addr_server.sin_addr), ntohs(addr_server.sin_port));
+    sockaddr_in addr_info;
+    getsockname(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+    printf("\t**getsockname - connect to %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+    getsockname(iconnect, (struct sockaddr *)&addr_info, &addr_size);
+    printf("\t**getsockname - client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+    getpeername(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+    printf("\t**getpeername - connect to %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+    getpeername(iconnect, (struct sockaddr *)&addr_info, &addr_size);
+    printf("\t**getpeername - client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+    // end dump
+
     while (1) {
         char data_req[MAX_DATA] = {0};
         char data_resp[MAX_DATA] = {0};
         fgets(data_req, MAX_DATA, stdin);
+        if (strlen(data_req) == 1 && data_req[0] == '\n') break;
         send(sock_client, data_req, strlen(data_req), 0);
         int len = recv(sock_client, data_resp, MAX_DATA, 0);
         data_resp[len] = '\0';

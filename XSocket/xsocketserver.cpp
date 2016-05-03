@@ -47,6 +47,21 @@ int XSocketServer::Launch(unsigned short port) {
                ntohs(addr_client.sin_port),
                inet_ntoa(addr_client.sin_addr));
 
+        // dump connection information
+        sockaddr_in addr_info;
+        getsockname(sock_server, (struct sockaddr *)&addr_info, &addr_size);
+        printf("\t**getsockname - server is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+        getsockname(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+        printf("\t**getsockname - connected client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+        getpeername(sock_server, (struct sockaddr *)&addr_info, &addr_size);
+        printf("\t**getpeername - server is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+
+        getpeername(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+        printf("\t**getpeername - connected client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
+        // end dump
+
         int data_len = 1;
         char data_empty[MAX_DATA] = {0};
         char data[MAX_DATA] = {0};
@@ -55,6 +70,8 @@ int XSocketServer::Launch(unsigned short port) {
         char HEAD_REQ[64] = "**Received from client**: %s";
         while (data_len > 0) {
             data_len = recv(sock_client, data, MAX_DATA, 0);
+            // empty data (data_len==1 means only has '\n') results in disconnection
+            if (data_len == 1 && data[0] == '\n') break;
             if (data_len > 0) {
                 strcat(data_resp, HEAD_RESP);
                 strcat(data_resp, data);
