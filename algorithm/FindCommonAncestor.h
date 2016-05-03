@@ -1,8 +1,8 @@
 #ifndef FINDCOMMONANCESTOR_H
 #define FINDCOMMONANCESTOR_H
 
-#include "../header.h"
-#include "../node.h"
+#include "../main/header.h"
+#include "../main/node.h"
 
 // http://stackoverflow.com/questions/1484473/how-to-find-the-lowest-common-ancestor-of-two-nodes-in-any-binary-tree
 template<class T> TreeNode<T>* FindCommonAncestor(TreeNode<T>* root, TreeNode<T>* n1, TreeNode<T>* n2) {

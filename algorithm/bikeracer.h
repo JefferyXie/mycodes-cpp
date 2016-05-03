@@ -1,7 +1,7 @@
 #ifndef BIKERACER_H
 #define BIKERACER_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/bike-racers
 // https://en.wikipedia.org/wiki/Hungarian_algorithm

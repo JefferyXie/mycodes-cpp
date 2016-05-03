@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../main/header.h"
 
 /***************************************************************************
  * http://stackoverflow.com/questions/6202762/pthread-create-as-detached

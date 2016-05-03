@@ -1,7 +1,7 @@
 #ifndef COUNTSHERLOCK_H
 #define COUNTSHERLOCK_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/sherlock-and-gcd
 // this is upgraded version of above question -

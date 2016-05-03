@@ -1,7 +1,7 @@
 #ifndef SIMILARPAIR_H
 #define SIMILARPAIR_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // [TBD] this problem has not yet been solved!
 //

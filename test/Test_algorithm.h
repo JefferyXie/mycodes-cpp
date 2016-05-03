@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../header.h"
+#include "../main/header.h"
 #include "../algorithm/FindCommonAncestor.h"
 #include "../algorithm/traversetree.h"
 #include "../algorithm/judgebitree.h"
@@ -17,6 +17,7 @@
 #include "../algorithm/matrixrotation.h"
 #include "../algorithm/deque_maxk.h"
 #include "../algorithm/encryption.h"
+#include "../algorithm/removeduplicates.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -617,5 +618,32 @@ TEST(algorithm, encryption) {
     auto a3 = Encryption(t3);
     EXPECT_EQ(a3, "clu hlt io");
 }
+
+TEST(algorithm, removeduplicates) {
+    auto printarr = [](int* arr, int len) {
+        for (int i = 0; i < len; ++i) 
+            cout << *(arr+i) << " ";
+        cout << endl;
+    };
+    int arr1[] = {1,2,3,4,5};
+    int len1 = RemoveDuplicates(arr1, sizeof(arr1)/sizeof(arr1[0]));
+    printarr(arr1, len1);
+    EXPECT_EQ(len1, 5);
+
+    int arr2[] = {1,2,2,3,1,5,6,0};
+    int len2 = RemoveDuplicates(arr2, sizeof(arr2)/sizeof(arr2[0]));
+    printarr(arr2, len2);
+    EXPECT_EQ(len2, 6);
+
+    int arr3[] = {1,2,2,2,3};
+    int len3 = RemoveDuplicates(arr3, sizeof(arr3)/sizeof(arr3[0]));
+    printarr(arr3, len3);
+    EXPECT_EQ(len3, 3);
+
+    int arr4[] = {1,1,1,2,2,5,3,2,1,3,2};
+    int len4 = RemoveDuplicates(arr4, sizeof(arr4)/sizeof(arr4[0]));
+    printarr(arr4, len4);
+    EXPECT_EQ(len4, 4);
+ }
 
 

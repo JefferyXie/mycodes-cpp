@@ -1,7 +1,7 @@
 #ifndef CUTTREE_H
 #define CUTTREE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/cut-the-tree
 // this version follows these steps -

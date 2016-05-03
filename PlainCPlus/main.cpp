@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../main/header.h"
 #include "../language/stlClass.h"
 #include "../language/sizeofClass.h"
 #include "../language/MyList.h"

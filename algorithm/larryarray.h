@@ -1,16 +1,7 @@
-#include <gtest/gtest.h>
-#include "header.h"
-#include "./test/Test_language.h"
-#include "./test/Test_algorithm.h"
-#include "./test/Test_multithreading.h"
+#ifndef LARRYARRAY_H
+#define LARRYARRAY_H
 
-//
-// googletest articles:
-// http://stackoverflow.com/questions/13513905/how-to-setup-googletest-as-a-shared-library-on-linux
-// http://www.ibm.com/developerworks/aix/library/au-googletestingframework.html
-// http://www.yolinux.com/TUTORIALS/Cpp-GoogleTest.html
-// https://github.com/google/googletest/blob/master/googletest/docs/FAQ.md#why-is-it-not-recommended-to-install-a-pre-compiled-copy-of-google-test-for-example-into-usrlocal
-
+#include "../main/header.h"
 
 bool LarryArray(vector<int> input) {
     auto ordered = [](int a, int b, int c) {
@@ -41,7 +32,7 @@ bool LarryArray(vector<int> input) {
     return true;
 }
 
-int main(int argc, char **argv) {
+void Run_larryarray() {
     vector<int> v1 = {1,2,3,4};
     cout << (LarryArray(v1) ? "TRUE" : "FALSE") << endl;
     vector<int> v2 = {3,1,2};
@@ -60,10 +51,8 @@ int main(int argc, char **argv) {
     cout << (LarryArray(v8) ? "TRUE" : "FALSE") << endl;
     vector<int> v9 = {7,9,15,8,10,16,6,14,5,13,17,12,3,11,4,1,18,2}; // NO
     cout << (LarryArray(v9) ? "TRUE" : "FALSE") << endl;
-    //return 0;
-
-    ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
 }
+
+#endif
 
 

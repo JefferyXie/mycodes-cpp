@@ -1,7 +1,7 @@
 #ifndef COUNTLUCK_H
 #define COUNTLUCK_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // there have better solutions available from other developers on website!!
 // https://www.hackerrank.com/challenges/count-luck

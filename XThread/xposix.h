@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../main/header.h"
 
 int g_sum = 0;
 void* runner(void* param);

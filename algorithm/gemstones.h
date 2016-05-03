@@ -1,7 +1,7 @@
 #ifndef GEMSTONES_H
 #define GEMSTONES_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/gem-stones
 int Gemstones() {

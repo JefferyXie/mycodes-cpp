@@ -1,7 +1,7 @@
 #ifndef HASHMAP_H
 #define HASHMAP_H
 
-#include "../header.h"
+#include "../main/header.h"
 #include "classtest.h"
 
 // http://marknelson.us/2011/09/03/hash-functions-for-c-unordered-containers/

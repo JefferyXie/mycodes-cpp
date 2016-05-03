@@ -1,7 +1,7 @@
 #ifndef TEMPLATE_CONSTRAINTS_H
 #define TEMPLATE_CONSTRAINTS_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // 1) by utilizing pointer to function, detect the constraint at compile time
 //

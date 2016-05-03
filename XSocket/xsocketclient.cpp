@@ -1,18 +1,14 @@
 #include "xsocketclient.h"
 
 XSocketClient::XSocketClient()
-{
-}
+{ }
 
 XSocketClient::~XSocketClient()
-{
-}
+{ }
 
-int XSocketClient::Launch(const char* addr, unsigned short port)
-{
+int XSocketClient::Launch(const char* addr, unsigned short port) {
     int sock_client = socket(AF_INET, SOCK_STREAM, 0);
-    if (ERROR == sock_client)
-    {
+    if (ERROR == sock_client) {
         perror("client socket: ");
         return -1;
     }
@@ -26,14 +22,12 @@ int XSocketClient::Launch(const char* addr, unsigned short port)
     bzero(&addr_server.sin_zero, 8);
 
     auto iconnect = connect(sock_client, (sockaddr*)&addr_server, addr_size);
-    if (ERROR == iconnect)
-    {
+    if (ERROR == iconnect) {
         perror("connect: ");
         return -1;
     }
 
-    while (1)
-    {
+    while (1) {
         char data_req[MAX_DATA] = {0};
         char data_resp[MAX_DATA] = {0};
         fgets(data_req, MAX_DATA, stdin);
@@ -45,3 +39,4 @@ int XSocketClient::Launch(const char* addr, unsigned short port)
     close(sock_client);
     return 1;
 }
+

@@ -1,7 +1,7 @@
 #ifndef KDIFFPAIRS_H
 #define KDIFFPAIRS_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/pairs
 int KDiffPairs(vector<int>& a, int k) {

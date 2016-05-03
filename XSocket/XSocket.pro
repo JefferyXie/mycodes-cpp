@@ -11,7 +11,7 @@ SOURCES += main.cpp \
     xsocketclient.cpp
 
 HEADERS += \
-    ../header.h \
+    ../main/header.h \
     xsocketserver.h \
     xsocketclient.h
 

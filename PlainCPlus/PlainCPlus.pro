@@ -18,8 +18,8 @@ QMAKE_CXXFLAGS += -std=c++1y
 SOURCES += main.cpp
 
 HEADERS += \
-    ../header.h \
-    ../utility.h \
+    ../main/header.h \
+    ../main/utility.h \
     ../language/stlClass.h \
     ../language/sizeofClass.h \
     ../language/MyList.h \

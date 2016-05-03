@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../header.h"
+#include "../main/header.h"
 #include "../language/auto.h"
 #include "../language/classtest.h"
 #include "../language/speed-dynamic-cast.cpp"

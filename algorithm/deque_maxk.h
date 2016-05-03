@@ -1,7 +1,7 @@
 #ifndef DEQUE_MAXK_H
 #define DEQUE_MAXK_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/deque-stl
 string printKMax(int arr[], int n, int k) {

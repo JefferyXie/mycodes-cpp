@@ -1,5 +1,5 @@
-#include "../header.h"
-#include "../node.h"
+#include "../main/header.h"
+#include "../main/node.h"
 
 template<class T> class MyDictionary
 {

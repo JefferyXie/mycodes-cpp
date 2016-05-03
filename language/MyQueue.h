@@ -1,7 +1,7 @@
 #ifndef MYQUEUE_H
 #define MYQUEUE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 #define DEFAULT_QUEUE_SIZE 2
 

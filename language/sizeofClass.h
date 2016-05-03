@@ -1,7 +1,7 @@
 #ifndef SIZEOFCLASS_H
 #define SIZEOFCLASS_H
 
-#include "../header.h"
+#include "../main/header.h"
 #include "stlClass.h"
 
 // http://pppboy.blog.163.com/blog/static/30203796201082494026399/

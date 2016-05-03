@@ -1,7 +1,7 @@
 #ifndef OPERATORNEWDELETE_H
 #define OPERATORNEWDELETE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // http://en.cppreference.com/w/cpp/memory/new/operator_new
 // https://www.relisoft.com/book/tech/9new.html

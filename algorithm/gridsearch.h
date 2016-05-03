@@ -1,7 +1,7 @@
 #ifndef GRIDSEARCH_H
 #define GRIDSEARCH_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/the-grid-search
 // using string vector rather than char/int array makes the code easier

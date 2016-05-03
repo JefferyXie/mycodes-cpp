@@ -1,7 +1,7 @@
 #ifndef BIGGERISGREATER_H
 #define BIGGERISGREATER_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/bigger-is-greater
 // 1), starting from end of string, find the character which is smaller than its right side one

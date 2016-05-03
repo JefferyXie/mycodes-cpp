@@ -1,7 +1,7 @@
 #ifndef SHERLOCK_H
 #define SHERLOCK_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/sherlock-and-queries
 // http://codereview.stackexchange.com/questions/77975/time-limit-exceeded-for-sherlock-and-queries-hackerrank-challenge

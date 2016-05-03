@@ -1,7 +1,7 @@
 #ifndef MATRIXROTATION_H
 #define MATRIXROTATION_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/matrix-rotation-algo
 // there're a few better solutions on the site!

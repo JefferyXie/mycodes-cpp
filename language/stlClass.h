@@ -1,8 +1,8 @@
 #ifndef STLCLASS_H
 #define STLCLASS_H
 
-#include "../header.h"
-#include "../utility.h"
+#include "../main/header.h"
+#include "../main/utility.h"
 
 // this class test basic operations on STL containers
 class stlClass

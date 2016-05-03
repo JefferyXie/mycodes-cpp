@@ -1,7 +1,7 @@
 #ifndef NUMDAYSBETWEEN_H
 #define NUMDAYSBETWEEN_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 bool IsLeapYear(int year) {
     return (year%4 == 0 ? (year%100 == 0 ? year%400 == 0 : true) : false);

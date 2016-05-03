@@ -1,7 +1,7 @@
 #ifndef CONNECTEDCELLS_H
 #define CONNECTEDCELLS_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/connected-cell-in-a-grid
 struct MatrixInfo {

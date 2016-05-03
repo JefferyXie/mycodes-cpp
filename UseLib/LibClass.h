@@ -1,7 +1,7 @@
 // 
 // In 100% standard C++, you cannot include standard headers in an extern "C" block
 // http://stackoverflow.com/questions/22115996/complex-type-with-c-linkage-in-c11
-#include "../header.h"
+#include "../main/header.h"
 
 #ifdef __cplusplus
 extern "C" {

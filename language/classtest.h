@@ -1,7 +1,7 @@
 #ifndef CLASSTEST_H
 #define CLASSTEST_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 class A {
 protected:

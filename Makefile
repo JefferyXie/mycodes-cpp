@@ -1,27 +1,11 @@
-CC=g++
+include ./Makefile-config
 
-#Compile options
-#Point to local dependency folder
-#CXXFLAGS = -c -O3 -std=c++11 -w -D__TRACE_PROF__
-#CXXFLAGS = -c -g -std=c++11 -w -D__TRACE_PROF__
-CXXFLAGS = -g -std=c++11 -w -D__TRACE_PROF__
-#Macros
-#Macros=-D _UNICODE -D UNICODE
+# recursively compile subfolders
+subdirs = main XSocket akuna fitch
+targets = all clean
 
-#object path
-OBJ_PATH = ./
+$(targets):
+	@for dir in $(subdirs); do cd $$dir && ${MAKE} $@; cd ..; done
+#	@for dir in $(subdirs); do cd $$dir && ${MAKE} $@ && cd .. ; done # why doesn't this work??
 
-#The definitions for main folder object files
-MainSrc= $(wildcard   ./*.cpp)
-MainObject=$(patsubst  ./%.cpp, $(OBJ_PATH)/%.o, $(MainSrc))
-
-$(MainObject):$(OBJ_PATH)/%.o:./%.cpp
-	$(CC) $(CXXFLAGS) -o $@ $<
-#	$(CC) $(CXXFLAGS) -o $@ $<
-
-clean:
-	rm $(OBJ_PATH)/*.o $(OBJ_PATH)/*.a $(OBJ_PATH)/*.out
-
-mkdir:
-	mkdir -p $(OBJ_PATH)
 

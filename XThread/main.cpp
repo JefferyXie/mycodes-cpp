@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../main/header.h"
 #include "xposix.h"
 #include "xfork.h"
 #include "mutex_spinlock.h"

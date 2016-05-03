@@ -17,7 +17,7 @@ DEFINES += "WINVER=0x0500" # test
 SOURCES += main.cpp
 
 HEADERS += \
-    ../header.h \
+    ../main/header.h \
     xfork.h \
     xposix.h \
     mutex_spinlock.h \

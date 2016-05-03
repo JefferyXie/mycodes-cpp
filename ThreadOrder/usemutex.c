@@ -3,7 +3,7 @@
 
 // 使用互斥变量mutex
 
-#include "../header.h"
+#include "../main/header.h"
 
 pthread_mutex_t  g_mutex;
 int n_count = 0;

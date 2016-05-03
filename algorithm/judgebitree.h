@@ -1,7 +1,7 @@
 #ifndef JUDGEBITREE_H
 #define JUDGEBITREE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 struct NodePair {
     char parent;

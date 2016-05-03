@@ -1,7 +1,7 @@
 #ifndef MISSINGNUMBERS_H
 #define MISSINGNUMBERS_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/missing-numbers
 set<int> FindMissingNumbers(int* A, int n, int* B, int m) {

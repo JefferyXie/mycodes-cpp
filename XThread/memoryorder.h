@@ -1,4 +1,4 @@
-#include "../header.h"
+#include "../main/header.h"
 
 // Marathon程序: http://ifeve.com/mutex-and-memory-visibility/
 bool arrived = false; // SHOULD use volatile

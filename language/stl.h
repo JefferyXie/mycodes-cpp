@@ -1,7 +1,7 @@
 #ifndef STL_H
 #define STL_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 class STL {
 public:

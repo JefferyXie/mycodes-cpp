@@ -1,7 +1,7 @@
 #ifndef MAXSUBARRAYMOD_H
 #define MAXSUBARRAYMOD_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/maximise-sum
 // http://stackoverflow.com/questions/31113993/maximum-subarray-sum-modulo-m

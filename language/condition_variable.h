@@ -1,7 +1,7 @@
 #ifndef CONDITION_VARIABLE_H
 #define CONDITION_VARIABLE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 // test std::condition_variable and std::unique_lock
 struct CV_notify_before_unlock 

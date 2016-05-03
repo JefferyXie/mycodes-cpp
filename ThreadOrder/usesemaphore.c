@@ -3,7 +3,7 @@
 
 // 使用信号量semaphore
 
-#include "../header.h"
+#include "../main/header.h"
 
 int m_count = 0;
 

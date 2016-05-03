@@ -1,7 +1,7 @@
 #ifndef TRAVERSETREE_H
 #define TRAVERSETREE_H
 
-#include "../header.h"
+#include "../main/header.h"
 
 struct tNode
 {
