@@ -14,15 +14,13 @@ int XSocketServer::Launch(unsigned short port) {
     }
 
     sockaddr_in addr_server;
-    sockaddr_in addr_client;
-    unsigned int addr_size = sizeof(sockaddr_in);
 
     addr_server.sin_family = AF_INET;
     addr_server.sin_port = htons(port);
     addr_server.sin_addr.s_addr = INADDR_ANY;
     bzero(&addr_server.sin_zero, 8);
 
-    auto ibind = bind(sock_server, (sockaddr*)&addr_server, addr_size);
+    auto ibind = bind(sock_server, (sockaddr*)&addr_server, sizeof(sockaddr_in));
     if (ERROR == ibind) {
         perror("bind");
         return -1;
@@ -37,11 +35,32 @@ int XSocketServer::Launch(unsigned short port) {
           inet_ntoa(addr_server.sin_addr),
           ntohs(addr_server.sin_port));
 
+    communate(sock_server);
+    //std::thread th1(&XSocketServer::handler, sock_server);
+    //std::thread th2(&XSocketServer::handler, sock_server);
+    //std::thread th3(&XSocketServer::handler, sock_server);
+    //std::thread th4(&XSocketServer::handler, sock_server);
+    //th1.join();
+    //th2.join();
+    //th3.join();
+    //th4.join();
+
+    close(sock_server);
+    printf("Socket server stops listening %s:%d\n",
+          inet_ntoa(addr_server.sin_addr),
+          ntohs(addr_server.sin_port));
+    return 1;
+}
+
+void XSocketServer::communate(int sock_server) {
+    sockaddr_in addr_client;
+    unsigned int addr_size = sizeof(sockaddr_in);
+    vector<std::thread> threads;
     while (1) {
         int sock_client = accept(sock_server, (sockaddr*)&addr_client, &addr_size);
         if (ERROR == sock_client) {
             perror("accept");
-            return -1;
+            return;
         }
         printf("New client connected from port %d and IP %s\n",
                ntohs(addr_client.sin_port),
@@ -62,33 +81,35 @@ int XSocketServer::Launch(unsigned short port) {
         printf("\t**getpeername - connected client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
         // end dump
 
-        int data_len = 1;
-        char data_empty[MAX_DATA] = {0};
-        char data[MAX_DATA] = {0};
-        char data_resp[MAX_DATA] = {0};
-        char HEAD_RESP[64] = "**Response from server**: ";
-        char HEAD_REQ[64] = "**Received from client**: %s";
-        while (data_len > 0) {
-            data_len = recv(sock_client, data, MAX_DATA, 0);
-            // empty data (data_len==1 means only has '\n') results in disconnection
-            if (data_len == 1 && data[0] == '\n') break;
-            if (data_len > 0) {
-                strcat(data_resp, HEAD_RESP);
-                strcat(data_resp, data);
-                send(sock_client, data_resp, strlen(data_resp), 0);
-                printf(HEAD_REQ, data);
-                memcpy(data_resp, data_empty, MAX_DATA);
-                memcpy(data, data_empty, MAX_DATA);
-            }
-        }
-
-        printf("Client disconnected...\n");
-        close(sock_client);
+        threads.emplace_back(std::thread(&XSocketServer::handleclient, sock_client));
     }
-    close(sock_server);
-    printf("Socket server stops listening %s:%d\n",
-          inet_ntoa(addr_server.sin_addr),
-          ntohs(addr_server.sin_port));
-    return 1;
+    for_each(begin(threads), end(threads), [](thread& th) {
+        th.join();
+    });
 }
+void XSocketServer::handleclient(int sock_client) {
+    int data_len = 1;
+    char data_empty[MAX_DATA] = {0};
+    char data[MAX_DATA] = {0};
+    char data_resp[MAX_DATA] = {0};
+    char HEAD_RESP[64] = "**Response from server**: ";
+    char HEAD_REQ[64] = "**Received from client**: %s";
+    while (data_len > 0) {
+        data_len = recv(sock_client, data, MAX_DATA, 0);
+        // empty data (data_len==1 means only has '\n') results in disconnection
+        if (data_len == 1 && data[0] == '\n') break;
+        if (data_len > 0) {
+            strcat(data_resp, HEAD_RESP);
+            strcat(data_resp, data);
+            send(sock_client, data_resp, strlen(data_resp), 0);
+            printf(HEAD_REQ, data);
+            memcpy(data_resp, data_empty, MAX_DATA);
+            memcpy(data, data_empty, MAX_DATA);
+        }
+    }
+
+    printf("Client disconnected...\n");
+    close(sock_client);
+}
+
 

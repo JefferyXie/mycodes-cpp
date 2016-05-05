@@ -2,14 +2,14 @@
 
 class XSocketServer
 {
-private:
-    //int m_socket;
-    //sockaddr_in m_addr_server;
-    //sockaddr_in m_addr_client;
 public:
     XSocketServer();
     virtual ~XSocketServer();
 
     int Launch(unsigned short port = 10000);
+
+private:
+    static void communate(int sock_server);
+    static void handleclient(int sock_client);
 };
 
