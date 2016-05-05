@@ -608,6 +608,7 @@ TEST(DISABLED_language, MyQuque_class) {
 }
 
 TEST(DISABLED_language, operatornewdelete) {
+#if CUSTOM_NEW_ENABLED > 0
     int* a = new int;
     delete a;
     int* b = new int(10);
@@ -623,5 +624,6 @@ TEST(DISABLED_language, operatornewdelete) {
     delete p1;
     auto p2 = new OpNewDelete[2];
     delete[] p2;
+#endif
 }
 

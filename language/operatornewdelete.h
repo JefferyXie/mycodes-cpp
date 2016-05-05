@@ -3,10 +3,15 @@
 
 #include "../main/header.h"
 
+#ifndef CUSTOM_NEW_ENABLED
+#define CUSTOM_NEW_ENABLED 0
+#endif
+
 // http://en.cppreference.com/w/cpp/memory/new/operator_new
 // https://www.relisoft.com/book/tech/9new.html
 // http://stackoverflow.com/questions/583003/overloading-new-delete
 
+#if CUSTOM_NEW_ENABLED > 0
 // override global new
 void* operator new(size_t s) {
     void* p = std::malloc(s);
@@ -35,6 +40,7 @@ void operator delete[](void* p) noexcept {
     cout << "global operator delete[] called: " << p << endl;
     std::free(p);
 }
+
 class OpNewDelete {
 public:
     static void* operator new(size_t s) {
@@ -51,6 +57,7 @@ public:
     virtual ~OpNewDelete() {};
     virtual void foo() {};
 };
+#endif
 
 #endif
 

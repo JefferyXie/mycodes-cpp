@@ -502,7 +502,7 @@ public:
         {
             cout << "Buffer(const Buffer&)" << endl;
             if (nullptr != buf.m_buffer_int.get())
-                m_buffer_int = make_unique<int>(*buf.m_buffer_int.get());
+                //m_buffer_int = make_unique<int>(*buf.m_buffer_int.get());
                 //m_buffer_int = move(unique_ptr<int>(new int(*buf.m_buffer_int.get())));
             copy(buf.m_buffer_B.begin(), buf.m_buffer_B.end(), back_inserter(m_buffer_B));
         }
@@ -515,7 +515,7 @@ public:
                 m_buffer_int.reset(); // equal to m_buffer_int = nullptr;
                 if (buf.m_buffer_int.get() != nullptr)
                 {
-                    m_buffer_int = make_unique<int>(*buf.m_buffer_int.get());
+                    //m_buffer_int = make_unique<int>(*buf.m_buffer_int.get());
                     //m_buffer_int = move(unique_ptr<int>(new int(*buf.m_buffer_int.get())));
                 }
                 copy(begin(buf.m_buffer_B), end(buf.m_buffer_B), back_inserter(m_buffer_B));
@@ -546,8 +546,8 @@ public:
         {
             m_buffer_B.push_back(B());
             m_buffer_B.push_back(B());
-            m_buffer_int = make_unique<int>(100);
-            //m_buffer_int = move(unique_ptr<int>(new int(100)));
+            //m_buffer_int = make_unique<int>(100);
+            m_buffer_int = move(unique_ptr<int>(new int(100)));
         }
     };
     static void Run_move()
@@ -645,7 +645,8 @@ public:
     {
         int a = 10;
         string s = "in class init.";
-        unique_ptr<int> p = make_unique<int>(15);
+        unique_ptr<int> p;
+        //unique_ptr<int> p = make_unique<int>(15);
     };
     static void Run_inclass_initializer()
     {
