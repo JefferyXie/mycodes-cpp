@@ -1,3 +1,6 @@
+//
+// https://www.ibm.com/support/knowledgecenter/api/content/nl/en-us/ssw_i5_54/rzab6/x2multicast.htm
+//
 #include <sys/types.h>
 #include <sys/socket.h>
 #include <arpa/inet.h>

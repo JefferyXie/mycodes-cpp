@@ -1,3 +1,6 @@
+// 
+// http://www.tack.ch/multicast/
+//
 // Multicast Server
 // written for LINUX
 // Version 0.0.2
