@@ -21,16 +21,17 @@
 #include <sys/socket.h> 
 #include <sys/wait.h> 
 #include <fcntl.h> /* Added for the nonblocking socket */
+#include <arpa/inet.h>
 
 #define MYPORT 3456    /* the port users will be connecting to */
 #define BACKLOG 10     /* how many pending connections queue will hold */
 
-main()
+#if 0
+int main()
 {
     int 			sockfd, new_fd;  /* listen on sock_fd, new connection on new_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
     struct 	sockaddr_in 	their_addr; /* connector's address information */
-    int 			sin_size;
     char			string_read[255];
     int 			n,i;
     int			last_fd;	/* Thelast sockfd that is connected	*/
@@ -58,6 +59,7 @@ main()
         exit(1);
     }
 
+    socklen_t   sin_size;
     if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, \
                     &sin_size)) == -1) {
         perror("accept");
@@ -68,7 +70,7 @@ main()
     while(1){
         for (i=sockfd;i<=last_fd;i++){
             printf("Round number %d\n",i);
-            if (i = sockfd){
+            if (i == sockfd){
                 sin_size = sizeof(struct sockaddr_in);
                 if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, \
                                 &sin_size)) == -1) {
@@ -94,6 +96,8 @@ main()
             }
         }
     }
+    return 0;
 }
 
+#endif
 

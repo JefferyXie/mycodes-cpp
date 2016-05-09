@@ -23,6 +23,7 @@
 
 #define MAXBUFSIZE 65536 // Max UDP Packet size is 64 Kbyte
 
+#if 0
 int main()
 {
     int sock, status;
@@ -72,3 +73,5 @@ int main()
 
     return 0;
 }
+#endif
+

@@ -32,6 +32,8 @@
 //    that you can handle multiple socket connections, as well as standard input and standard 
 //    output and possibly file I/O, all with a single thread of control.
 
+#if 0
+
 #define STDIN 0  // file descriptor for standard input
 
 // http://beej.us/guide/bgnet/output/html/multipage/advanced.html
@@ -57,4 +59,6 @@ int main(void)
 
     return 0;
 } 
+
+#endif
 

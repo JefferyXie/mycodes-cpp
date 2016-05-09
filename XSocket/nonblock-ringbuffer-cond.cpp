@@ -10,6 +10,8 @@
 // Solution: use phtread mutex + condition variable
 //
 
+#if 0
+
 #define RINGBUFFER_SIZE (5)
 char ringbuffer[RINGBUFFER_SIZE];
 unsigned reader_unread = 0;
@@ -93,4 +95,5 @@ int main(void)
     return 0;
 }
 
+#endif
 

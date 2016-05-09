@@ -23,6 +23,7 @@
 #define HELLO_GROUP "225.0.0.37"
 #define MSGBUFSIZE 256
 
+#if 0
 int main(int argc, char *argv[])
 {
     int fd, nbytes;
@@ -73,4 +74,5 @@ int main(int argc, char *argv[])
     return 0;
 }
 
+#endif
 

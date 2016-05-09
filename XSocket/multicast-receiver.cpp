@@ -17,6 +17,7 @@ int                   sd;
 int                   datalen;
 char                  databuf[1024];
 
+#if 0
 int main (int argc, char *argv[])
 {
 
@@ -99,5 +100,5 @@ int main (int argc, char *argv[])
     close(sd);
 }
 
-
+#endif
 

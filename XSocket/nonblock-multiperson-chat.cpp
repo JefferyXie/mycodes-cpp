@@ -19,6 +19,8 @@
 // hostname 9034") from multiple other windows. When you type 
 // something in one telnet session, it should appear in all the others.
 
+#if 0
+
 #define PORT "9034"   // port we're listening on
 
 // get sockaddr, IPv4 or IPv6:
@@ -168,4 +170,5 @@ int main(void)
     return 0;
 }
 
+#endif
 

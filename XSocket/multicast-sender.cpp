@@ -10,7 +10,7 @@
 #include <unistd.h>
 #include <cstring>
 
-
+#if 0
 struct in_addr        localInterface;
 struct sockaddr_in    groupSock;
 int                   sd;
@@ -91,5 +91,5 @@ int main (int argc, char *argv[])
     close(sd);
 }
 
-
+#endif
 

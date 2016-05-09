@@ -13,6 +13,7 @@
 
 #define MAXDATASIZE 100 /* max number of bytes we can get at once */
 
+#if 0
 int main(int argc, char *argv[])
 {
     int sockfd, numbytes;  
@@ -55,4 +56,5 @@ int main(int argc, char *argv[])
 
     return 0;
 }
+#endif
 
