@@ -11,6 +11,7 @@
 #include "../language/MyQueue.h"
 #include "../language/template_constraints.h"
 #include "../language/operatornewdelete.h"
+#include "../language/mysmartpointer.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -626,4 +627,33 @@ TEST(DISABLED_language, operatornewdelete) {
     delete[] p2;
 #endif
 }
+
+TEST(language, mysmartpointer) {
+    MySmartPointer<int> s1(new int(2));
+    MySmartPointer<int> s2(s1);
+    MySmartPointer<int> s3 = s1;
+
+    MySmartPointer<int> s4(new int(5));
+    s4 = s1;
+
+    MySmartPointer<int> s5;
+    s5 = MySmartPointer<int>(new int(9));
+
+    MySmartPointer<Plain> s11(new Plain());
+    MySmartPointer<Plain> s22(s11);
+    MySmartPointer<Plain> s33 = s11;
+
+    MySmartPointer<Plain> s44(new Plain());
+    s44 = s11;
+
+    MySmartPointer<Plain> s55;
+    s55 = MySmartPointer<Plain>(new Plain());
+
+    s44.reset(new Plain());
+    s44.reset(s55.get());
+
+    s44.reset(new Plain());
+    s44.reset(s55.get());
+}
+
 

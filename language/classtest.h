@@ -68,24 +68,24 @@ int MyMember::s_count = 0;
 
 struct Plain {
     Plain() {
-        std::cout << "construct a Plain object" << std::endl;
+        std::cout << "Plain(): construct a Plain object" << std::endl;
     }
     Plain(const Plain&) {
-        std::cout << "copy construct a Plain object" << std::endl;
+        std::cout << "Plain(const Plain&): copy construct a Plain object" << std::endl;
     }
     Plain& operator=(const Plain&) {
-        std::cout << "copy assignment a Plain object" << std::endl;
+        std::cout << "operator=(const Plain&): copy assignment a Plain object" << std::endl;
         return *this;
     }
     Plain(Plain&&) {
-        std::cout << "move construct a Plain object" << std::endl;
+        std::cout << "Plain(Plain&&): move construct a Plain object" << std::endl;
     }
     Plain& operator=(Plain&&) {
-        std::cout << "move assignment a Plain object" << std::endl;
+        std::cout << "operator=(Plain&&): move assignment a Plain object" << std::endl;
         return *this;
     }
     ~Plain() {
-        std::cout << "destruct a Plain object" << std::endl;
+        std::cout << "~Plain(): destruct a Plain object" << std::endl;
     }
 };
 

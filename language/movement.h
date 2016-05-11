@@ -2,6 +2,7 @@
 #define MOVEMENT_H
 
 #include "../main/header.h"
+#include "./classtest.h"
 
 namespace movement {
     // http://stackoverflow.com/questions/3106110/what-are-move-semantics
@@ -32,6 +33,8 @@ namespace movement {
     };
 
     A f(A a) { return a; }
+    Plain g() { Plain p; return p; }
+    Plain g(Plain) { Plain p; return p; }
 
     struct B : A
     {
@@ -85,6 +88,16 @@ namespace movement {
         A a_1(x);
         A a_2(x+y);
         A a_3(f(x));
+
+
+        cout << "#Plain p1 = g():" << endl;
+        Plain p1 = g();
+        cout << "#p1 = g():" << endl;
+        p1 = g();
+        cout << "#p1 = g(Plain()):" << endl;
+        p1 = g(Plain());
+        cout << "#Plain p(g()):" << endl;
+        Plain p(g());
     }
 
     // swap under old standard
