@@ -10,6 +10,7 @@
 // http://stackoverflow.com/questions/2247736/little-endian-vs-big-endian
 // https://en.wikipedia.org/wiki/Endianness
 // https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/endian.html
+// http://stackoverflow.com/questions/21478765/endian-representation-of-64-bit-values
 void Run_endianness() {
     cout << INT_MAX << ", " << INT_MIN << endl;
     cout << pow(2, 31) << endl;

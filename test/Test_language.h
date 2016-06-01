@@ -12,6 +12,7 @@
 #include "../language/template_constraints.h"
 #include "../language/operatornewdelete.h"
 #include "../language/mysmartpointer.h"
+#include "../language/memoryleakdetector.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -655,5 +656,21 @@ TEST(language, mysmartpointer) {
     s44.reset(new Plain());
     s44.reset(s55.get());
 }
+
+TEST(language, memoryleakdetector) {
+#if MEMORYLEAK_ENABLED > 0
+    int* p = NEW(int);
+    *p = 10;
+
+    Plain* pl = NEW(Plain);
+
+    DumpMemUsage();
+
+    DEL(pl);
+
+    DEL(p);
+#endif
+}
+
 
 

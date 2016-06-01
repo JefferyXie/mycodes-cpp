@@ -3,6 +3,7 @@
 
 #include "../main/header.h"
 
+// this question is online coding quiz from Optiver
 struct NodePair {
     char parent;
     char child;

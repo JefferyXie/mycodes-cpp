@@ -343,11 +343,24 @@ public:
         ff(p3);
         fp(p4.get());
 
+        // http://stackoverflow.com/questions/20895648/difference-in-make-shared-and-normal-shared-ptr-in-c
+        // http://stackoverflow.com/questions/24741061/how-to-avoid-big-memory-allocation-with-stdmake-shared
         // although the memory cost is same, make_shared performs better since it only allocate memory once
         // while shared_ptr will do twice: one is the 'new' and the other happens inside ref control
         shared_ptr<B> p5(new B());
         auto p6 = make_shared<B>();
         f_smart(p6.get());
+
+        // when use vector for shared_ptr, below doesn't work since brace doesn't work well
+        // in most type deduction contexts
+        // shared_ptr<vector<int> > sp = std::make_shared<vector<int> > {1,2,5};
+        // Instead, there're two ways to initialize vector for shared_ptr:
+        // 1), explictly call std::initializer_list
+        auto sp3 = std::make_shared<vector<int> > (std::initializer_list<int> {1,2,5});
+        // 2), create vector object and pass it as parameter
+        shared_ptr<vector<int> > sp4 = std::make_shared<vector<int> > (vector<int> {1,2,5});
+        // this is to call vector<int>(int, int) constructor
+        auto sp5 = std::make_shared<vector<int> > (3,2);
 
         weak_ptr<B> wp = p5;
         {
@@ -591,12 +604,27 @@ public:
 
     static void Run_forward()
     {
+        InClass inA;
+        inA.a = 15;
+        auto getInClass = []() {
+            InClass a;
+            a.a = 20;
+            return a;
+        };
+        overloaded(getInClass().a); // member of rvalue is still rvalue
+        overloaded(forward<int>(inA.a));
+        string u = forward<string>(inA.s);
+        string t = move(inA.s);
+
+        cout << "***fon(10)" << endl;
         fon(10);
 
         int i = 2;
-        int& j = i;
+        cout << "***overloaded(3)" << endl;
         overloaded(3);
+        cout << "***overloaded(i)" << endl;
         overloaded(i);
+        cout << "***overloaded(forward<int>(3))" << endl;
         overloaded(forward<int>(3));
         // Question: forward is supposed to not convert i to rvalue
         // since i is lvalue, however it DOES. Why? Is this because
@@ -605,7 +633,9 @@ public:
         // Answer: here should use forward<int&>(i) since i is treated as reference!
         // http://stackoverflow.com/questions/17539282/stdforward-test-in-template-and-non-template-function
         // http://blog.csdn.net/zwvista/article/details/6848582
+        cout << "***overloaded(forward<int>(i))" << endl;
         overloaded(forward<int>(i));
+        cout << "***overloaded(move(i))" << endl;
         overloaded(move(i));
 
         auto ffn = [](string&& v) {
@@ -614,8 +644,11 @@ public:
         };
         string s = "10";
         //ffn(s);
+        cout << "***ffn(forward<string>(s))" << endl;
         ffn(forward<string>(s));
+        cout << "***ffn(move(s))" << endl;
         ffn(move(s));
+        cout << "***ffn(\"abc\")" << endl;
         ffn("abc");
 
         int a = 2;
@@ -643,6 +676,7 @@ public:
     // 012: in-class member initializer
     class InClass
     {
+    public:
         int a = 10;
         string s = "in class init.";
         unique_ptr<int> p;
