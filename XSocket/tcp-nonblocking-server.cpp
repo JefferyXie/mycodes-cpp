@@ -29,12 +29,12 @@
 #if 0
 int main()
 {
-    int 			sockfd, new_fd;  /* listen on sock_fd, new connection on new_fd */
+    int     sockfd, new_fd;  /* listen on sock_fd, new connection on new_fd */
     struct 	sockaddr_in 	my_addr;    /* my address information */
     struct 	sockaddr_in 	their_addr; /* connector's address information */
-    char			string_read[255];
-    int 			n,i;
-    int			last_fd;	/* Thelast sockfd that is connected	*/
+    char    string_read[255];
+    int     n,i;
+    int	    last_fd;	/* Thelast sockfd that is connected	*/
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");
@@ -60,34 +60,41 @@ int main()
     }
 
     socklen_t   sin_size;
-    if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, \
-                    &sin_size)) == -1) {
-        perror("accept");
-    }
-    fcntl(last_fd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
-    fcntl(new_fd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
+//    if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, \
+//                    &sin_size)) == -1) {
+//        perror("accept");
+//    }
+    int flags = fcntl(last_fd, F_GETFL, 0);
+    flags |= O_NONBLOCK;
+    fcntl(last_fd, F_SETFL, flags); /* Change the socket into non-blocking state	*/
+//    fcntl(new_fd, F_SETFL, O_NONBLOCK); /* Change the socket into non-blocking state	*/
 
+    printf("@sockfd=%d, @last_fd=%d\n", sockfd, last_fd);
+
+    // Jeffery: the following code will give "Resource temporarily unavailable" when doing accept()
+    // we should use select/poll/epoll for this non-blocking socket, details are from -
+    // http://stackoverflow.com/questions/7635440/error-on-accept-resource-temporarily-unavailable
     while(1){
-        for (i=sockfd;i<=last_fd;i++){
+        for (i=sockfd;i<=last_fd;i++) {
             printf("Round number %d\n",i);
             if (i == sockfd){
                 sin_size = sizeof(struct sockaddr_in);
                 if ((new_fd = accept(sockfd, (struct sockaddr *)&their_addr, \
                                 &sin_size)) == -1) {
                     perror("accept");
+                } else {
+                    printf("server: got connection from %s\n", \
+                            inet_ntoa(their_addr.sin_addr)); 
+                    fcntl(new_fd, F_SETFL, O_NONBLOCK);
+                    last_fd = new_fd;
+                    printf("@last_fd=%d\n", last_fd); 
                 }
-                printf("server: got connection from %s\n", \
-                        inet_ntoa(their_addr.sin_addr)); 
-                fcntl(new_fd, F_SETFL, O_NONBLOCK);
-                last_fd = new_fd;
-            }
-            else{
-                n=recv(new_fd,string_read,sizeof(string_read),0);
-                if (n < 1){ 
+            } else {
+                n = recv(new_fd,string_read,sizeof(string_read),0);
+                if (n < 1) { 
                     perror("recv - non blocking \n");
                     printf("Round %d, and the data read size is: n=%d \n",i,n);
-                }
-                else{
+                } else {
                     string_read[n] = '\0';
                     printf("The string is: %s \n",string_read);
                     if (send(new_fd, "Hello, world!\n", 14, 0) == -1)

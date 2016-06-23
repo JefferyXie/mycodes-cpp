@@ -3,6 +3,7 @@
 *.so.*
 *.log
 *.swp
+*.out
 gdb.txt
 tags
 main_exe

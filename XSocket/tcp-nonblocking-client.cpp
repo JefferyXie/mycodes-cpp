@@ -47,10 +47,13 @@ int main(int argc, char *argv[])
         exit(1);
     }
     /* sleep(5); */
+    int count = 0;
     while (1){
-        if (send(sockfd, "Hello, world!\n", 14, 0) == -1)
+        char buf[256] = {0};
+        sprintf(buf, "Hello world, %d\n", count);
+        if (send(sockfd, buf, strlen(buf), 0) == -1)
             perror("send");
-        printf("In loop \n");
+        printf("In loop %d \n", count++);
     }
     close(sockfd);
 

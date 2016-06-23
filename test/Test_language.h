@@ -13,6 +13,7 @@
 #include "../language/operatornewdelete.h"
 #include "../language/mysmartpointer.h"
 #include "../language/memoryleakdetector.h"
+#include "../language/circularbuf.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -629,7 +630,7 @@ TEST(DISABLED_language, operatornewdelete) {
 #endif
 }
 
-TEST(language, mysmartpointer) {
+TEST(DISABLED_language, mysmartpointer) {
     MySmartPointer<int> s1(new int(2));
     MySmartPointer<int> s2(s1);
     MySmartPointer<int> s3 = s1;
@@ -672,5 +673,81 @@ TEST(language, memoryleakdetector) {
 #endif
 }
 
+TEST(language, circularbuffer) {
+    CircularBuffer cbuf;
+    cbuf.Write("abcde", 5);
+    cbuf.Write("fghijk", 6);
+    int n = 5;
+    while (n--) {
+        cbuf.Read();
+    }
+    cbuf.Write("lmnopqrst", 9);
+    while (n++ < 2) {
+        cbuf.Read();
+    }
+    cbuf.Write("uvwxyz", 6);
+    string s;
+    while (1) {
+        char ch = cbuf.Read();
+        cout << ch;
+        if (ch == '\0') {
+            cout << endl;
+            break;
+        } else {
+            s += ch;
+        }
+    }
+
+    EXPECT_EQ(s, string("ijklmnopqrst"));
+
+    CircularBuffer cbuf1;
+    auto writer = [&cbuf1]() {
+        const char* letters = "abcdefghijklmnopqrstuvwxyz";
+        int count = 0;
+        int i = 0;
+        string ss;
+        while (i < strlen(letters)) {
+            int ret = cbuf1.Write(letters+i, 1);
+            if (ret <= 0) {
+                cout << "*" << this_thread::get_id() 
+                            << "**[" << ++count << "] failed to write: " 
+                            << *(letters+i) << endl;
+            } else {
+                ss += *(letters+i);
+                ++i;
+            }
+            this_thread::sleep_for(std::chrono::milliseconds(100));
+        }
+        cout << "*writer*" << this_thread::get_id() << ": " << ss << endl;
+    };
+    bool stopped = false;
+    auto reader = [&cbuf1, &stopped]() {
+        int count = 0;
+        string ss;
+        while (1) {
+            char ch = cbuf1.Read();
+            if (ch == '\0') {
+                cout << "*" << this_thread::get_id()
+                                << "**[" << ++count << "] read nothing." 
+                                << endl;
+            } else {
+                ss += ch;
+                // this judgement doesn't work well for mutiple writer (multiple 'z')
+                if (ch == 'z') stopped = true;
+            }
+            if (stopped) break;
+            this_thread::sleep_for(std::chrono::milliseconds(80));
+        }
+        cout << "*reader*" << this_thread::get_id() << ": " << ss << endl;
+    };
+    thread th_w1(writer);
+    thread th_w2(writer);
+    thread th_r1(reader);
+    thread th_r2(reader);
+    th_w1.join();
+    th_w2.join();
+    th_r1.join();
+    th_r2.join();
+}
 
 
