@@ -9,6 +9,12 @@
 template<class T>
 void Temp_Fun_specialization (T v) {
     cout << "Temp_Fun_specialization (T): " << v << endl;
+    // there're three ways that give compile error if specialization is not provided
+    // 1) don't even implement the default function
+    // 2) use below code in the default function
+    //    T::unimplemented_function;
+    // 3) use static_assert as bleow
+    //    static_assert(sizeof(T) == 0, "not yet implemented");
 };
 
 template<>
