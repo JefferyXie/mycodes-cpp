@@ -3,6 +3,9 @@
 
 #include "../main/header.h"
 
+// http://stackoverflow.com/questions/14926482/const-and-non-const-template-specialization
+// http://stackoverflow.com/questions/13401716/selecting-a-member-function-using-different-enable-if-conditions
+
 template<class T>
 void Temp_Fun_specialization (T v) {
     cout << "Temp_Fun_specialization (T): " << v << endl;
