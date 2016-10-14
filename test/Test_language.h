@@ -14,6 +14,7 @@
 #include "../language/mysmartpointer.h"
 #include "../language/memoryleakdetector.h"
 #include "../language/circularbuf.h"
+#include "../language/flagset.h"
 
 TEST(DISABLED_language, constructorOrder) {
     // always call base constructor no matter how the object is created
@@ -748,6 +749,14 @@ TEST(language, circularbuffer) {
     th_w2.join();
     th_r1.join();
     th_r2.join();
+}
+
+TEST(language, flagset) {
+    auto t = std::bitset<4>();
+    assert((int)Options::FULLSCREEN == 0);
+    test_AND();
+    test_OR();
+    test_set_reset();
 }
 
 
