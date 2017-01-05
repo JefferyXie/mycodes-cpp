@@ -21,7 +21,7 @@ INCLUDES = -I/opt/gtest/include
 CC = g++
 C11 = -std=c++0x 
 #CFLAGS = -Wall -W -lpthread $(C11)
-CFLAGS = $(C11) -w -L/opt/gtest/lib -lgtest -lgtest_main -lpthread # disable warning
+CFLAGS = $(C11) -w -L/opt/gtest/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
 CFLAGS_DEBUG = -g $(CFLAGS) 
 
 
