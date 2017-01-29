@@ -1,5 +1,5 @@
-#ifndef IPC_CLIENT_C
-#define IPC_CLIENT_C
+#ifndef IPC_CLIENT_EPOLL_C
+#define IPC_CLIENT_EPOLL_C
 
 #include <sys/types.h>
 #include <sys/socket.h>
@@ -7,6 +7,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <thread>
+#include <chrono>
 
 //
 // https://users.cs.cf.ac.uk/Dave.Marshall/C/node28.html
@@ -14,8 +16,8 @@
 // https://lists.freebsd.org/pipermail/freebsd-performance/2005-February/001143.html
 //
 //
-#define NSTRS       3           /* no. of strings  */
-#define ADDRESS     "/home/jeffery/mysocket"  /* addr to connect */
+#define NSTRS       3                           /* no. of strings  */
+#define ADDRESS     "/home/jeffery/mysocket"    /* addr to connect */
 
 /*
  * Strings we send to the server.
@@ -67,29 +69,25 @@ int main()
     }
 
     /*
-     * We'll use stdio for reading
-     * the socket.
+     * First we send some strings to the server.
+     */
+    for (i = 0; i < NSTRS; i++) {
+        std::this_thread::sleep_for(std::chrono::seconds(5));
+        send(s, strs[i], strlen(strs[i]), 0);
+    }
+
+    /*
+     * We'll use stdio for reading the socket.
      */
     fp = fdopen(s, "r");
 
     /*
-     * First we read some strings from the server
+     * Then we read some strings from the server
      * and print them out.
      */
-    for (i = 0; i < NSTRS; i++) {
-        while ((c = fgetc(fp)) != EOF) {
-            putchar(c);
-
-            if (c == '\n')
-                break;
-        }
+    while ((c = fgetc(fp)) != EOF) {
+        putchar(c);
     }
-
-    /*
-     * Now we send some strings to the server.
-     */
-    for (i = 0; i < NSTRS; i++)
-        send(s, strs[i], strlen(strs[i]), 0);
 
     /*
      * We can simply use close() to terminate the
