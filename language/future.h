@@ -36,14 +36,14 @@ void run_future()
     // std::launch::async flag will force a new thread spawned
     // std::~future will block until spawned thread finishes
     {
-        auto f = std::async( std::launch::async, sleep, 2);
+        auto f = std::async(std::launch::async, sleep, 2);
         
         end = std::chrono::steady_clock::now();
         // time difference == 0, nothing needs to wait
         time_consumed(begin, end);
         begin = std::chrono::steady_clock::now();
     }
-    end= std::chrono::steady_clock::now();
+    end = std::chrono::steady_clock::now();
     // time difference == 2, std::~future will block
     time_consumed(begin, end);
 
@@ -52,8 +52,8 @@ void run_future()
     // std::async will block if std::future is in temporary object, saying, no explict std::future declared
     {
         //
-        //auto f1 = std::async( std::launch::async, sleep, 2 );
-        std::async( std::launch::async, sleep, 2 );
+        //auto f1 = std::async(std::launch::async, sleep, 2 );
+        std::async(std::launch::async, sleep, 2 );
         
         end= std::chrono::steady_clock::now();
         // time difference == 2; if using auto f1 = std::async(...), time difference == 0
@@ -62,14 +62,14 @@ void run_future()
         
         //
         //auto f2 = std::async( std::launch::async, sleep, 2 );
-        std::async( std::launch::async, sleep, 2 );
+        std::async(std::launch::async, sleep, 2 );
         
         // time difference == 2; if using auto f2 = std::async(...), time difference == 0
-        end= std::chrono::steady_clock::now();
+        end = std::chrono::steady_clock::now();
         time_consumed(begin, end);
         begin = std::chrono::steady_clock::now();
     }
-    end= std::chrono::steady_clock::now();
+    end = std::chrono::steady_clock::now();
     // time difference == 0; if using f1 and f2 declared variable, time difference == 0
     time_consumed(begin, end);
     cout << endl;
@@ -87,7 +87,7 @@ void run_future()
         // has to be called before f.get(), otherwise, f(future)'s state will never be ready
         package(3);
     
-        end= std::chrono::steady_clock::now();
+        end = std::chrono::steady_clock::now();
         // time difference == 3
         time_consumed(begin, end);
         
@@ -101,12 +101,12 @@ void run_future()
         std::future<void> f = package.get_future();
     
         cout << "running in std::thread" << endl;
-        // create a thread with std::packaged_task
+        // create a thread with std::packaged_task which is callable (operator())
         std::thread t { std::move(package), 3 };
         // block here until the task/future finishes in the new thread asynchronously
         f.get();
 
-        end= std::chrono::steady_clock::now();
+        end = std::chrono::steady_clock::now();
         // time difference == 3
         time_consumed(begin, end);
     
@@ -116,7 +116,7 @@ void run_future()
     cout << "----------std::promise----------" << endl;
 
     auto task = [](std::future<int> fu) {
-        // hold until std::promise fulfill promise
+        // hold until std::promise fulfill promise, we can use fu.wait() as well
         std::cout << fu.get() << std::endl;
     };
 
@@ -125,6 +125,9 @@ void run_future()
     std::thread th {task, pr.get_future()};
 
     // fulfill promise
+    // Effective Modern C++ - Item 39: std::promise::set_value works pretty much as
+    // mutex & condition_variable but it's one-shot notification; to notify mutiple
+    // reacting tasks, use std::shared_future
     pr.set_value(5);
 
     th.join();

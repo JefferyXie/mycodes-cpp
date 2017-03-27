@@ -4,7 +4,7 @@
 #include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/deque-stl
-string printKMax(int arr[], int n, int k) {
+string print_k_max_1(int arr[], int n, int k) {
     if (n < k) return "";
     string result;
     int maxEle = 0;
@@ -49,7 +49,7 @@ void remove(int x) {
         q.pop_front();
     }
 }
-string printKMax_2(int arr[], int n, int k) {
+string print_k_max_2(int arr[], int n, int k) {
     if (n < k) return "";
     q.clear();
     string result;
@@ -66,5 +66,4 @@ string printKMax_2(int arr[], int n, int k) {
 }
 
 #endif
-
 

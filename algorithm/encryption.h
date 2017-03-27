@@ -4,7 +4,7 @@
 #include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/encryption
-string Encryption(string text) {
+string encryption(string text) {
     int L = text.length();
     int L_floor = floor(sqrt(L));
     int L_ceil = ceil(sqrt(L));

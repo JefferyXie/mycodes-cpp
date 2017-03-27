@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 #include "../main/header.h"
-#include "../ThreadOrder/usemutex.c"
-#include "../ThreadOrder/usesemaphore.c"
+#include "../thread/thread_order.h"
 
 TEST(DISABLED_multithreading, UseMutex) {
     UseMutex();

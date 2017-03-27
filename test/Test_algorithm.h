@@ -1,23 +1,23 @@
 #include <gtest/gtest.h>
 #include "../main/header.h"
-#include "../algorithm/FindCommonAncestor.h"
+#include "../algorithm/find_common_ancestor.h"
 #include "../algorithm/traversetree.h"
 #include "../algorithm/judgebitree.h"
-#include "../algorithm/numdaysbetween.h"
+#include "../algorithm/num_days_between.h"
 #include "../algorithm/similarpair.h"
-#include "../algorithm/kdiffpairs.h"
-#include "../algorithm/connectedcells.h"
-#include "../algorithm/maxsubarraymod.h"
-#include "../algorithm/missingnumbers.h"
-#include "../algorithm/bikeracer.h"
-#include "../algorithm/countluck.h"
+#include "../algorithm/k_diff_pairs.h"
+#include "../algorithm/connected_cell_in_grid.h"
+#include "../algorithm/max_subarray_mod.h"
+#include "../algorithm/find_missing_numbers.h"
+#include "../algorithm/bike_racer.h"
+#include "../algorithm/count_luck.h"
 #include "../algorithm/cuttree.h"
 #include "../algorithm/cuttree_2.h"
 #include "../algorithm/gridsearch.h"
-#include "../algorithm/matrixrotation.h"
+#include "../algorithm/matrix_rotation.h"
 #include "../algorithm/deque_maxk.h"
 #include "../algorithm/encryption.h"
-#include "../algorithm/removeduplicates.h"
+#include "../algorithm/remove_duplicates.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -46,17 +46,17 @@ TEST(DISABLED_algorithm, FindCommonAncestor) {
     n4->right = n9.get();
     n9->left = n0.get();
     
-    auto ancestor1 = FindCommonAncestor<int>(root.get(), n7.get(), n0.get());
+    auto ancestor1 = find_common_ancestor<int>(root.get(), n7.get(), n0.get());
     EXPECT_EQ(ancestor1, n1.get());
-    auto ancestor2 = FindCommonAncestor<int>(root.get(), n5.get(), n9.get());
+    auto ancestor2 = find_common_ancestor<int>(root.get(), n5.get(), n9.get());
     EXPECT_EQ(ancestor2, root.get());
-    auto ancestor3 = FindCommonAncestor<int>(root.get(), n3.get(), n0.get());
+    auto ancestor3 = find_common_ancestor<int>(root.get(), n3.get(), n0.get());
     EXPECT_EQ(ancestor3, n1.get());
-    auto ancestor4 = FindCommonAncestor<int>(root.get(), n1.get(), n7.get());
+    auto ancestor4 = find_common_ancestor<int>(root.get(), n1.get(), n7.get());
     EXPECT_EQ(ancestor4, n1.get());
-    auto ancestor5 = FindCommonAncestor<int>(root.get(), n0.get(), n6.get());
+    auto ancestor5 = find_common_ancestor<int>(root.get(), n0.get(), n6.get());
     EXPECT_EQ(ancestor5, root.get());
-    auto ancestor6 = FindCommonAncestor<int>(root.get(), n9.get(), n5.get());
+    auto ancestor6 = find_common_ancestor<int>(root.get(), n9.get(), n5.get());
     EXPECT_EQ(ancestor6, root.get());
 }
 
@@ -140,17 +140,17 @@ TEST(DISABLED_algorithm, judgeBiTree) {
 }
 
 TEST(DISABLED_algorithm, numdaysbetween) {
-    int a = NumDaysBetween(2010,5,1,2011,5,1);
+    int a = num_days_between(2010,5,1,2011,5,1);
     EXPECT_EQ(a, 365);
-    int b = NumDaysBetween(1900,1,10,1901,3,1);
+    int b = num_days_between(1900,1,10,1901,3,1);
     EXPECT_EQ(b, 415);
-    int c = NumDaysBetween(1999,10,1,2015,12,10);
+    int c = num_days_between(1999,10,1,2015,12,10);
     EXPECT_EQ(c, 5914);
-    int d = NumDaysBetween(1644,3,21,2016,2,23);
+    int d = num_days_between(1644,3,21,2016,2,23);
     EXPECT_EQ(d, 135843);
-    int e = NumDaysBetween(2016,3,21,2016,3,30);
+    int e = num_days_between(2016,3,21,2016,3,30);
     EXPECT_EQ(e, 9);
-    int f = NumDaysBetween(1644,3,21,1644,3,21);
+    int f = num_days_between(1644,3,21,1644,3,21);
     EXPECT_EQ(f, 0);
     cout << a << ", " << b << ", " << c << ", " 
         << d << ", " << e << ", " << f << endl;
@@ -184,7 +184,7 @@ TEST(DISABLED_algorithm, similarpair) {
 
 TEST(DISABLED_algorithm, kdiffparis) {
     vector<int> arr = { 1,5,3,4,2 };
-    int a = KDiffPairs(arr, 2);
+    int a = k_diff_pairs(arr, 2);
     EXPECT_EQ(a, 3);
 }
 
@@ -194,7 +194,7 @@ TEST(DISABLED_algorithm, maxconnectedcells) {
         {1,0,0},
         {0,1,0},
     };
-    int a = MaxConnectedCells(mt1);
+    int a = max_connected_cell_in_grid(mt1);
     EXPECT_EQ(a, 4);
     vector<vector<int> > mt2 = {
         {0,1,1,1,1},
@@ -203,13 +203,13 @@ TEST(DISABLED_algorithm, maxconnectedcells) {
         {0,1,0,1,1},
         {0,1,1,1,0},
     };
-    int b = MaxConnectedCells(mt2);
+    int b = max_connected_cell_in_grid(mt2);
     EXPECT_EQ(b, 15);
 }
 
 TEST(DISABLED_algorithm, maxsubarraymod) {
     long long arr[] = {3,3,9,9,5};
-    auto a = MaxSubarrayMod(arr, sizeof(arr)/sizeof(arr[0]), 7);
+    auto a = max_subarray_mod(arr, sizeof(arr)/sizeof(arr[0]), 7);
     EXPECT_EQ(a, 6);
     long long arr1[] = {
         846930887, 1681692778, 1714636916, 1957747794, 424238336, 719885387, 1649760493, 
@@ -220,14 +220,14 @@ TEST(DISABLED_algorithm, maxsubarraymod) {
         1059961394, 2089018457, 628175012, 1656478043, 1131176230, 1653377374, 859484422,
         1914544920, 608413785, 756898538, 1734575199, 1973594325, 149798316, 2038664371,
         1129566414 };
-    auto b = MaxSubarrayMod(arr1, sizeof(arr)/sizeof(arr[0]), 1804289384);
+    auto b = max_subarray_mod(arr1, sizeof(arr)/sizeof(arr[0]), 1804289384);
     EXPECT_EQ(b, 1745498720);
 }
 
 TEST(DISABLED_algorithm, missingnumbers) {
     int A[] = {203, 204, 205, 206, 207, 208, 203, 204, 205, 206};
     int B[] = {203, 204, 204, 205, 206, 207, 205, 208, 203, 206, 205, 206, 204};
-    auto s = FindMissingNumbers(A, sizeof(A)/sizeof(A[0]), B, sizeof(B)/sizeof(B[0]));
+    auto s = find_missing_numbers(A, sizeof(A)/sizeof(A[0]), B, sizeof(B)/sizeof(B[0]));
     set<int> ss{204,205,206};
     EXPECT_EQ(s, ss);
 }
@@ -385,7 +385,7 @@ TEST(DISABLED_algorithm, countluck) {
         {".*......................................."},
     }; // 280
     fillforest(arr1);
-    int a1 = CalcWaveHandTimes(forest);
+    int a1 = count_luck(forest);
     EXPECT_EQ(a1, 280);
 
     vector<string> arr2 = {
@@ -396,7 +396,7 @@ TEST(DISABLED_algorithm, countluck) {
         {"XXXXXXXXXXXXXXXXX"},
     }; // 1*/
     fillforest(arr2);
-    int a2 = CalcWaveHandTimes(forest);
+    int a2 = count_luck(forest);
     EXPECT_EQ(a2, 1);
 
     vector<string> arr3 = {
@@ -406,7 +406,7 @@ TEST(DISABLED_algorithm, countluck) {
         {"......XXXX."},
     }; // 3
     fillforest(arr3);
-    int a3 = CalcWaveHandTimes(forest);
+    int a3 = count_luck(forest);
     EXPECT_EQ(a3, 3);
 
     vector<string> arr4 = {
@@ -417,7 +417,7 @@ TEST(DISABLED_algorithm, countluck) {
         {"M.........."},
     }; // 0
     fillforest(arr4);
-    int a4 = CalcWaveHandTimes(forest);
+    int a4 = count_luck(forest);
     EXPECT_EQ(a4, 0);
 
     vector<string> arr5 = {
@@ -460,7 +460,7 @@ TEST(DISABLED_algorithm, countluck) {
         {"..X.X......X...X.X..XXXXXXXXXXX"},
     };// 21
     fillforest(arr5);
-    int a5 = CalcWaveHandTimes(forest);
+    int a5 = count_luck(forest);
     EXPECT_EQ(a5, 21);
 
     vector<string> arr6 = {
@@ -469,7 +469,7 @@ TEST(DISABLED_algorithm, countluck) {
         {".X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X.X."},
     };// 20 
     fillforest(arr6);
-    int a6 = CalcWaveHandTimes(forest);
+    int a6 = count_luck(forest);
     EXPECT_EQ(a6, 20);
 }
 
@@ -512,7 +512,7 @@ TEST(algorithm, gridsearch) {
         "111111",
         "111111",
     };
-    auto a = GridSearch(G, P);
+    auto a = gridsearch(G, P);
     EXPECT_EQ(a, true);
     /*
     int T = 1;
@@ -558,7 +558,7 @@ TEST(algorithm, matrixrotation) {
         {5, 6, 10, 16},
         {9, 13, 14, 15},
     };
-    auto r1 = MatrixRotation(matrix, R);
+    auto r1 = matrix_rotation(matrix, R);
     dumpMatrix(r1);
     EXPECT_EQ(r1, result);
 
@@ -577,7 +577,7 @@ TEST(algorithm, matrixrotation) {
         {10, 14, 20, 7},
         {4, 3, 2, 1},
     };
-    auto r2 = MatrixRotation(matrix, R);
+    auto r2 = matrix_rotation(matrix, R);
     dumpMatrix(r2);
     EXPECT_EQ(r2, result);
 
@@ -593,29 +593,29 @@ TEST(algorithm, matrixrotation) {
 
 TEST(algorithm, deque_maxk) {
     int arr1[] = {3,4,6,3,4};
-    auto r1 = printKMax(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
+    auto r1 = print_k_max_1(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
     EXPECT_EQ(r1, "4 6 6 4");
-    auto r21 = printKMax_2(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
+    auto r21 = print_k_max_2(arr1, sizeof(arr1)/sizeof(arr1[0]), 2);
     EXPECT_EQ(r21, "4 6 6 4");
 
     int arr2[] = {3,4,5,8,1,4,10};
-    auto r2 = printKMax(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
+    auto r2 = print_k_max_1(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
     EXPECT_EQ(r2, "8 8 8 10");
-    auto r22 = printKMax_2(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
+    auto r22 = print_k_max_2(arr2, sizeof(arr2)/sizeof(arr2[0]), 4);
     EXPECT_EQ(r22, "8 8 8 10");
 }
 
 TEST(algorithm, encryption) {
     string t1 = "ifmanwasmeanttostayonthegroundgodwouldhavegivenusroots";
-    auto a1 = Encryption(t1);
+    auto a1 = encryption(t1);
     EXPECT_EQ(a1, "imtgdvs fearwer mayoogo anouuio ntnnlvt wttddes aohghn sseoau");
 
     string t2 = "haveaniceday";
-    auto a2 = Encryption(t2);
+    auto a2 = encryption(t2);
     EXPECT_EQ(a2, "hae and via ecy");
 
     string t3 = "chillout";
-    auto a3 = Encryption(t3);
+    auto a3 = encryption(t3);
     EXPECT_EQ(a3, "clu hlt io");
 }
 
@@ -626,22 +626,22 @@ TEST(algorithm, removeduplicates) {
         cout << endl;
     };
     int arr1[] = {1,2,3,4,5};
-    int len1 = RemoveDuplicates(arr1, sizeof(arr1)/sizeof(arr1[0]));
+    int len1 = remove_duplicates_1(arr1, sizeof(arr1)/sizeof(arr1[0]));
     printarr(arr1, len1);
     EXPECT_EQ(len1, 5);
 
     int arr2[] = {1,2,2,3,1,5,6,0};
-    int len2 = RemoveDuplicates(arr2, sizeof(arr2)/sizeof(arr2[0]));
+    int len2 = remove_duplicates_1(arr2, sizeof(arr2)/sizeof(arr2[0]));
     printarr(arr2, len2);
     EXPECT_EQ(len2, 6);
 
     int arr3[] = {1,2,2,2,3};
-    int len3 = RemoveDuplicates(arr3, sizeof(arr3)/sizeof(arr3[0]));
+    int len3 = remove_duplicates_1(arr3, sizeof(arr3)/sizeof(arr3[0]));
     printarr(arr3, len3);
     EXPECT_EQ(len3, 3);
 
     int arr4[] = {1,1,1,2,2,5,3,2,1,3,2};
-    int len4 = RemoveDuplicates(arr4, sizeof(arr4)/sizeof(arr4[0]));
+    int len4 = remove_duplicates_1(arr4, sizeof(arr4)/sizeof(arr4[0]));
     printarr(arr4, len4);
     EXPECT_EQ(len4, 4);
  }

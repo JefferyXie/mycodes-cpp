@@ -1,7 +1,8 @@
 include ./Makefile-config
 
 # recursively compile subfolders
-subdirs = main XSocket akuna fitch
+#subdirs = main socket akuna fitch # TODO: cleanup socket directory!!
+subdirs = main akuna fitch
 targets = all clean
 
 $(targets):

@@ -5,7 +5,7 @@
 
 // https://www.hackerrank.com/challenges/the-grid-search
 // using string vector rather than char/int array makes the code easier
-bool GridSearch(const vector<string>& G, const vector<string>& P) {
+bool gridsearch(const vector<string>& G, const vector<string>& P) {
     int rows = P.size();
     int cols = P[0].size();
     bool found = false;
