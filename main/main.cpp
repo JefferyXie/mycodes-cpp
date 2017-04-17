@@ -10,12 +10,3 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
 }
 
-/*
-#include "header.h"
-
-int main() {
-    auto hs = std::hash<int>()(10);
-    auto hs1 = std::hash<int>()(-10);
-    auto hs2 = std::hash<int>()(0);
-}
-*/

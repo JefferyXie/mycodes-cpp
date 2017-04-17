@@ -934,7 +934,6 @@ public:
         Buffer buf1;
         Buffer buf2("2nd buf");
         auto buf3 = Buffer("3rd");
-        auto buf5 = move(Buffer("5th"));
 
         F f1;
         //auto f2 = f1; // error, no allowed to use 'delete' function
@@ -1267,21 +1266,6 @@ public:
                 }
             }
         }
-
-        /*** stl chrono ***/
-        // std::chrono
-        auto start = std::chrono::high_resolution_clock::now();
-        sleep(2);
-        auto end = std::chrono::high_resolution_clock::now();
-        cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << endl;
-
-        auto st = std::chrono::system_clock::now();
-        sleep(2);
-        auto ed = std::chrono::system_clock::now();
-        auto elapsed_seconds = ed - st;
-        auto end_time = std::chrono::system_clock::to_time_t(ed);
-        cout << "finished computation at " << std::ctime(&end_time)
-                << "\nelapsed time: " << elapsed_seconds.count() << endl;
 
         // std::ratio
         std::ratio<2, 3> two_thirds;
@@ -1617,6 +1601,128 @@ public:
         StringTable o1 = getStringTable();
         StringTableEx o2 = getStringTableEx();
         cout << o1._oMove._str << " "<< o2._oMove._str << endl;
+    }
+
+    // 024: std::ref, std::cref
+    void ref_cref(int n0, int& n1, int& n2, const int& n3)
+    {
+        std::cout << "In function: " << n0 << ' ' << n1 << ' ' << n2 << ' ' << n3 << '\n';
+        ++n0; // increments temporary n0 in the function object
+        ++n1; // increments the copy of n1 stored in the function object
+        ++n2; // increments the main()'s n2
+        // ++n3; // compile error
+    }
+     
+    static void Run_ref_cref()
+    {
+        int n0 = 0, n1 = 1, n2 = 2, n3 = 3;
+        std::function<void()> bound_f = std::bind(ref_cref, n0, n1, std::ref(n2), std::cref(n3));
+        n0 = 9;
+        n1 = 10;
+        n2 = 11;
+        n3 = 12;
+        
+        // 9, 10, 11, 12
+        std::cout << "Before function: " << n0 << ' ' << n1 << ' ' << n2 << ' ' << n3 << '\n';
+        // 0, 1, 11, 12
+        bound_f();
+        
+        // 9, 10, 12, 12
+        std::cout << "After function 1: " << n0 << ' ' << n1 << ' ' << n2 << ' ' << n3 << '\n';
+        // 0, 2, 12, 12
+        bound_f();
+        
+        // 9, 10, 13, 12
+        std::cout << "After function 2: " << n0 << ' ' << n1 << ' ' << n2 << ' ' << n3 << '\n';
+
+        // A std::reference_wrapper is a C++ object able to hold a reference. It can be used to
+        // create an array of references which was not possible with T&!
+        // std::ref is a standard function that returns a std::reference_wrapper on its argument.
+        // std::cref returns std::reference_wrapper to a const reference.       
+        
+        // You cannot do int& arr[] = {n0, n1, n2, n3}; error: declaration of 'arr' as array of references
+        // But it works by using std::reference_wrapper as below
+        std::reference_wrapper<int> arr[] = {n0, n1, n2, n3};
+        
+        n1 = 22;
+        
+        std::cout << &n0 << " " << n0 << std::endl;
+        std::cout << &n1 << " " << n1 << std::endl;
+        std::cout << &n2 << " " << n2 << std::endl;
+        std::cout << &n3 << " " << n3 << std::endl;
+            
+        for (auto& a : arr) {
+            // a.get() is int& which is reference of original variable, (int&)a has same effect.
+            // &a is not address of origianl variable but address of std::reference_wrapper object.
+            std::cout << &a << " " << &a.get() << " " << a << std::endl;
+        }
+    }
+
+    // 025: std::chrono
+    unsigned long long get_nano_seconds_since_midnight()
+    {
+        // current time
+        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+     
+        // get midnight time_point
+        time_t tnow = std::chrono::system_clock::to_time_t(now);
+        tm* date = std::localtime(&tnow);
+        date->tm_hour = 0;
+        date->tm_min = 0;
+        date->tm_sec = 0;
+        auto midnight = std::chrono::system_clock::from_time_t(std::mktime(date));
+     
+        // number of nano seconds between midnight and now
+        // The same technique can be used for time since epoch
+        return std::chrono::duration_cast<std::chrono::nanoseconds>(now - midnight).count();
+    }
+
+    string get_localtime_now()
+    {
+        // current time
+        std::chrono::time_point<std::chrono::system_clock> now = std::chrono::system_clock::now();
+     
+        // get datetime
+        time_t dt   = std::chrono::system_clock::to_time_t(now);
+        tm*    date = std::localtime(&dt);
+        //tm*    date = std::gmtime(&dt); // UTC time
+
+        // convert time_t(datetime) to time_point, and then get nano seconds
+        auto dt_point = std::chrono::system_clock::from_time_t(dt);
+        auto nano_sec = std::chrono::duration_cast<std::chrono::nanoseconds>(now - dt_point).count();
+
+        char time[128] = {0};
+        sprintf(time, "%d-%.2d-%.2d %.2d:%.2d:%.2d.%09llu",
+                date->tm_year+1900,
+                date->tm_mon+1,
+                date->tm_mday,
+                date->tm_hour,
+                date->tm_min,
+                date->tm_sec,
+                nano_sec);
+        //strftime(time, sizeof(buf), "%Y-%m-%d %X", date); // use tm/time_t but only to seconds
+        return string(time);
+    }
+
+    static void Run_chrono()
+    {
+        /*** stl chrono ***/
+        // std::chrono
+        auto start = std::chrono::high_resolution_clock::now();
+        sleep(2);
+        auto end = std::chrono::high_resolution_clock::now();
+        cout << std::chrono::duration_cast<std::chrono::milliseconds>(end-start).count() << endl;
+
+        auto st = std::chrono::system_clock::now();
+        sleep(2);
+        auto ed = std::chrono::system_clock::now();
+        auto elapsed_seconds = ed - st;
+        auto end_time = std::chrono::system_clock::to_time_t(ed);
+        cout << "finished computation at " << std::ctime(&end_time)
+             << "\nelapsed time: " << elapsed_seconds.count() << endl;
+
+        cout << "localtime: " << get_localtime_now() << endl;
+        cout << "nano seconds since midnight: " << get_nano_seconds_since_midnight() << endl;
     }
 };
 
