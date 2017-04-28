@@ -1,0 +1,85 @@
+README
+
+//
+// Introduction
+//
+
+This package includes source code that manipulates CSV data via command line.
+
+The following source files are included:
+--> csv_file_reader.h : wrapper class that parses csv file
+--> handler.h : functions that handle each requirements
+--> main.cpp: main function
+
+The following csv files are included for testing purpose:
+--> 0.csv
+--> 1.csv
+
+
+
+//
+// Compile
+//
+
+My compiler version is g++ 4.9.2 under CentOS 7
+> g++ -std=c++14 main.cpp -o main_exe
+or 
+> g++ -std=c++11 main.cpp -o main_exe
+
+
+
+//
+// Run
+//
+
+ASSUMPTION: a), the input csv file doesn't contain column header row
+            b), all input column arguments are 0 based, saying 1st column has index 0
+
+0) Display usage
+> ./main_exe
+or
+> ./main_exe --help
+
+1) Output specific columns, output file is cols.csv
+Sample 1: output second column
+> ./main_exe --file='0.csv' --cols=1
+
+Sample 2: output 2nd, 3rd, 5th columns
+> ./main_exe --file='0.csv' --cols=1,2,4
+
+2) Run operation on two columns, output file is operations.csv
+(*EXTRA FEATURE: support mutiple operations once a time, each operation separated by '|')
+
+Sample 1: sum 3rd and 5th columns
+> ./main_exe --file='0.csv' --operations='2,4,+'
+
+Sample 2: sum 3rd and 5th columns, multiple 3rd and 6th columns, divide 5th column by 6th column
+> ./main_exe --file='0.csv' --operations='2,4,+|2,5,x|4,5,/'
+
+Sample 3: sum 3rd and 5th columns, multiple 3rd and 6th columns, divide 5th column by 6th column, subtract 5th with 6th column
+> ./main_exe --file='0.csv' --operations='2,4,+|2,5,x|4,5,/|4,5,-'
+
+3) Run statistics max/min/avg/median on sepcific columns, output file is stats.csv
+
+Sample 1: output max/min/avg/median of 3rd column
+> ./main_exe --file='0.csv' --stats=2
+
+Sample 2: output max/min/avg/median of 3rd and 5th columns
+> ./main_exe --file='0.csv' --stats=2,4
+
+4), Join two data sets in terms of specific primary column, output file inner.csv is for inner join result, and outer.csv is for outer join result
+(*EXTRA FEATURE: keep the primary column as first column in the result)
+
+Sample 1: join data sets by 2nd column in 0.csv and 3rd column in 1.csv
+> ./main_exe --file='0.csv' --join='1.csv,1,2'
+
+*NOTE: the primary field should be unique so duplicates ones will be ignored.
+
+5), Combine multiple command arguments into one command,
+
+Sample 1: - output raw 2nd, 3rd, 5th columns to cols.csv
+		  - run operations on 3rd & 5th, 3rd & 6th columns, output to operations.csv
+		  - run statistics on 3rd and 5th columns, output to stats.csv
+		  - join 0.csv and 1.csv by 2nd column in 0.csv, and 3rd column in 1.csv, output to inner.csv & outer.csv
+> ./main_exe --file='0.csv' --cols=1,2,4 --operations='2,4,+|2,5,x' --stats=2,4 --join='1.csv,1,2'
+
