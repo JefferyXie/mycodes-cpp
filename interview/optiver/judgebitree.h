@@ -1,7 +1,7 @@
 #ifndef JUDGEBITREE_H
 #define JUDGEBITREE_H
 
-#include "../main/header.h"
+#include "../../main/header.h"
 
 // this question is online coding quiz from Optiver
 struct NodePair {

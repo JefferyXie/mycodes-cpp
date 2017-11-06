@@ -1,7 +1,7 @@
 #ifndef VOLANT_H
 #define VOLANT_H
 
-#include "../main/header.h"
+#include "../../main/header.h"
 
 // 
 // Given a string which consists of number, space, and dash, normalize it as a phone number

@@ -1,4 +1,4 @@
-include ../Makefile-config
+include ../../Makefile-config
 
 #object path
 OBJ_PATH = ./

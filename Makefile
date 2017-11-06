@@ -2,7 +2,7 @@ include ./Makefile-config
 
 # recursively compile subfolders
 #subdirs = main socket akuna fitch # TODO: cleanup socket directory!!
-subdirs = main akuna fitch
+subdirs = main interview/akuna interview/fitch misc
 targets = all clean
 
 $(targets):

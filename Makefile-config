@@ -22,6 +22,6 @@ CC = g++
 C11 = -std=c++14
 #CFLAGS = -Wall -W -lpthread $(C11)
 CFLAGS = $(C11) -w -L/opt/gtest/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
-CFLAGS_DEBUG = -g $(CFLAGS) 
-
+#CFLAGS_DEBUG = -g $(CFLAGS) 
+CFLAGS_DEBUG = $(CFLAGS) -O3
 
