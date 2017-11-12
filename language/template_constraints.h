@@ -104,5 +104,3 @@ void Sample2() {
 }
 
 #endif
-
-

@@ -68,8 +68,6 @@ bool method_rewritten(int64_t i)
 //
 class Clock
 {
-    std::chrono::time_point<std::chrono::steady_clock> _start;
-
 public:
     static inline std::chrono::time_point<std::chrono::steady_clock> now()
     {
@@ -84,6 +82,8 @@ public:
     {
         return std::chrono::duration_cast<DurationUnit>(now() - _start).count();
     }
+private:
+    std::chrono::time_point<std::chrono::steady_clock> _start;
 };
 
 //
@@ -96,20 +96,8 @@ fixed_condition()
         for (int64_t i = 0 ; i < BENCHSIZE ; ++i)
         {
             result &= method_no_builtin(i);
-            /*
             result &= method_no_builtin(i);
             result &= method_no_builtin(i);
-            
-            result &= method_no_builtin(i);
-            result &= method_no_builtin(i);
-            result &= method_no_builtin(i);
-            
-            result &= method_no_builtin(i);
-            result &= method_no_builtin(i);
-            result &= method_no_builtin(i);
-            
-            result &= method_no_builtin(i);
-            */
         }
         const double unit_time = clock.end<std::chrono::nanoseconds>() / static_cast<double>(BENCHSIZE);
         std::cout << std::setw(40) << "method_no_builtin(): " << std::setprecision(3) << unit_time << " ns\n";
@@ -120,20 +108,8 @@ fixed_condition()
         for (int64_t i = 0 ; i < BENCHSIZE ; ++i)
         {
             result &= method_builtin(i);
-            /*
             result &= method_builtin(i);
             result &= method_builtin(i);
-            
-            result &= method_builtin(i);
-            result &= method_builtin(i);
-            result &= method_builtin(i);
-            
-            result &= method_builtin(i);
-            result &= method_builtin(i);
-            result &= method_builtin(i);
-            
-            result &= method_builtin(i);
-            */
         }
         const double unit_time = clock.end<std::chrono::nanoseconds>() / static_cast<double>(BENCHSIZE);
         std::cout << std::setw(40) << "method_builtin(): " << std::setprecision(3) << unit_time << " ns\n";
@@ -144,20 +120,8 @@ fixed_condition()
         for (int64_t i = 0 ; i < BENCHSIZE; ++i)
         {
             result &= method_rewritten(i);
-            /*
             result &= method_rewritten(i);
             result &= method_rewritten(i);
-            
-            result &= method_rewritten(i);
-            result &= method_rewritten(i);
-            result &= method_rewritten(i);
-            
-            result &= method_rewritten(i);
-            result &= method_rewritten(i);
-            result &= method_rewritten(i);
-            
-            result &= method_rewritten(i);
-            */
         }
         const double unit_time = clock.end<std::chrono::nanoseconds>() / static_cast<double>(BENCHSIZE);
         std::cout << std::setw(40) << "method_rewritten(): " << std::setprecision(3) << unit_time << " ns\n";
@@ -165,4 +129,3 @@ fixed_condition()
 }
 
 #endif
-
