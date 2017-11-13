@@ -1,7 +1,6 @@
 #ifndef HEADER_H
 #define HEADER_H
 
-
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -62,5 +61,6 @@ using namespace std;
 #define ERROR       -1
 #define MAX_CLIENTS 2
 #define MAX_DATA    1024
+
 
 #endif

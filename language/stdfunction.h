@@ -51,8 +51,10 @@ public:
     }
 };
 
-void std_function()
+void run_std_function_1()
 {
+    FUNC_BEGIN(run_std_function_1);
+
     // 0) function pointer
     PFUN pf = fun_fo;
     cout << pf('u') << endl;
@@ -97,6 +99,94 @@ void std_function()
     cout << "<<function<int(A_function&)>" << endl;
     cout << fun_B(b) << endl;
     cout << ">>function<int(A_function&)>" << endl;
+}
+
+// 
+// a cleaner example for real case
+class func_caller {
+public:
+    // 1) add_callback: class member method as input
+    template<class T> void
+    add_callback(T* const object, char(T::* const mf)(bool,int))
+    {
+        using namespace std::placeholders; 
+        callbacks_.emplace_back(std::bind(mf, object, _1, _2));
+    }
+ 
+    // 2) add_callback: regular function or class static method as input
+    using PFunc = char(*)(bool,int);
+//  void addCallback(char * const fun(bool,int))// NO! void* const (*)(bool, int)
+//  void addCallback(char * fun(bool,int))      // NO! void* (*)(bool, int)
+//  void addCallback(char fun(bool,int))        // works
+//  void addCallback(PFunc fun)                 // works
+//  void addCallback(char (*fun)(bool, int))    // works
+    void add_callback(char(* const fun)(bool, int)) // works
+    {
+        callbacks_.emplace_back(fun);
+    }
+
+    // 3) add_callback: function object as input
+    void add_callback(std::function<char(bool,int)>&& func) {
+        callbacks_.emplace_back(std::move(func));
+    }
+
+    void call_callbacks(bool firstval, int secondval) 
+    {
+        for (const auto& cb : callbacks_)
+            cb(firstval, secondval);
+    }
+private:
+    std::vector<std::function<char(bool,int)>> callbacks_;
+};
+
+struct func_class {
+    char in_class_func(bool,int) {
+        cout << "in_class_func" << endl; return '1';
+    }
+};
+char regular_func(bool,int) {
+    cout << "regular_func" << endl; return '2';
+}
+struct functor_class {
+    char operator()(bool,int) {
+        cout << "functor_class operator()" << endl; return 'c';
+    }
+};
+
+void run_std_function_2()
+{
+    FUNC_BEGIN(run_std_function_1);
+
+    func_caller caller;
+    func_class func_o;
+    //then, somewhere in Callee, to add the callback, given a pointer to Caller `ptr`
+    caller.add_callback(&func_o, &func_class::in_class_func);
+    
+    //or to add a call back to a regular function
+    caller.add_callback(regular_func);
+    caller.add_callback(&regular_func);
+    
+    caller.call_callbacks(true, 10);
+    
+    // std::function can take input with any kind of - 
+    // 1) a function
+    // 2) a function pointer
+    // 3) a pointer to member
+    // 4) lambda
+    // 5) any kind of copy-constructible function object 
+    //    (i.e., an object whose class defines operator(), 
+    //    including closures and other instantiations of function).
+    std::function<char(bool,int)> fn1 = regular_func;   // function
+    std::function<char(bool,int)> fn2 = &regular_func;  // function pointer
+    std::function<char(bool,int)> fn3 = functor_class();// function object
+    std::function<char(bool,int)> fn4 = [](bool,int) {  // lambda expression
+        cout << "lambda" << endl; return 'd';
+    };
+    caller.add_callback(std::move(fn1));
+    caller.add_callback(std::move(fn2));
+    caller.add_callback(std::move(fn3));
+    caller.add_callback(std::move(fn4));
+    caller.call_callbacks(true, 10);
 }
 
 #endif

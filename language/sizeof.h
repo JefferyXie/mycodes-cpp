@@ -1,5 +1,5 @@
-#ifndef SIZEOFCLASS_H
-#define SIZEOFCLASS_H
+#ifndef SIZEOF_H
+#define SIZEOF_H
 
 #include "../main/header.h"
 #include "stlClass.h"
@@ -51,28 +51,23 @@ struct IntShortIntShort
     short s2;
 };
 
-class sizeofClass
-{
-public:
-	static void CheckBasicTypes();
+template<typename T> void
+run_CheckClass(T t) {
+    cout << "sizeof(T): " << sizeof(t) << endl;
+    cout << "sizeof(EmptyClass): " << sizeof(EmptyClass) << endl;
+    cout << "sizeof(CharClass): " << sizeof(CharClass) << endl;
+    cout << "sizeof(IntClass): " << sizeof(IntClass) << endl;
+    cout << "sizeof(CharDoubleClass): " << sizeof(CharDoubleClass) << endl;
+    cout << "sizeof(DoubleCharClass): " << sizeof(DoubleCharClass) << endl;
+    cout << "sizeof(CharIntShort): " << sizeof(CharIntShort) << endl;
+    cout << "sizeof(IntCharShort): " << sizeof(IntCharShort) << endl;
+    cout << "sizeof(IntShortChar): " << sizeof(IntShortChar) << endl;
+    cout << "sizeof(IntShortIntShort): " << sizeof(IntShortIntShort) << endl;
+    cout << "sizeof(stlClass): " << sizeof(stlClass) << endl;
+}
 
-	template<typename T> static void CheckClass(T t)
-	{
-		cout << "sizeof(T): " << sizeof(t) << endl;
-		cout << "sizeof(EmptyClass): " << sizeof(EmptyClass) << endl;
-		cout << "sizeof(CharClass): " << sizeof(CharClass) << endl;
-		cout << "sizeof(IntClass): " << sizeof(IntClass) << endl;
-		cout << "sizeof(CharDoubleClass): " << sizeof(CharDoubleClass) << endl;
-		cout << "sizeof(DoubleCharClass): " << sizeof(DoubleCharClass) << endl;
-		cout << "sizeof(CharIntShort): " << sizeof(CharIntShort) << endl;
-		cout << "sizeof(IntCharShort): " << sizeof(IntCharShort) << endl;
-		cout << "sizeof(IntShortChar): " << sizeof(IntShortChar) << endl;
-        cout << "sizeof(IntShortIntShort): " << sizeof(IntShortIntShort) << endl;
-        cout << "sizeof(stlClass): " << sizeof(stlClass) << endl;
-    }
-};
-
-void sizeofClass::CheckBasicTypes() {
+void
+run_CheckBasicTypes() {
     cout << "sizeof(int): " << sizeof(int) <<endl;
     cout << "sizeof(short): " << sizeof(short) << endl;
     cout << "sizeof(long): " << sizeof(long) << endl;

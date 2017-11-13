@@ -6,7 +6,7 @@
 #include "../language/thread.h"
 #include "../language/copy_elision.h"
 #include "../language/matrix.h"
-#include "../language/sizeofClass.h"
+#include "../language/sizeof.h"
 #include "../language/MyList.h"
 #include "../language/MyQueue.h"
 #include "../language/template_constraints.h"
@@ -439,9 +439,9 @@ TEST(DISABLED_language, matrix) {
     cout << m[0][0] << "," << m[1][1] << endl;
 }
 
-TEST(DISABLED_language, sizeofClass) {
-    sizeofClass::CheckBasicTypes();
-    sizeofClass::CheckClass(stlClass("temp", 1000));
+TEST(DISABLED_language, sizeof_) {
+    run_CheckBasicTypes();
+    run_CheckClass(stlClass("temp", 1000));
 
     stlClass stlObj("test", 43);
     stlClass stlObj_1 = stlObj;
