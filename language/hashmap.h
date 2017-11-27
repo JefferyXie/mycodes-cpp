@@ -67,7 +67,8 @@ namespace std {
     };
 }
 
-void RunHashmap() {
+void
+run_hashmap() {
     // MyKey1
     unordered_map<MyKey1, int, MyKey1_Hash, MyKey1_Compare> um1 = {
         {{"1st"}, 10},
@@ -91,6 +92,28 @@ void RunHashmap() {
     if (it2 != um1.end()) {
         cout << it2->first.ToString() << "|" << it2->second << endl;
     }
+
+    // APPENDIX: this method actually is same (the thing happen underneath) as lambda
+    auto hasher = [](const MyKey1& key) {
+        return hash<string>()(key.first);
+    };
+    auto equaler= [](const MyKey1& k1, const MyKey1& k2) {
+        return k1.first == k2.first;
+    };
+    unordered_map<MyKey1, int, decltype(hasher), decltype(equaler)> um1_1 = {{
+            {{"1st"}, 10},
+            {{"2nd"}, 20},
+            {{"3st"}, 30},
+            {{"5th"}, 50},
+            {{"6th"}, 60},
+            {{"7th"}, 70},
+            {{"4th"}, 40},
+        },
+        2, hasher, equaler
+    };
+    um1_1.insert({{"8th"},80});
+    um1_1.emplace(MyKey1{"7th"}, 70);
+
     // MyKey2
     unordered_map<MyKey2, int, decltype(&MyKey2_Hash), decltype(&MyKey2_Compare)> um2(10, MyKey2_Hash, MyKey2_Compare); 
     um2 = {

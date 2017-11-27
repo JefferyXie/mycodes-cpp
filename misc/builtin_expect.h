@@ -88,7 +88,7 @@ private:
 
 //
 void
-fixed_condition()
+run_builtin_expect() // fixed_condition()
 {
     {
         Clock clock;
