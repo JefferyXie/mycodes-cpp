@@ -161,4 +161,9 @@ operator<< (std::basic_ostream<charT, traits>& s,
               << formatter::centered(#name, '<')\
               << std::endl;
 
+#define SECTION_BEGIN(name)                     \
+    std::cout << std::setw(80)                  \
+              << formatter::centered(#name, '-')\
+              << std::endl;
+
 #endif
