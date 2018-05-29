@@ -134,6 +134,8 @@ std::basic_ostream<charT, traits>&
 operator<< (std::basic_ostream<charT, traits>& s,
             const center_helper<charT, traits>& c)
 {
+    // make sure the default adjustfield is valid
+    std::cout << std::right;
     char fill_default = s.fill(c.fill_);
     std::streamsize w = s.width();
     if (w > c.str_.length()) {
@@ -152,13 +154,15 @@ operator<< (std::basic_ostream<charT, traits>& s,
 } // end namespace formatter
 
 #define FUNC_BEGIN(name)                        \
-    std::cout << std::setw(80)                  \
+    std::cout << "\n"                           \
+              << std::setw(80)                  \
               << formatter::centered(#name, '>')\
               << std::endl;
 
 #define FUNC_END(name)                          \
     std::cout << std::setw(80)                  \
               << formatter::centered(#name, '<')\
+              << "\n"                           \
               << std::endl;
 
 #define SECTION_BEGIN(name)                     \
