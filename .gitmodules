@@ -1,0 +1,6 @@
+[submodule "__learn/cppcon2016"]
+	path = __learn/cppcon2016
+	url = https://github.com/CppCon/CppCon2016.git
+[submodule "__learn/cppcon2017"]
+	path = __learn/cppcon2017
+	url = https://github.com/CppCon/CppCon2017.git
