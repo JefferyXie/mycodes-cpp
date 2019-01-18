@@ -7,11 +7,8 @@
 #include "../language/copy_elision.h"
 #include "../language/matrix.h"
 #include "../language/sizeof.h"
-#include "../language/MyList.h"
-#include "../language/MyQueue.h"
 #include "../language/template_constraints.h"
 #include "../language/operatornewdelete.h"
-#include "../language/mysmartpointer.h"
 #include "../language/memoryleakdetector.h"
 #include "../language/circularbuf.h"
 #include "../language/flagset.h"
@@ -460,36 +457,6 @@ TEST(DISABLED_language, sizeof_) {
     //	copy(data.begin(), data.end(), ostream_iterator<stlClass>(cout, " * "));
 }
 
-TEST(DISABLED_language, MyList) {
-    MyList<int> olist;
-    int i_2 = 2;
-    int i_3 = 3;
-    int i_5 = 5;
-    int i_8 = 8;
-    int i_7 = 7;
-    int i_0 = 0;
-    int i_11 = 11;
-    int i_10 = 10;
-    olist.Add(i_3);
-    olist.Add(i_5);
-//    olist.Add(i_2);
-    ListNode<int>* p = olist.Find(i_3);
-    p = olist.Insert(p, i_8);
-    olist.Insert(p, i_7);
-    olist.Insert2Head(i_0);
-    olist.Insert(p, i_11);
-    olist.Insert2End(i_5);
-    olist.Insert2End(i_3);
-    olist.Remove(i_8);
-    p = olist.Insert2Head(i_10);
-    olist.Remove(i_10);
-
-//    olist.Display();
-
-    olist.Reverse();
-    olist.Display();
-}
-
 TEST(DISABLED_language, lib) {
 /*
     SharedClass shObj;
@@ -529,88 +496,6 @@ TEST(DISABLED_language, lambda) {
 	lam1(&a);
 }
 
-TEST(DISABLED_language, MyQuque_int) {
-    MyQueue<int> q1, q2;
-    for (int i = 0; i < 100; ++i) {
-        q1.Push(i);
-        cout << q1.ToString() << endl;
-    }
-    while (q1.Length() > 0) {
-        cout << q1.Pop() << ", ";
-        cout << q1.ToString() << endl;
-    }
-    cout << endl;
-
-    cout << "--------------------------------------------------" << endl;
-
-    auto writer = [&q2] {
-        this_thread::sleep_for(chrono::seconds(10));
-        for (int i = 0; i < 100; ++i) {
-            q2.Push(i);
-            cout << i << " pushed * " << q2.ToString() << endl;
-            this_thread::sleep_for(chrono::milliseconds(100));
-        }
-    };
-    auto reader = [&q2] {
-        while (1) {
-            int i = q2.Pop();
-            cout << i << " poped * " << q2.ToString() << endl;
-            this_thread::sleep_for(chrono::milliseconds(30));
-        }
-    };
-
-    thread th_writer(writer); 
-    thread th_reader(reader);
-
-    th_writer.join();
-    th_reader.join();
-}
-
-TEST(DISABLED_language, MyQuque_class) {
-    {
-        MyQueue<MyMember> q1;
-        for (int i = 0; i < 100; ++i) {
-            q1.Push(MyMember());
-            cout << q1.ToString() << endl;
-        }
-        while (q1.Length() > 0) {
-            cout << q1.Pop().ToString() << ", ";
-            cout << q1.ToString() << endl;
-        }
-    }
-    cout << endl;
-
-    cout << "--------------------------------------------------" << endl;
-
-    {
-        bool writter_finished = false;
-        MyQueue<MyMember> q2;
-        auto writer = [&q2, &writter_finished] {
-            this_thread::sleep_for(chrono::seconds(10));
-            for (int i = 0; i < 100; ++i) {
-                q2.Push(MyMember());
-                cout << i << " pushed * " << q2.ToString() << endl;
-                this_thread::sleep_for(chrono::milliseconds(100));
-            }
-            writter_finished = true;
-        };
-        auto reader = [&q2, &writter_finished] {
-            while (!writter_finished || q2.Length() > 0) {
-                auto i = q2.Pop().ToString();
-                cout << i << " poped * " << q2.ToString() << endl;
-                this_thread::sleep_for(chrono::milliseconds(30));
-            }
-        };
-
-        thread th_writer(writer); 
-        thread th_reader(reader);
-
-        th_writer.join();
-        th_reader.join();
-    }
-    cout << "test end!" << endl;
-}
-
 TEST(DISABLED_language, operatornewdelete) {
 #if CUSTOM_NEW_ENABLED > 0
     int* a = new int;
@@ -629,34 +514,6 @@ TEST(DISABLED_language, operatornewdelete) {
     auto p2 = new OpNewDelete[2];
     delete[] p2;
 #endif
-}
-
-TEST(DISABLED_language, mysmartpointer) {
-    MySmartPointer<int> s1(new int(2));
-    MySmartPointer<int> s2(s1);
-    MySmartPointer<int> s3 = s1;
-
-    MySmartPointer<int> s4(new int(5));
-    s4 = s1;
-
-    MySmartPointer<int> s5;
-    s5 = MySmartPointer<int>(new int(9));
-
-    MySmartPointer<Plain> s11(new Plain());
-    MySmartPointer<Plain> s22(s11);
-    MySmartPointer<Plain> s33 = s11;
-
-    MySmartPointer<Plain> s44(new Plain());
-    s44 = s11;
-
-    MySmartPointer<Plain> s55;
-    s55 = MySmartPointer<Plain>(new Plain());
-
-    s44.reset(new Plain());
-    s44.reset(s55.get());
-
-    s44.reset(new Plain());
-    s44.reset(s55.get());
 }
 
 TEST(language, memoryleakdetector) {

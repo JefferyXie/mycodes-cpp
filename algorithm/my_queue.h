@@ -1,20 +1,20 @@
-#ifndef MYQUEUE_H
-#define MYQUEUE_H
+#ifndef MY_QUEUE_H
+#define MY_QUEUE_H
 
 #include "../main/header.h"
 
 #define DEFAULT_QUEUE_SIZE 2
 
-template <class T> class MyQueue {
+template <class T> class my_queue {
 public:
-    MyQueue() {
+    my_queue() {
         //_head = new T[DEFAULT_QUEUE_SIZE];
         _head = new T*[DEFAULT_QUEUE_SIZE];
         _offset = 0;
         _length = 0;
         _capacity = DEFAULT_QUEUE_SIZE;
     }    
-    ~MyQueue() {
+    ~my_queue() {
         for (int i = 0; i < _length+_offset; ++i) {
             delete _head[i];
             _head[i] = NULL;
@@ -39,7 +39,7 @@ private:
     mutex _mu;
 };
 
-template<class T> void MyQueue<T>::Push(const T& v) {
+template<class T> void my_queue<T>::Push(const T& v) {
     lock_guard<mutex> lg(_mu);
     if (_length + _offset >= _capacity) {
         enlarge();
@@ -48,7 +48,7 @@ template<class T> void MyQueue<T>::Push(const T& v) {
     _head[_length+_offset] = new T(v);
     _length++;
 }
-template<class T> void MyQueue<T>::Push(T&& v) {
+template<class T> void my_queue<T>::Push(T&& v) {
     lock_guard<mutex> lg(_mu);
     if (_length + _offset >= _capacity) {
         enlarge();
@@ -59,7 +59,7 @@ template<class T> void MyQueue<T>::Push(T&& v) {
     _length++;
 }
 
-template<class T> T MyQueue<T>::Pop() {
+template<class T> T my_queue<T>::Pop() {
     while (_length <= 0) {
         cout << "yield" << endl;
         this_thread::sleep_for(chrono::seconds(1));
@@ -70,7 +70,7 @@ template<class T> T MyQueue<T>::Pop() {
     return *(_head[_offset++]);
 }
 
-template<class T> string MyQueue<T>::ToString() {
+template<class T> string my_queue<T>::ToString() {
     string str;
     str += "capacity:" + to_string(_capacity);
     str += ",offset:" + to_string(_offset);
@@ -78,7 +78,7 @@ template<class T> string MyQueue<T>::ToString() {
     return str;
 }
 
-template<class T> void MyQueue<T>::enlarge() {
+template<class T> void my_queue<T>::enlarge() {
     if (_length+_offset < _capacity) return;
 
     _capacity *= 2;
@@ -89,11 +89,10 @@ template<class T> void MyQueue<T>::enlarge() {
     _offset = 0;
 }
 
-template<class T> void MyQueue<T>::reset() {
+template<class T> void my_queue<T>::reset() {
     delete[] _head;
     _head = NULL;
 }
 
 #endif
-
 

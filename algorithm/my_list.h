@@ -1,13 +1,13 @@
 #include "../main/header.h"
 #include "../main/node.h"
 
-template<class T> class MyList
+template<class T> class my_list
 {
 public:
-    MyList();
-    virtual ~MyList();
-    MyList(const MyList& other);
-    MyList& operator=(const MyList& other);
+    my_list();
+    virtual ~my_list();
+    my_list(const my_list& other);
+    my_list& operator=(const my_list& other);
 
     ListNode<T>* Insert(ListNode<T>* pBefore, T& v);
     ListNode<T>* Insert2Head(T& v);
@@ -27,13 +27,13 @@ private:
     ListNode<T>* m_pCurrent;
 };
 
-template<class T> MyList<T>::MyList()
+template<class T> my_list<T>::my_list()
 {
     m_pHead = NULL;
     m_pCurrent = NULL;
 }
 
-template<class T> MyList<T>::~MyList()
+template<class T> my_list<T>::~my_list()
 {
     ListNode<T>* pNode = m_pHead;
     while (NULL != pNode)
@@ -44,7 +44,7 @@ template<class T> MyList<T>::~MyList()
     }
 }
 
-template<class T> MyList<T>::MyList(const MyList<T>& other)
+template<class T> my_list<T>::my_list(const my_list<T>& other)
 {
     if (this != &other)
     {
@@ -53,7 +53,7 @@ template<class T> MyList<T>::MyList(const MyList<T>& other)
     }
 }
 
-template<class T> MyList<T>& MyList<T>::operator=(const MyList<T>& rhs)
+template<class T> my_list<T>& my_list<T>::operator=(const my_list<T>& rhs)
 {
     if (this == &rhs) return *this; // handle self assignment
     m_pHead = rhs.GetHead();
@@ -61,7 +61,7 @@ template<class T> MyList<T>& MyList<T>::operator=(const MyList<T>& rhs)
     return *this;
 }
 
-template<class T> ListNode<T>* MyList<T>::Insert(ListNode<T>* pBefore, T& v)
+template<class T> ListNode<T>* my_list<T>::Insert(ListNode<T>* pBefore, T& v)
 {
     ListNode<T>* pNew = new ListNode<T>(v, NULL);
     if (NULL != pBefore)
@@ -79,13 +79,13 @@ template<class T> ListNode<T>* MyList<T>::Insert(ListNode<T>* pBefore, T& v)
 }
 
 
-template<class T> ListNode<T>* MyList<T>::Insert2Head(T& v)
+template<class T> ListNode<T>* my_list<T>::Insert2Head(T& v)
 {
     m_pHead = new ListNode<T>(v, m_pHead);
     return m_pHead;
 }
 
-template<class T> ListNode<T>* MyList<T>::Insert2End(T& v)
+template<class T> ListNode<T>* my_list<T>::Insert2End(T& v)
 {
     ListNode<T>* pTail = m_pCurrent;
     while (NULL != pTail && NULL != pTail->GetPNext())
@@ -95,12 +95,12 @@ template<class T> ListNode<T>* MyList<T>::Insert2End(T& v)
     return Insert(pTail, v);
 }
 
-template<class T> ListNode<T>* MyList<T>::Add(T& v)
+template<class T> ListNode<T>* my_list<T>::Add(T& v)
 {
     return Insert2End(v);
 }
 
-template<class T> void MyList<T>::Remove(T& v)
+template<class T> void my_list<T>::Remove(T& v)
 {
     ListNode<T>* p = m_pHead;
     ListNode<T>* pPre = NULL;
@@ -127,7 +127,7 @@ template<class T> void MyList<T>::Remove(T& v)
     }
 }
 
-template<class T> ListNode<T>* MyList<T>::Find(T& v)
+template<class T> ListNode<T>* my_list<T>::Find(T& v)
 {
     ListNode<T>* p = m_pHead;
     while (NULL != p)
@@ -139,7 +139,7 @@ template<class T> ListNode<T>* MyList<T>::Find(T& v)
     return p;
 }
 
-template<class T> ListNode<T>* MyList<T>::Reverse()
+template<class T> ListNode<T>* my_list<T>::Reverse()
 {
     ListNode<T>* p = m_pHead;
     ListNode<T>* pOldPre = NULL;
@@ -155,7 +155,7 @@ template<class T> ListNode<T>* MyList<T>::Reverse()
     return m_pHead;
 }
 
-template<class T> int MyList<T>::Size()
+template<class T> int my_list<T>::Size()
 {
     int len = 0;
     ListNode<T>* p = m_pHead;
@@ -167,7 +167,7 @@ template<class T> int MyList<T>::Size()
     return len;
 }
 
-template<class T> void MyList<T>::Display()
+template<class T> void my_list<T>::Display()
 {
     cout << "List size is " << Size() << endl;
     int i = 0;
@@ -178,5 +178,4 @@ template<class T> void MyList<T>::Display()
         p = p->GetPNext();
     }
 }
-
 

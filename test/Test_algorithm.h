@@ -2,7 +2,6 @@
 #include "../main/header.h"
 #include "../algorithm/find_common_ancestor.h"
 #include "../algorithm/traversetree.h"
-#include "../algorithm/judgebitree.h"
 #include "../algorithm/num_days_between.h"
 #include "../algorithm/similarpair.h"
 #include "../algorithm/k_diff_pairs.h"
@@ -18,6 +17,10 @@
 #include "../algorithm/deque_maxk.h"
 #include "../algorithm/encryption.h"
 #include "../algorithm/remove_duplicates.h"
+#include "../algorithm/my_list.h"
+#include "../algorithm/my_queue.h"
+#include "../algorithm/my_smartpointer.h"
+#include "../interview/optiver/judgebitree.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
@@ -644,6 +647,145 @@ TEST(algorithm, removeduplicates) {
     int len4 = remove_duplicates_1(arr4, sizeof(arr4)/sizeof(arr4[0]));
     printarr(arr4, len4);
     EXPECT_EQ(len4, 4);
- }
+}
 
+TEST(DISABLED_algorithm, my_list) {
+    my_list<int> olist;
+    int i_2 = 2;
+    int i_3 = 3;
+    int i_5 = 5;
+    int i_8 = 8;
+    int i_7 = 7;
+    int i_0 = 0;
+    int i_11 = 11;
+    int i_10 = 10;
+    olist.Add(i_3);
+    olist.Add(i_5);
+//    olist.Add(i_2);
+    ListNode<int>* p = olist.Find(i_3);
+    p = olist.Insert(p, i_8);
+    olist.Insert(p, i_7);
+    olist.Insert2Head(i_0);
+    olist.Insert(p, i_11);
+    olist.Insert2End(i_5);
+    olist.Insert2End(i_3);
+    olist.Remove(i_8);
+    p = olist.Insert2Head(i_10);
+    olist.Remove(i_10);
+
+//    olist.Display();
+
+    olist.Reverse();
+    olist.Display();
+}
+
+TEST(DISABLED_algorithm, my_quque_int) {
+    my_queue<int> q1, q2;
+    for (int i = 0; i < 100; ++i) {
+        q1.Push(i);
+        cout << q1.ToString() << endl;
+    }
+    while (q1.Length() > 0) {
+        cout << q1.Pop() << ", ";
+        cout << q1.ToString() << endl;
+    }
+    cout << endl;
+
+    cout << "--------------------------------------------------" << endl;
+
+    auto writer = [&q2] {
+        this_thread::sleep_for(chrono::seconds(10));
+        for (int i = 0; i < 100; ++i) {
+            q2.Push(i);
+            cout << i << " pushed * " << q2.ToString() << endl;
+            this_thread::sleep_for(chrono::milliseconds(100));
+        }
+    };
+    auto reader = [&q2] {
+        while (1) {
+            int i = q2.Pop();
+            cout << i << " poped * " << q2.ToString() << endl;
+            this_thread::sleep_for(chrono::milliseconds(30));
+        }
+    };
+
+    thread th_writer(writer); 
+    thread th_reader(reader);
+
+    th_writer.join();
+    th_reader.join();
+}
+
+TEST(DISABLED_algorithm, my_quque_class) {
+    {
+        my_queue<MyMember> q1;
+        for (int i = 0; i < 100; ++i) {
+            q1.Push(MyMember());
+            cout << q1.ToString() << endl;
+        }
+        while (q1.Length() > 0) {
+            cout << q1.Pop().ToString() << ", ";
+            cout << q1.ToString() << endl;
+        }
+    }
+    cout << endl;
+
+    cout << "--------------------------------------------------" << endl;
+
+    {
+        bool writter_finished = false;
+        my_queue<MyMember> q2;
+        auto writer = [&q2, &writter_finished] {
+            this_thread::sleep_for(chrono::seconds(10));
+            for (int i = 0; i < 100; ++i) {
+                q2.Push(MyMember());
+                cout << i << " pushed * " << q2.ToString() << endl;
+                this_thread::sleep_for(chrono::milliseconds(100));
+            }
+            writter_finished = true;
+        };
+        auto reader = [&q2, &writter_finished] {
+            while (!writter_finished || q2.Length() > 0) {
+                auto i = q2.Pop().ToString();
+                cout << i << " poped * " << q2.ToString() << endl;
+                this_thread::sleep_for(chrono::milliseconds(30));
+            }
+        };
+
+        thread th_writer(writer); 
+        thread th_reader(reader);
+
+        th_writer.join();
+        th_reader.join();
+    }
+    cout << "test end!" << endl;
+}
+
+TEST(DISABLED_algorithm, my_smartpointer) {
+    my_smartpointer<int> s1(new int(2));
+    my_smartpointer<int> s2(s1);
+    my_smartpointer<int> s3 = s1;
+
+    my_smartpointer<int> s4(new int(5));
+    s4 = s1;
+
+    my_smartpointer<int> s5;
+    s5 = my_smartpointer<int>(new int(9));
+
+    my_smartpointer<Plain> s11(new Plain());
+    my_smartpointer<Plain> s22(s11);
+    my_smartpointer<Plain> s33 = s11;
+
+    my_smartpointer<Plain> s44(new Plain());
+    s44 = s11;
+
+    my_smartpointer<Plain> s55;
+    s55 = my_smartpointer<Plain>(new Plain());
+
+    s44.reset(new Plain());
+    s44.reset(s55.get());
+
+    s44.reset(new Plain());
+    s44.reset(s55.get());
+}
 
