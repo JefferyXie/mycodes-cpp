@@ -1,13 +1,13 @@
 #include "../main/header.h"
 #include "../main/node.h"
 
-template<class T> class MyDictionary
+template<class T> class my_dictionary
 {
 public:
-    MyDictionary();
-    virtual ~MyDictionary();
-    MyDictionary(const MyDictionary& other);
-    MyDictionary& operator=(const MyDictionary& other);
+    my_dictionary();
+    virtual ~my_dictionary();
+    my_dictionary(const my_dictionary& other);
+    my_dictionary& operator=(const my_dictionary& other);
 
     TreeNode<T>* Add(const T& v);
     void Remove(const T& v);
@@ -30,28 +30,28 @@ private:
     TreeNode<T>* m_pRoot;
 };
 
-template<class T> MyDictionary<T>::MyDictionary()
+template<class T> my_dictionary<T>::my_dictionary()
 {
     m_pRoot = NULL;
 }
 
-template<class T> MyDictionary<T>::~MyDictionary<T>()
+template<class T> my_dictionary<T>::~my_dictionary<T>()
 {
     int num = Destroy(m_pRoot);
-    cout << "~MyDictionary(): " << num << " TreeNode(s) are deleted." << endl;
+    cout << "~my_dictionary(): " << num << " TreeNode(s) are deleted." << endl;
 }
 
-template<class T> MyDictionary<T>::MyDictionary(const MyDictionary<T>& other)
+template<class T> my_dictionary<T>::my_dictionary(const my_dictionary<T>& other)
 {
 
 }
 
-template<class T> MyDictionary<T>& MyDictionary<T>::operator=(const MyDictionary<T>& other)
+template<class T> my_dictionary<T>& my_dictionary<T>::operator=(const my_dictionary<T>& other)
 {
     return *this;
 }
 
-template<class T> TreeNode<T>* MyDictionary<T>::Add(const T& v)
+template<class T> TreeNode<T>* my_dictionary<T>::Add(const T& v)
 {
     TreeNode<T>* pNode = Add(v, m_pRoot);
     if (NULL == pNode)
@@ -60,7 +60,7 @@ template<class T> TreeNode<T>* MyDictionary<T>::Add(const T& v)
     }
     return pNode;
 }
-template<class T> TreeNode<T>* MyDictionary<T>::Add(const T& v, TreeNode<T>*& root)
+template<class T> TreeNode<T>* my_dictionary<T>::Add(const T& v, TreeNode<T>*& root)
 {
     TreeNode<T>* pNode = NULL;
     if (NULL == root)
@@ -83,7 +83,7 @@ template<class T> TreeNode<T>* MyDictionary<T>::Add(const T& v, TreeNode<T>*& ro
     return pNode;
 }
 
-template<class T> TreeNode<T>* MyDictionary<T>::Find(const T& v)
+template<class T> TreeNode<T>* my_dictionary<T>::Find(const T& v)
 {
     TreeNode<T>* pNode = Find(v, m_pRoot);
     if (NULL == pNode)
@@ -92,7 +92,7 @@ template<class T> TreeNode<T>* MyDictionary<T>::Find(const T& v)
     }
     return pNode;
 }
-template<class T> TreeNode<T>* MyDictionary<T>::Find(const T& v, TreeNode<T>* pStart)
+template<class T> TreeNode<T>* my_dictionary<T>::Find(const T& v, TreeNode<T>* pStart)
 {
     if (NULL == pStart) return NULL;
 
@@ -108,11 +108,11 @@ template<class T> TreeNode<T>* MyDictionary<T>::Find(const T& v, TreeNode<T>* pS
     return pNode;
 }
 
-template<class T> void MyDictionary<T>::Remove(const T& v)
+template<class T> void my_dictionary<T>::Remove(const T& v)
 {
     Remove(v, m_pRoot);
 }
-template<class T> void MyDictionary<T>::Remove(const T& v, TreeNode<T>*& pStart)
+template<class T> void my_dictionary<T>::Remove(const T& v, TreeNode<T>*& pStart)
 {
     if (NULL == pStart) return;
 
@@ -148,14 +148,14 @@ template<class T> void MyDictionary<T>::Remove(const T& v, TreeNode<T>*& pStart)
     }
 }
 
-template<class T> void MyDictionary<T>::Display()
+template<class T> void my_dictionary<T>::Display()
 {
     cout << "Dictionary size is " << Size() << endl;
     int num = 0;
     _display(m_pRoot, num, "root");
 }
 
-template<class T> void MyDictionary<T>::_display(TreeNode<T>* root, int& num, string ext)
+template<class T> void my_dictionary<T>::_display(TreeNode<T>* root, int& num, string ext)
 {
     if (NULL != root)
     {
@@ -165,11 +165,11 @@ template<class T> void MyDictionary<T>::_display(TreeNode<T>* root, int& num, st
     }
 }
 
-template<class T> int MyDictionary<T>::Size()
+template<class T> int my_dictionary<T>::Size()
 {
     return _size(m_pRoot);
 }
-template<class T> int MyDictionary<T>::_size(TreeNode<T>* root)
+template<class T> int my_dictionary<T>::_size(TreeNode<T>* root)
 {
     if (NULL == root) return 0;
     int len = 1;
@@ -178,7 +178,7 @@ template<class T> int MyDictionary<T>::_size(TreeNode<T>* root)
     return len;
 }
 
-template<class T> int MyDictionary<T>::Destroy(TreeNode<T>* root)
+template<class T> int my_dictionary<T>::Destroy(TreeNode<T>* root)
 {
     int num = 0;
     if (NULL != root)
