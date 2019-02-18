@@ -2,7 +2,6 @@
 #include "../main/header.h"
 #include "../algorithm/find_common_ancestor.h"
 #include "../algorithm/traversetree.h"
-#include "../algorithm/judgebitree.h"
 #include "../algorithm/num_days_between.h"
 #include "../algorithm/similarpair.h"
 #include "../algorithm/k_diff_pairs.h"
@@ -18,6 +17,7 @@
 #include "../algorithm/deque_maxk.h"
 #include "../algorithm/encryption.h"
 #include "../algorithm/remove_duplicates.h"
+#include "../interview/optiver/judgebitree.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
