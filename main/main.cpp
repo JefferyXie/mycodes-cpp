@@ -1,4 +1,3 @@
-/*
 #include <gtest/gtest.h>
 #include "header.h"
 #include "../test/Test_Fixture.h"
@@ -10,12 +9,13 @@ int main(int argc, char **argv) {
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();
 }
-*/
+
+/*
 #include "header.h"
 #include "../misc/builtin_expect.h"
 
 int main(int, char **) {
-    fixed_condition();
+    run_builtin_expect(); // fixed_condition()
     return 0;
 }
-
+*/

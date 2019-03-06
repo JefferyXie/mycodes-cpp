@@ -1,11 +1,12 @@
-#ifndef MAX_SUBARRAY_MOD_H
-#define MAX_SUBARRAY_MOD_H
+#ifndef SUBARRAY_MAX_MOD_H
+#define SUBARRAY_MAX_MOD_H
 
 #include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/maximise-sum
 // http://stackoverflow.com/questions/31113993/maximum-subarray-sum-modulo-m
-long long max_subarray_mod(long long* arr, int length, long long M) {
+long long subarray_max_mod(long long* arr, int length, long long M)
+{
     long long mods[length];
     memset(mods, 0, sizeof(mods));
     long long sum = 0;

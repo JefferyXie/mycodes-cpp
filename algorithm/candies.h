@@ -4,7 +4,7 @@
 #include "../main/header.h"
 
 // 
-// https://www.hackerrank.com/challenges/candies/problem?isFullScreen=false
+// https://www.hackerrank.com/challenges/candies/problem
 
 // 
 // solution 1)

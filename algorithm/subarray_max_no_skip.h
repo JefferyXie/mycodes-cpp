@@ -1,5 +1,5 @@
-#ifndef MAX_SUM_NO_SKIP_H
-#define MAX_SUM_NO_SKIP_H
+#ifndef SUBARRAY_MAX_NO_SKIP_H
+#define SUBARRAY_MAX_NO_SKIP_H
 
 #include "../main/header.h"
 
@@ -22,7 +22,7 @@
 //             dp[i - 2] + a[i], <- skip a[i - 1]
 //            )
  
-int max_sum_no_skip(int arr[], int n)
+int subarray_max_no_skip(int arr[], int n)
 {
     // TODO...
     return 0;

@@ -6,7 +6,7 @@
 #include "../algorithm/similarpair.h"
 #include "../algorithm/k_diff_pairs.h"
 #include "../algorithm/connected_cell_in_grid.h"
-#include "../algorithm/max_subarray_mod.h"
+#include "../algorithm/subarray_max_mod.h"
 #include "../algorithm/find_missing_numbers.h"
 #include "../algorithm/bike_racer.h"
 #include "../algorithm/count_luck.h"
@@ -210,9 +210,9 @@ TEST(DISABLED_algorithm, maxconnectedcells) {
     EXPECT_EQ(b, 15);
 }
 
-TEST(DISABLED_algorithm, maxsubarraymod) {
+TEST(DISABLED_algorithm, subarray_max_mod) {
     long long arr[] = {3,3,9,9,5};
-    auto a = max_subarray_mod(arr, sizeof(arr)/sizeof(arr[0]), 7);
+    auto a = subarray_max_mod(arr, sizeof(arr)/sizeof(arr[0]), 7);
     EXPECT_EQ(a, 6);
     long long arr1[] = {
         846930887, 1681692778, 1714636916, 1957747794, 424238336, 719885387, 1649760493, 
@@ -223,7 +223,7 @@ TEST(DISABLED_algorithm, maxsubarraymod) {
         1059961394, 2089018457, 628175012, 1656478043, 1131176230, 1653377374, 859484422,
         1914544920, 608413785, 756898538, 1734575199, 1973594325, 149798316, 2038664371,
         1129566414 };
-    auto b = max_subarray_mod(arr1, sizeof(arr)/sizeof(arr[0]), 1804289384);
+    auto b = subarray_max_mod(arr1, sizeof(arr)/sizeof(arr[0]), 1804289384);
     EXPECT_EQ(b, 1745498720);
 }
 
