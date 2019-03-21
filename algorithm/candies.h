@@ -8,7 +8,8 @@
 
 // 
 // solution 1)
-void inc_last(int last, vector<int>& candies, const vector<int>& arr) {
+void inc_last(int last, vector<int>& candies, const vector<int>& arr)
+{
     candies[last] += 1;
     if (last <= 0) return;
 
@@ -16,7 +17,8 @@ void inc_last(int last, vector<int>& candies, const vector<int>& arr) {
         inc_last(last-1, candies, arr);
     }
 }
-long candies_1(int n, const vector<int>& arr) {
+long candies_1(int n, const vector<int>& arr)
+{
     vector<int> candies;
     candies.resize(arr.size(), 1);
     for (int i = 1; i < n; ++i) {
@@ -32,7 +34,8 @@ long candies_1(int n, const vector<int>& arr) {
 
 // 
 // solution 2), same idea as 1) but withoout recursive
-long candies_2(int n, const vector<int>& arr) {
+long candies_2(int n, const vector<int>& arr)
+{
 	vector<int> candies;
     candies.resize(arr.size(), 1);
 	for (int i = 1; i < n; i++) {
@@ -52,7 +55,8 @@ long candies_2(int n, const vector<int>& arr) {
 
 //
 // solution 3), ultimate version, best performance!
-long candies_3(int n, const vector<int>& arr) {
+long candies_3(int n, const vector<int>& arr)
+{
     vector<int> dp;
     dp.resize(arr.size(), 1);
     // forward track, guarantee right side higher score gets more candies
