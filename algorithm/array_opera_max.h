@@ -8,7 +8,8 @@
 // https://www.hackerrank.com/challenges/crush/editorial
 // 
 
-long array_opera_max(int n, vector<vector<int>> queries)
+long
+array_opera_max(int n, vector<vector<int>> queries)
 {
     vector<int> arr(n, 0);
     for (auto& q : queries) {
