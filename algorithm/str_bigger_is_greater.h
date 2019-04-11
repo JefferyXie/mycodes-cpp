@@ -1,5 +1,5 @@
-#ifndef BIGGER_IS_GREATER_H
-#define BIGGER_IS_GREATER_H
+#ifndef STR_BIGGER_IS_GREATER_H
+#define STR_BIGGER_IS_GREATER_H
 
 #include "../main/header.h"
 
@@ -42,6 +42,40 @@ void bigger_is_greater() {
         }
         cout << (bExist ? arr : "no answer") << endl;
     }
+}
+
+string str_bigger_is_greater(string w)
+{
+    auto len = w.size();
+    if (len <= 1) return "no answer";
+
+    auto i = len-1;
+    do {
+        if (w[i] > w[i-1]) break;
+    } while (--i);
+    if (i == 0) return "no answer";
+
+    // find w[i-1]'s upper bound from [i, len)
+    auto bound = std::upper_bound(w.rbegin(), w.rbegin()+len-i, w[i-1]);
+    auto bound_idx = len - std::distance(w.rbegin(), bound) - 1;
+//    cout << "pos:" << i << ",bound_idx:" << bound_idx << endl;
+
+    // swap w[bound_idx] and w[i-1]
+    auto t = w[i-1];
+    w[i-1] = w[bound_idx];
+    w[bound_idx] = t;
+
+    // reverse [i, len)
+    auto lt = i;
+    auto rt = len - 1;
+    while (lt < rt) {
+        auto t = w[lt];
+        w[lt] = w[rt];
+        w[rt] = t;
+        ++lt;
+        --rt;
+    }
+    return w;
 }
 
 #endif

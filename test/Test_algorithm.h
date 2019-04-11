@@ -4,7 +4,7 @@
 #include "../algorithm/traversetree.h"
 #include "../algorithm/num_days_between.h"
 #include "../algorithm/similarpair.h"
-#include "../algorithm/k_diff_pairs.h"
+#include "../algorithm/sort_k_diff_pairs.h"
 #include "../algorithm/connected_cell_in_grid.h"
 #include "../algorithm/subarray_max_mod.h"
 #include "../algorithm/find_missing_numbers.h"
@@ -187,7 +187,7 @@ TEST(DISABLED_algorithm, similarpair) {
 
 TEST(DISABLED_algorithm, kdiffparis) {
     vector<int> arr = { 1,5,3,4,2 };
-    int a = k_diff_pairs(arr, 2);
+    int a = sort_k_diff_pairs(arr, 2);
     EXPECT_EQ(a, 3);
 }
 

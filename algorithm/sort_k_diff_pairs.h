@@ -1,10 +1,15 @@
-#ifndef K_DIFF_PAIRS_H
-#define K_DIFF_PAIRS_H
+#ifndef SORT_K_DIFF_PAIRS_H
+#define SORT_K_DIFF_PAIRS_H
 
 #include "../main/header.h"
 
+//
 // https://www.hackerrank.com/challenges/pairs
-int k_diff_pairs(vector<int>& a, int k) {
+// 
+
+int
+sort_k_diff_pairs(vector<int>& a, int k)
+{
     int ans=0;
     sort(a.begin(),a.end());
     int i=0,j=i+1;
@@ -24,5 +29,3 @@ int k_diff_pairs(vector<int>& a, int k) {
 }
 
 #endif
-
-
