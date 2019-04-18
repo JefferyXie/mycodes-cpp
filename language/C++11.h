@@ -1332,10 +1332,12 @@ public:
             // produce cargos...
             for (int i = 0; i < num_cargos; ++i)
             {
+                // TODO: use a different cv notified by consume to avoid loop
                 while (_cargo != 0)
                     std::this_thread::yield();
                 std::unique_lock<mutex> lk(_mtx);
                 _cargo = i + 1;
+                // should notify after unlock
                 _cv.notify_one();
             }
 

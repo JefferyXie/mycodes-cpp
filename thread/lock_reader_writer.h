@@ -7,16 +7,19 @@
 /*
  * This implementation has quite a few drawbacks, though.
 
- 1) No fairness. Readers starve writers - writers won't execute unless all readers finish (readers == 0)
+ 1) No fairness. Readers starve writers - writers won't execute unless all
+    readers finish (readers == 0)
 
- You can fix that by tracking the number of pending read and write locks, and either stop acquiring read
- locks once there a pending write locks (though you'll then starve readers!), or randomly waking up either
- all readers or one writer (assuming you use separate condition variable, see section above).
+ You can fix that by tracking the number of pending read and write locks, and
+ either stop acquiring read locks once there a pending write locks (though you
+ will then starve readers!), or randomly waking up either all readers or one
+ writer (assuming you use separate condition variable, see section above).
 
  2) Locks aren't dealt out in the order they are requested
 
- To guarantee this, you'll need a real wait queue. You could e.g. create one condition variable for each
- waiter, and signal all readers or a single writer, both at the head of the queue, after releasing the lock.
+ To guarantee this, you'll need a real wait queue. You could e.g. create one
+ condition variable for each waiter, and signal all readers or a single writer,
+ both at the head of the queue, after releasing the lock.
 
  **/
 
@@ -76,7 +79,8 @@ void run_lock_reader_writer()
 }
 void* reader(void* arg)  
 {
-    int c = *static_cast<int*>(arg); printf("\nreader %d is created",c); sleep(1);
+    int c = *static_cast<int*>(arg);
+    printf("\nreader %d is created",c); sleep(1);
 
     s_locker.read_lock();
 

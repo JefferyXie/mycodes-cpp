@@ -16,13 +16,13 @@ struct CV_notify_before_unlock
         {
             std::unique_lock<std::mutex> lk(_mtx);
             _cv.wait(lk, [&]() {
-                    // this callback only executes after the mutex is released by other thread
-                    if (_cargo != 0) {
+                // this callback only executes after the mutex is released by other thread
+                if (_cargo != 0) {
                     cout << "there is cargo, should consume!" << endl;
                     return true;
-                    }
-                    return false;
-                    });
+                }
+                return false;
+            });
             // start consuming...
             cout << _cargo << endl;
             _cargo = 0;
@@ -67,12 +67,12 @@ struct CV_notify_after_unlock
         {
             std::unique_lock<std::mutex> lk(_mtx);
             _cv.wait(lk, [&]() {
-                    if (_cargo != 0) {
+                if (_cargo != 0) {
                     cout << "there is cargo, should consume!" << endl;
                     return true;
-                    }
-                    return false;
-                    });
+                }
+                return false;
+            });
             // start consuming...
             cout << _cargo << endl;
             _cargo = 0;
@@ -169,5 +169,4 @@ struct CV_notify_all
 };
 
 #endif
-
 

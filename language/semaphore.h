@@ -52,7 +52,9 @@ public:
         while (true) {
             int count = count_.load(std::memory_order_relaxed);
             if (count > 0) {
-                if (count_.compare_exchange_weak(count, count-1, std::memory_order_acq_rel, std::memory_order_relaxed)) {
+                if (count_.compare_exchange_weak(count, count-1,
+                    std::memory_order_acq_rel,
+                    std::memory_order_relaxed)) {
                     break;
                 }
             }
@@ -62,7 +64,9 @@ public:
     bool try_wait() {
         int count = count_.load(std::memory_order_relaxed);
         if (count > 0) {
-            if (count_.compare_exchange_strong(count, count-1, std::memory_order_acq_rel, std::memory_order_relaxed)) {
+            if (count_.compare_exchange_strong(count, count-1,
+                std::memory_order_acq_rel,
+                std::memory_order_relaxed)) {
                 return true;
             }
         }
