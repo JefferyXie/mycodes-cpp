@@ -3,6 +3,9 @@
 
 #include "../main/header.h"
 
+// 
+// https://embeddedartistry.com/blog/2017/4/6/circular-buffers-in-cc
+// 
 class CircularBuffer {
 public:
     CircularBuffer() : _length(0), _offset(0) { }
@@ -40,6 +43,11 @@ private:
     int getBufSize() { return BUFFERSIZE; }
 
 private:
+	// TODO: use array pointer than fixed size array
+	// _capacity = size;
+	// char* _buff = nullptr;
+	// _buff = new T[_capacity];
+	// delete[] _buff;
     static const int BUFFERSIZE = 16;
     char _buff[BUFFERSIZE] = {0};
     int _length;

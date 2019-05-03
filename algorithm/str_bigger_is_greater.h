@@ -3,13 +3,16 @@
 
 #include "../main/header.h"
 
+// 
 // https://www.hackerrank.com/challenges/bigger-is-greater
 // 1), starting from end of string, find the character which is smaller than its right side one
 // 2), keep recording occurances of checked characters
 // 3), once 1) is found, change the character with the one that is LITTLE bigger which is recorded in 2)
 // 4), re-order the right side rest string so that it's the smallest by using 2)
-void bigger_is_greater() {
-    /* Enter your code here. Read input from STDIN. Print output to STDOUT */   
+// 
+void
+str_bigger_is_greater_v1()
+{
     int t = 0;
     cin >> t;
     const int a_int = (int)'a';
@@ -44,7 +47,8 @@ void bigger_is_greater() {
     }
 }
 
-string str_bigger_is_greater(string w)
+string
+str_bigger_is_greater_v2(string w)
 {
     auto len = w.size();
     if (len <= 1) return "no answer";
@@ -79,4 +83,3 @@ string str_bigger_is_greater(string w)
 }
 
 #endif
-

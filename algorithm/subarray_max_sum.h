@@ -8,7 +8,8 @@
 // 
 
 // solution 1), keep all steps' values, not space efficient
-vector<int> subarray_max_sum_1(vector<int> arr)
+vector<int>
+subarray_max_sum_1(vector<int> arr)
 {
     auto len = arr.size();
     vector<int> dp[3];
@@ -31,7 +32,8 @@ vector<int> subarray_max_sum_1(vector<int> arr)
 }
 
 // solution 2), just keep latest snap values
-vector<int> subarray_max_sum_2(vector<int> arr)
+vector<int>
+subarray_max_sum_2(vector<int> arr)
 {
     auto len = arr.size();
     int max_subarr_so_far = arr[0];
@@ -46,4 +48,3 @@ vector<int> subarray_max_sum_2(vector<int> arr)
 }
 
 #endif
-

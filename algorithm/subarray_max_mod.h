@@ -5,7 +5,8 @@
 
 // https://www.hackerrank.com/challenges/maximise-sum
 // http://stackoverflow.com/questions/31113993/maximum-subarray-sum-modulo-m
-long long subarray_max_mod(long long* arr, int length, long long M)
+long long
+subarray_max_mod(long long* arr, int length, long long M)
 {
     long long mods[length];
     memset(mods, 0, sizeof(mods));

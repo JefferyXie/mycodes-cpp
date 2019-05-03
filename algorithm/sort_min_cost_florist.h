@@ -7,7 +7,8 @@
 // https://www.hackerrank.com/challenges/greedy-florist/
 // 
 
-int sort_min_cost_florist(int k, vector<int> c)
+int
+sort_min_cost_florist(int k, vector<int> c)
 {
     sort(c.begin(), c.end());
     auto len = c.size();

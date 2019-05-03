@@ -7,7 +7,8 @@
 // https://www.hackerrank.com/challenges/angry-children
 // 
 
-int sort_min_fairness(int k, vector<int> arr)
+int
+sort_min_fairness(int k, vector<int> arr)
 {
 	sort(arr.begin(), arr.end());
 	int min_unfairness = arr[k - 1] - arr[0];

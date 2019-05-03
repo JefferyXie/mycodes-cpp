@@ -7,8 +7,8 @@
 // https://www.hackerrank.com/challenges/game-of-thrones
 // 
 
-// this practice gives a good example to count characters
-// by using integer (bits) than array
+// this practice gives a good example to count characters by using integer
+// (bits) than array
 string
 str_palindrome(string s)
 {

@@ -21,10 +21,12 @@
 //             dp[i - 1] + a[i], <- take two consecutives
 //             dp[i - 2] + a[i], <- skip a[i - 1]
 //            )
- 
+
 int subarray_max_no_skip(int arr[], int n)
 {
     // TODO...
+    // this might be similar idea as subarray_max_non_adjacent_dp_2(...) from
+    // subarray_max_no_adjacent.h
     return 0;
 }
 

@@ -21,7 +21,8 @@
 
 // 
 // solution 1), recursive version, doing a lot of duplicate call & calc
-long subarray_max_non_adjacent_recursive(const vector<int>& arr,
+long
+subarray_max_non_adjacent_recursive(const vector<int>& arr,
         unsigned int index, bool index_picked, long max_by_far)
 {
     if (index == 0) return max_by_far;
@@ -36,7 +37,8 @@ long subarray_max_non_adjacent_recursive(const vector<int>& arr,
 
 //
 // solution 2), using dynamic programming, keep intermediate results
-long subarray_max_non_adjacent_dp(const vector<int>& arr)
+long
+subarray_max_non_adjacent_dp(const vector<int>& arr)
 {
     auto len = arr.size();
 	// dp[0]: the max subset sum in range arr[0, i], given arr[i] is not selected
@@ -56,7 +58,8 @@ long subarray_max_non_adjacent_dp(const vector<int>& arr)
 
 //
 // solution 3), another way by using dynamic programming
-long subarray_max_non_adjacent_dp_2(const vector<int>& arr)
+long
+subarray_max_non_adjacent_dp_2(const vector<int>& arr)
 {
     auto len = arr.size();
     if (len == 0) return 0;
@@ -82,7 +85,8 @@ long subarray_max_non_adjacent_dp_2(const vector<int>& arr)
 //    the current element will be excl + current element (Note that only excl is considered
 //    because elements cannot be adjacent).
 // 3) At the end of the loop return max of incl and excl.
-long subarray_max_non_adjacent_dp_3(const vector<int>& arr)
+long
+subarray_max_non_adjacent_dp_3(const vector<int>& arr)
 {
     auto n = arr.size();
     int incl = arr[0];
@@ -103,4 +107,3 @@ long subarray_max_non_adjacent_dp_3(const vector<int>& arr)
 }
 
 #endif
-

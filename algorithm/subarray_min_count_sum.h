@@ -8,7 +8,8 @@
 
 // 
 // dynamic programming
-int subarray_min_count_sum(const vector<int>& arr, int sum)
+int
+subarray_min_count_sum(const vector<int>& arr, int sum)
 {
     auto len = arr.size();
     vector<vector<int>> dp;

@@ -17,8 +17,9 @@
 // 
 // Recursive
 // Overall: O(2^N)
-void subarray_equal_sum_1(const std::vector<int>& A, int currSum, int index, int sum,
-                          std::vector<int>& solution)
+void
+subarray_equal_sum_1(const std::vector<int>& A, int currSum, int index, int sum,
+                     std::vector<int>& solution)
 {
     if (index == (int)A.size()) return;
 
@@ -55,7 +56,8 @@ void subarray_equal_sum_1(const std::vector<int>& A, int currSum, int index, int
 //    Include element A[j-1], then subset[i][j] == subset[i-A[j-1]][j-1]
 // Overall: O(N^2)
 // 
-void subarray_equal_sum_2(const std::vector<int>& A, int sum)
+void
+subarray_equal_sum_2(const std::vector<int>& A, int sum)
 {
     int n = (int)A.size();
     // The value of subset[i][j] will be true if there is a 
@@ -68,7 +70,8 @@ void subarray_equal_sum_2(const std::vector<int>& A, int sum)
         subset[0][i] = true;
     }
  
-    // If sum is not 0 and set is empty, then answer is false since no element is available
+    // If sum is not 0 and set is empty, answer is false since no element
+    // is available
     for (int i = 1; i <= sum; i++)
     {
         subset[i][0] = false;
@@ -103,11 +106,12 @@ void subarray_equal_sum_2(const std::vector<int>& A, int sum)
 // Dynamic programming
 // http://stackoverflow.com/a/18308020/7169399
 // This version even returns the number of sub arrays that sum equal to target
-void subarray_equal_sum_3(const std::vector<int>& A, int sum)
+void
+subarray_equal_sum_3(const std::vector<int>& A, int sum)
 {
     int dp[sum + 1];
     dp[0] = 1;
-    int currentSum =0;
+    int currentSum = 0;
     for (int i = 0; i < (int)A.size(); i++)
     {
         currentSum += A[i];
@@ -121,4 +125,3 @@ void subarray_equal_sum_3(const std::vector<int>& A, int sum)
 }
 
 #endif
-

@@ -8,10 +8,12 @@
 // 
 
 //
-// buy all dates before the max price date, keep finding max price date afterwards over and over
-// instead of forward iteration, run the calc backwards makes the logic clear and easy
+// buy all dates before the max price date, keep finding max price date
+// afterwards over and over instead of forward iteration, run the calc 
+// backwards makes the logic clear and easy
 // 
-int stock_max_profit(vector<int> prices)
+int
+stock_max_profit(vector<int> prices)
 {
 	auto len = prices.size();
 	int profit = 0;
