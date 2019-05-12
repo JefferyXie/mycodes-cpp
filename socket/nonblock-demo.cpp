@@ -24,9 +24,9 @@
 //    Using poll() or select() with a non-blocking file descriptor gives you two advantages:
 // 
 //    a) You can set a timeout to block for;
-//    b) You can wait for any of a set of file descriptors to become useable.
+//    b) You can wait for any of a set of file descriptors to become available.
 //    If you only have a single file descriptor (socket) to wait for, and you don't mind 
-//    waiting indefinitely on it, then yes; you can just use a blocking call.
+//    waiting forever on it, then yes, you can just use a blocking call.
 
 //    The second advantage is really the killer use case for select() and friends. It means
 //    that you can handle multiple socket connections, as well as standard input and standard 

@@ -34,7 +34,7 @@ int main()
     struct 	sockaddr_in 	their_addr; /* connector's address information */
     char    string_read[255];
     int     n,i;
-    int	    last_fd;	/* Thelast sockfd that is connected	*/
+    int	    last_fd;	/* last sockfd that is connected */
 
     if ((sockfd = socket(AF_INET, SOCK_STREAM, 0)) == -1) {
         perror("socket");

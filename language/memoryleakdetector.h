@@ -28,7 +28,7 @@ struct mem_usage {
     }
 };
 
-std::map<unsigned long long, mem_usage> g_mem_usage;
+std::unordered_map<unsigned long long, mem_usage> g_mem_usage;
 
 void DumpMemUsage() {
     for_each(begin(g_mem_usage), end(g_mem_usage), [](const pair<unsigned long long, mem_usage>& mu) {
@@ -53,6 +53,7 @@ void DumpMemUsage() {
                 if (it != g_mem_usage.end()) { \
                     g_mem_usage.erase(it); \
                 } \
+                delete p; p = nullptr; \
             } \
         } \
     }
@@ -70,5 +71,3 @@ void operator delete(void* p) noexcept {
 #endif
 
 #endif
-
-

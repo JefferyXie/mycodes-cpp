@@ -43,6 +43,8 @@ struct GET_IMPL {
         -> decltype(GET_IMPL<index - 1, Rest...>::value(t))
     {
         // recursively call/instantiate template<int, typename, typename...> GetImpl
+        // the trick here is my_tuple<First, Rest...> inherits from my_tuple<Rest...>
+        // so given index, compiler will find the right my_tuple class
         return GET_IMPL<index - 1, Rest...>::value(t);
     }
 };
@@ -73,4 +75,3 @@ void run_my_tuple() {
 }
 
 #endif
-
