@@ -20,6 +20,8 @@
 #include "../algorithm/my_list.h"
 #include "../algorithm/my_queue.h"
 #include "../algorithm/my_smartpointer.h"
+#include "../algorithm/array_bus_station.h"
+#include "../algorithm/max_points_on_line.h"
 #include "../interview/optiver/judgebitree.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
