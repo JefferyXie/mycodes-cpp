@@ -9,6 +9,34 @@
 // Resource: https://monoinfinito.wordpress.com/series/introduction-to-c-template-metaprogramming/
 //
 
+
+template<int N> constexpr int
+pow_2() {
+    return 2 * pow_2<N-1>();
+}
+template<> constexpr int
+pow_2<0>() {
+    return 1;
+}
+
+constexpr int
+constexpr_pow_2(int N) {
+    return N == 0 ? 1 : (2 * constexpr_pow_2(N-1));
+}
+constexpr int
+constexpr_pow_2_2(int N) {
+    return pow(2, N);
+}
+
+template<int N>
+struct STRUCT_POW_2 {
+    static const int VALUE = 2 * STRUCT_POW_2<N-1>::VALUE;
+};
+template<>
+struct STRUCT_POW_2<0> {
+    static const int VALUE = 1;
+};
+
 // 
 // FACTORIAL
 // 
@@ -208,6 +236,17 @@ public:
 
 void run_meta()
 {
+    // 
+    // pow
+    std::static_assert(pow_2<5>() == 32, "wrong result");
+    std::cout << pow_2<5>() << endl;
+    
+    std::static_assert(constexpr_pow_2(5) == 32, "wrong result");
+    std::static_assert(constexpr_pow_2_2(5) == 32, "wrong result");
+    
+    std::static_assert(STRUCT_POW_2<5>::VALUE == 32, "wrong result");
+    std::cout << STRUCT_POW_2<5>::VALUE << std::endl;
+
     // 
     // FACTORIAL
     std::cout << "\n[FACTORIAL]" << std::endl;
