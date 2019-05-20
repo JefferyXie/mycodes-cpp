@@ -86,9 +86,9 @@ public:
     }
 
     bool HaveDuplicatePairs() {
-        for (ulong i = 0; i < _pairs.size(); ++i) {
+        for (unsigned i = 0; i < _pairs.size(); ++i) {
             const NodePair& pair1 = _pairs.at(i);
-            for (ulong j = i + 1; j < _pairs.size(); ++j) {
+            for (unsigned j = i + 1; j < _pairs.size(); ++j) {
                 const NodePair& pair2 = _pairs.at(j);
                 if ((pair1.parent == pair2.parent && pair1.child == pair2.child) ||
                    (pair1.parent == pair2.child && pair1.child == pair2.parent)) {
@@ -100,10 +100,10 @@ public:
     }
 
     bool HaveMoreChildren() {
-        for (ulong i = 0; i < _pairs.size(); ++i) {
+        for (unsigned i = 0; i < _pairs.size(); ++i) {
             int numChildren = 1;
             const NodePair& pair1 = _pairs.at(i);
-            for (ulong j = i+1; j < _pairs.size(); ++j) {
+            for (unsigned j = i+1; j < _pairs.size(); ++j) {
                 const NodePair& pair2 = _pairs.at(j);
                 if (pair1.parent == pair2.parent) {
                     numChildren++;
@@ -116,7 +116,7 @@ public:
 
     bool HaveMultipleRoots() {
         char root = 0;
-        for (ulong i = 0; i < _pairs.size(); ++i) {
+        for (unsigned i = 0; i < _pairs.size(); ++i) {
             char tempRoot = _pairs.at(i).parent;
             string path;
             tempRoot = findRoot(_pairs, tempRoot, path);
@@ -135,11 +135,11 @@ public:
 
     bool HaveCycleChain() {
         vector<string> paths = getAllPaths(_pairs);
-        for (ulong i = 0; i < paths.size(); ++i) {
+        for (unsigned i = 0; i < paths.size(); ++i) {
             string path = paths.at(i);
             char c1 = path.front();
             char c2 = path.back();
-            for (ulong j = i+1; j < paths.size(); ++j) {
+            for (unsigned j = i+1; j < paths.size(); ++j) {
                 string path1 = paths.at(j);
                 char d1 = path1.front();
                 char d2 = path1.back();
@@ -199,7 +199,7 @@ private:
 
     vector<string> getAllPaths(const vector<NodePair>& pairs) {
         vector<string> paths;
-        for (ulong i = 0; i < pairs.size(); ++i) {
+        for (unsigned i = 0; i < pairs.size(); ++i) {
             const NodePair& curPair = pairs.at(i);
             char curParent = curPair.parent;
             char curChild = curPair.child;
@@ -226,7 +226,7 @@ private:
     }
     void buildNode(const vector<NodePair>& pairs, Node* pRoot) {
         if (pRoot == NULL) return;
-        for (ulong i = 0; i < pairs.size(); ++i) {
+        for (unsigned i = 0; i < pairs.size(); ++i) {
             const NodePair& pair = pairs.at(i);
             if (pRoot->value == pair.parent) {
                 Node* p = new Node();

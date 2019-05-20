@@ -1,6 +1,12 @@
 #ifndef HEADER_H
 #define HEADER_H
 
+#ifdef __APPLE__
+#include <mach/error.h>
+#else
+#include <error.h>
+#endif
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
@@ -9,7 +15,6 @@
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <netinet/in.h>
-#include <error.h>
 #include <errno.h>
 #include <strings.h>
 #include <unistd.h>
@@ -24,6 +29,7 @@
 #include <fstream>
 #include <sstream>
 #include <set>
+#include <stack>
 #include <vector>
 #include <list>
 #include <queue>

@@ -21,11 +21,12 @@
 #include "../algorithm/my_queue.h"
 #include "../algorithm/my_smartpointer.h"
 #include "../interview/optiver/judgebitree.h"
+#include "../language/classtest.h"
 
 // ASSERT_XXX(): If assertion fails then processing of test terminate.
 // EXPECT_XXX(): nonfatal failure, allowing processing to continue.
 
-TEST(DISABLED_algorithm, FindCommonAncestor) {
+TEST(algorithm, FindCommonAncestor) {
     auto_ptr<TreeNode<int> > root(new TreeNode<int>(10));
     auto_ptr<TreeNode<int> > n1(new TreeNode<int>(2));
     auto_ptr<TreeNode<int> > n2(new TreeNode<int>(4));
@@ -63,7 +64,7 @@ TEST(DISABLED_algorithm, FindCommonAncestor) {
     EXPECT_EQ(ancestor6, root.get());
 }
 
-TEST(DISABLED_algorithm, traverse) {
+TEST(algorithm, traverse) {
     tNode root(0);
     tNode n1(1);
     tNode n2(2);
@@ -92,7 +93,7 @@ TEST(DISABLED_algorithm, traverse) {
     TraversePostorder(&root);
 }
 
-TEST(DISABLED_algorithm, judgeBiTree) {
+TEST(algorithm, judgeBiTree) {
     string tc1 = JudgeBiTree("(B,D) (D,E) (A,B) (C,F) (E,G) (A,C)");
     EXPECT_EQ(tc1, "(A(B(D(E(G))))(C(F)))");
 
@@ -142,7 +143,7 @@ TEST(DISABLED_algorithm, judgeBiTree) {
     EXPECT_EQ(tc16, "E1");
 }
 
-TEST(DISABLED_algorithm, numdaysbetween) {
+TEST(algorithm, numdaysbetween) {
     int a = num_days_between(2010,5,1,2011,5,1);
     EXPECT_EQ(a, 365);
     int b = num_days_between(1900,1,10,1901,3,1);
@@ -185,13 +186,13 @@ TEST(DISABLED_algorithm, similarpair) {
     EXPECT_EQ(a, 23);
 }
 
-TEST(DISABLED_algorithm, kdiffparis) {
+TEST(algorithm, kdiffparis) {
     vector<int> arr = { 1,5,3,4,2 };
     int a = sort_k_diff_pairs(arr, 2);
     EXPECT_EQ(a, 3);
 }
 
-TEST(DISABLED_algorithm, maxconnectedcells) {
+TEST(algorithm, maxconnectedcells) {
     vector<vector<int> > mt1 = {
         {0,1,1},
         {1,0,0},
@@ -210,7 +211,7 @@ TEST(DISABLED_algorithm, maxconnectedcells) {
     EXPECT_EQ(b, 15);
 }
 
-TEST(DISABLED_algorithm, subarray_max_mod) {
+TEST(algorithm, subarray_max_mod) {
     long long arr[] = {3,3,9,9,5};
     auto a = subarray_max_mod(arr, sizeof(arr)/sizeof(arr[0]), 7);
     EXPECT_EQ(a, 6);
@@ -227,7 +228,7 @@ TEST(DISABLED_algorithm, subarray_max_mod) {
     EXPECT_EQ(b, 1745498720);
 }
 
-TEST(DISABLED_algorithm, missingnumbers) {
+TEST(algorithm, missingnumbers) {
     int A[] = {203, 204, 205, 206, 207, 208, 203, 204, 205, 206};
     int B[] = {203, 204, 204, 205, 206, 207, 205, 208, 203, 206, 205, 206, 204};
     auto s = find_missing_numbers(A, sizeof(A)/sizeof(A[0]), B, sizeof(B)/sizeof(B[0]));
@@ -325,14 +326,14 @@ TEST(DISABLED_algorithm, bikeracer) {
     EXPECT_EQ(shortestTime4, 19069);
 }
 
-TEST(DISABLED_algorithm, permutation) {
+TEST(algorithm, permutation) {
     vector<int> source = {1,2,3,4};
     vector<int> target;
     int a = PossiblePermutation_WithOrder(source, 0, 4, target);
     EXPECT_EQ(a, 24);
 }
 
-TEST(DISABLED_algorithm, countluck) {
+TEST(algorithm, countluck) {
     vector<vector<char> > forest;
     auto fillforest = [&forest](vector<string>& ar) {
         forest.clear();
@@ -476,7 +477,7 @@ TEST(DISABLED_algorithm, countluck) {
     EXPECT_EQ(a6, 20);
 }
 
-TEST(DISABLED_algorithm, cuttree) {
+TEST(algorithm, cuttree) {
     vector<int> vertices = {100,200,100,500,100,600};
     vector<pair<int,int> > edges = {
         {1,2},
@@ -489,7 +490,7 @@ TEST(DISABLED_algorithm, cuttree) {
     EXPECT_EQ(a, 400);
 }
 
-TEST(DISABLED_algorithm, cuttree_2) {
+TEST(algorithm, cuttree_2) {
     vector<int> vertices = {100,200,100,500,100,600};
     vector<pair<int,int> > edges = {
         {1,2},
@@ -649,7 +650,7 @@ TEST(algorithm, removeduplicates) {
     EXPECT_EQ(len4, 4);
 }
 
-TEST(DISABLED_algorithm, my_list) {
+TEST(algorithm, my_list) {
     my_list<int> olist;
     int i_2 = 2;
     int i_3 = 3;

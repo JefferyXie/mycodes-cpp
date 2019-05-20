@@ -55,7 +55,7 @@
 void find_jump_numbers(int x, int num)
 {
     // Create a queue and enqueue 'i' to it
-    queue<int > q;
+    queue<int> q;
     q.push(num);
  
     // Do BFS starting from i
@@ -94,7 +94,6 @@ void find_jump_numbers(int x, int num)
 // a positive number x
 void find_jump_numbers(int x)
 {
-    cout << 0 << " ";
     for (int i=1; i<=9 && i<=x; i++)
        find_jump_numbers(x, i);
 }
