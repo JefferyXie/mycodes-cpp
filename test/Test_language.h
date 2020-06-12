@@ -10,7 +10,8 @@
 #include "../language/template_constraints.h"
 #include "../language/operatornewdelete.h"
 #include "../language/memoryleakdetector.h"
-#include "../language/circularbuf.h"
+#include "../language/circular_buf.h"
+#include "../language/circular_buf_async.h"
 #include "../language/flagset.h"
 
 TEST(DISABLED_language, constructorOrder) {
@@ -531,22 +532,22 @@ TEST(language, memoryleakdetector) {
 #endif
 }
 
-TEST(language, circularbuffer) {
-    CircularBuffer cbuf;
-    cbuf.Write("abcde", 5);
-    cbuf.Write("fghijk", 6);
+TEST(language, circular_buf) {
+    circular_buf cbuf;
+    cbuf.write("abcde", 5);
+    cbuf.write("fghijk", 6);
     int n = 5;
     while (n--) {
-        cbuf.Read();
+        cbuf.read();
     }
-    cbuf.Write("lmnopqrst", 9);
+    cbuf.write("lmnopqrst", 9);
     while (n++ < 2) {
-        cbuf.Read();
+        cbuf.read();
     }
-    cbuf.Write("uvwxyz", 6);
+    cbuf.write("uvwxyz", 6);
     string s;
     while (1) {
-        char ch = cbuf.Read();
+        char ch = cbuf.read();
         cout << ch;
         if (ch == '\0') {
             cout << endl;
@@ -558,14 +559,14 @@ TEST(language, circularbuffer) {
 
     EXPECT_EQ(s, string("ijklmnopqrst"));
 
-    CircularBuffer cbuf1;
+    circular_buf cbuf1;
     auto writer = [&cbuf1]() {
         const char* letters = "abcdefghijklmnopqrstuvwxyz";
         int count = 0;
         int i = 0;
         string ss;
         while (i < strlen(letters)) {
-            int ret = cbuf1.Write(letters+i, 1);
+            int ret = cbuf1.write(letters+i, 1);
             if (ret <= 0) {
                 cout << "*" << this_thread::get_id() 
                             << "**[" << ++count << "] failed to write: " 
@@ -583,7 +584,7 @@ TEST(language, circularbuffer) {
         int count = 0;
         string ss;
         while (1) {
-            char ch = cbuf1.Read();
+            char ch = cbuf1.read();
             if (ch == '\0') {
                 cout << "*" << this_thread::get_id()
                                 << "**[" << ++count << "] read nothing." 

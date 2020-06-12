@@ -1,17 +1,19 @@
-#ifndef CIRCULARBUF_H
-#define CIRCULARBUF_H
+#ifndef CIRCULAR_BUF_H
+#define CIRCULAR_BUF_H
 
 #include "../main/header.h"
 
 // 
 // https://embeddedartistry.com/blog/2017/4/6/circular-buffers-in-cc
 // 
-class CircularBuffer {
+// A basic non-threading-safe circular buffer
+// 
+class circular_buf {
 public:
-    CircularBuffer() : _length(0), _offset(0) { }
+    circular_buf() : _length(0), _offset(0) { }
 
-    int Write(const char* ch, int s) {
-        int cap = getBufSize();
+    int write(const char* ch, int s) {
+        int cap = get_buf_size();
         if (s + _length > cap) return -1;
 
         lock_guard<mutex> lg(_mu);
@@ -26,7 +28,7 @@ public:
         return s;
     }
 
-    char Read() {
+    char read() {
         if (_length <= 0) return '\0';
 
         lock_guard<mutex> lg(_mu);
@@ -35,12 +37,12 @@ public:
 
         _length--;
         char ch = _buff[_offset];
-        _offset = (++_offset) % getBufSize();
+        _offset = (++_offset) % get_buf_size();
         return ch;
     }
 
 private:
-    int getBufSize() { return BUFFERSIZE; }
+    int get_buf_size() { return BUFFERSIZE; }
 
 private:
 	// TODO: use array pointer than fixed size array
