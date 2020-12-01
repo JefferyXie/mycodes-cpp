@@ -10,12 +10,3 @@ int main(int argc, char **argv) {
     return RUN_ALL_TESTS();
 }
 
-/*
-#include "header.h"
-#include "../misc/builtin_expect.h"
-
-int main(int, char **) {
-    run_builtin_expect(); // fixed_condition()
-    return 0;
-}
-*/
