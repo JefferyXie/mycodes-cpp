@@ -98,7 +98,6 @@ void find_jump_numbers(int x)
        find_jump_numbers(x, i);
 }
  
-// Driver program
 void run_find_jump_numbers()
 {
     int x = 40;

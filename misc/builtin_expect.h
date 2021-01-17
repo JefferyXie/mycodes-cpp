@@ -20,7 +20,8 @@
 volatile std::time_t near_futur = -1;
 //void error_handling() { std::cerr << "error\n"; }
 //bool method_impl() { return std::time(NULL) != near_futur; }
-constexpr int64_t BENCHSIZE = 2000000000;
+//constexpr int64_t BENCHSIZE = 2000000000;
+constexpr int64_t BENCHSIZE = 20;
 inline
 void error_handling() { auto a = BENCHSIZE*2; auto b = a%125; b = 2*a + 3*b - 100; }
 inline

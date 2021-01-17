@@ -42,7 +42,7 @@ graph_dijkstra(int n, vector<vector<int>> edges, int s)
     node_q.push(s);
     do {
         auto node = node_q.front();
-        for (size_t i = 1; i <= n; ++i) {
+        for (int i = 1; i <= n; ++i) {
           auto v = ancestors[node][i];
           if (v == 0)
             continue;
