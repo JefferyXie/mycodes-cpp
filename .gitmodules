@@ -19,3 +19,6 @@
 [submodule "__learn/imgui"]
 	path = __learn/imgui
 	url = https://github.com/ocornut/imgui.git
+[submodule "__learn/reliable_multicast"]
+	path = __learn/reliable_multicast
+	url = https://github.com/PDXostc/reliable_multicast.git
