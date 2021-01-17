@@ -22,11 +22,11 @@
 #include <cstdlib>
 
 #define MAXBUFSIZE    65536 // Max UDP Packet size is 64 Kbyte
-const char*           s_group_addr    = "226.0.0.1";
-unsigned int          s_group_port    = 4096;
-const char*           s_outbound_addr = "127.0.0.1";
+static const char*           s_group_addr    = "226.0.0.1";
+static unsigned int          s_group_port    = 4096;
+static const char*           s_outbound_addr = "127.0.0.1";
 
-#if 1
+#if 0
 int main()
 {
     // open a UDP socket

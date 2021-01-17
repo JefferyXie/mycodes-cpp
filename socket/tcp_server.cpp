@@ -35,7 +35,7 @@ int tcp_server::Launch(unsigned short port) {
           inet_ntoa(addr_server.sin_addr),
           ntohs(addr_server.sin_port));
 
-    communate(sock_server);
+    communicate(sock_server);
     //std::thread th1(&tcp_server::handler, sock_server);
     //std::thread th2(&tcp_server::handler, sock_server);
     //std::thread th3(&tcp_server::handler, sock_server);
@@ -52,7 +52,7 @@ int tcp_server::Launch(unsigned short port) {
     return 1;
 }
 
-void tcp_server::communate(int sock_server) {
+void tcp_server::communicate(int sock_server) {
     sockaddr_in addr_client;
     unsigned int addr_size = sizeof(sockaddr_in);
     vector<std::thread> threads;
@@ -106,6 +106,16 @@ void tcp_server::handleclient(int sock_client) {
             memcpy(data_resp, data_empty, MAX_DATA);
             memcpy(data, data_empty, MAX_DATA);
         }
+
+        /* if server shutdown the connection, client recv returns 0
+        auto r = shutdown(sock_client, SHUT_RD);
+        if (r < 0) {
+            printf("ERROR: shutdown err=%s\n", strerror(errno));
+        } else {
+            printf("Done: shutdown\n");
+            break;
+        }
+        */
     }
 
     printf("Client disconnected...\n");

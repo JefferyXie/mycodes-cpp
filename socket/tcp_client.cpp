@@ -48,8 +48,22 @@ int tcp_client::Launch(const char* addr, unsigned short port) {
         char data_resp[MAX_DATA] = {0};
         fgets(data_req, MAX_DATA, stdin);
         if (strlen(data_req) == 1 && data_req[0] == '\n') break;
-        send(sock_client, data_req, strlen(data_req), 0);
+        auto r = send(sock_client, data_req, strlen(data_req), 0);
+        if (r < 0) {
+            printf("ERROR: send fails, err=%s\n", strerror(errno));
+        } else if (r == 0) {
+            printf("ERROR: send fails, got disconnected, err=%s\n", strerror(errno));
+        } else {
+            printf("INFO: send \"%s\"\n", data_req);
+        }
         int len = recv(sock_client, data_resp, MAX_DATA, 0);
+        if (len < 0) {
+            printf("ERROR: recv fails, err=%s\n", strerror(errno));
+        } else if (len == 0) {
+            printf("ERROR: recv fails, got disconnected, err=%s\n", strerror(errno));
+        } else {
+            printf("INFO: recv \"%s\"\n", data_resp);
+        }
         data_resp[len] = '\0';
         printf("%s\n", data_resp);
     }

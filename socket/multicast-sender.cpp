@@ -10,10 +10,10 @@
 #include <unistd.h>
 #include <cstring>
 
-#if 1
-const char*           s_group_addr    = "225.1.1.1";
-unsigned int          s_group_port    = 5555;
-const char*           s_outbound_addr = "127.0.0.1";
+#if 0
+static const char*           s_group_addr    = "225.1.1.1";
+static unsigned int          s_group_port    = 5555;
+static const char*           s_outbound_addr = "127.0.0.1";
 
 int main (int argc, char *argv[])
 {
