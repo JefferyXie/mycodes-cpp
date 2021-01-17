@@ -13,3 +13,9 @@
 [submodule "__learn/lift"]
 	path = __learn/lift
 	url = https://github.com/rollbear/lift.git
+[submodule "__learn/cppcon2020"]
+	path = __learn/cppcon2020
+	url = https://github.com/CppCon/CppCon2020.git
+[submodule "__learn/imgui"]
+	path = __learn/imgui
+	url = https://github.com/ocornut/imgui.git
