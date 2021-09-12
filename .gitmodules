@@ -22,3 +22,9 @@
 [submodule "__learn/reliable_multicast"]
 	path = __learn/reliable_multicast
 	url = https://github.com/PDXostc/reliable_multicast.git
+[submodule "__learn/spdlog"]
+	path = __learn/spdlog
+	url = https://github.com/gabime/spdlog.git
+[submodule "__learn/hffix"]
+	path = __learn/hffix
+	url = https://github.com/jamesdbrock/hffix.git
