@@ -22,6 +22,7 @@
 #include "../algorithm/my_smartpointer.h"
 #include "../algorithm/array_bus_station.h"
 #include "../algorithm/max_points_on_line.h"
+#include "../algorithm/max_increasing_subsequence.h"
 #include "../interview/optiver/judgebitree.h"
 #include "../language/classtest.h"
 
@@ -211,6 +212,15 @@ TEST(algorithm, maxconnectedcells) {
     };
     int b = max_connected_cell_in_grid(mt2);
     EXPECT_EQ(b, 15);
+}
+
+TEST(algorithm, max_increasing_subsequence) {
+    vector<int> arr1 = {10, 7, 6 };
+    vector<int> arr2 = {10, 7, 12, 30, 22, 35, 60, 9};
+    vector<int> arr3 = {10, 7, 12, 30, 11,  5, 60, 9};
+    EXPECT_EQ(max_increasing_subsequence(arr1), 1);
+    EXPECT_EQ(max_increasing_subsequence(arr2), 5);
+    EXPECT_EQ(max_increasing_subsequence(arr3), 4);
 }
 
 TEST(algorithm, subarray_max_mod) {

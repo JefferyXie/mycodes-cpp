@@ -67,27 +67,10 @@ namespace std {
     };
 }
 
-struct test_map
+// method 4: hash map is class member, use customize hasher & comparar
+struct MyHashMap
 {
-    test_map() = delete;
-
-    using hasher_t = std::function<size_t(const string&)>;
-    using comparar_t = std::function<bool(const string&, const string&)>;
-
-    test_map(int len) : um1_(2, hasher{len}, comparar{len})
-    {
-        um2_ = new unordered_map<string, int, hasher, comparar>{2, hasher{len+1}, comparar(len+1)};
-
-        um3_ = new unordered_map<string, int, hasher_t, comparar_t>{
-            2,
-            [len_ = len + 2](const string& key) {
-                return hash<string>()(key.substr(0, len_));
-            },
-            [len_ = len + 2](const string& k1, const string& k2) {
-                return k1.substr(0, len_) == k2.substr(0, len_);
-            }
-        };
-    }
+    MyHashMap() = delete;
 
     struct hasher {
         hasher(int len) : len_(len) {}
@@ -103,6 +86,25 @@ struct test_map
         }
         int len_ = 0;
     };
+
+    using hasher_t = std::function<size_t(const string&)>;
+    using comparar_t = std::function<bool(const string&, const string&)>;
+
+    MyHashMap(int len) : um1_(2, hasher{len}, comparar{len})
+    {
+        um2_ = new unordered_map<string, int, hasher, comparar>{2, hasher{len+1}, comparar(len+1)};
+
+        // highly flexible: hasher & comparar are configurable
+        um3_ = new unordered_map<string, int, hasher_t, comparar_t>{
+            2,
+            [len_ = len + 2](const string& key) {
+                return hash<string>()(key.substr(0, len_));
+            },
+            [len_ = len + 2](const string& k1, const string& k2) {
+                return k1.substr(0, len_) == k2.substr(0, len_);
+            }
+        };
+    }
 
     void add(string k, int v) {
         um1_.emplace(k, v);
@@ -133,18 +135,8 @@ struct test_map
 
 void
 run_hashmap() {
-    test_map tm{1};
-
-    tm.add("1", 10);
-    tm.add("1a", 10);
-    tm.add("1ab", 10);
-    tm.add("1abc", 10);
-    tm.add("2", 10);
-
-    tm.print();
-
-/*
     // MyKey1
+    cout << "----------MyKey1----------" << endl;
     unordered_map<MyKey1, int, MyKey1_Hash, MyKey1_Compare> um1 = {
         {{"1st"}, 10},
         {{"2nd"}, 20},
@@ -167,105 +159,46 @@ run_hashmap() {
     if (it2 != um1.end()) {
         cout << it2->first.ToString() << "|" << it2->second << endl;
     }
-*/
-    for (int i = 1; i < 5; ++i) {
-        cout << "i=" << i << "--------------" << endl;
-        // APPENDIX: this method actually is same (the thing happen underneath) as lambda
-        auto hasher = [length = i](const MyKey1& key) {
-            return hash<string>()(key.first.substr(0, length));
-        };
-        auto equaler= [length = i](const MyKey1& k1, const MyKey1& k2) {
-            return k1.first.substr(0, length) == k2.first.substr(0, length);
-        };
-/*
-        auto hasher = [](const MyKey1& key) {
-            return hash<string>()(key.first);
-        };
-        auto equaler= [](const MyKey1& k1, const MyKey1& k2) {
-            return k1.first == k2.first;
-        };
-*/
-/*
-        unordered_map<MyKey1, int, decltype(hasher), decltype(equaler)> um1_1 = {{
-                {{"1st"}, 10},
-                {{"2nd"}, 20},
-                {{"3st"}, 30},
-                {{"5th"}, 50},
-                {{"6th"}, 60},
-                {{"7th"}, 70},
-                {{"4th"}, 40},
 
-                {{"6th1"}, 160},
-                {{"7th1"}, 170},
+    auto hasher = [](const MyKey1& key) {
+        return hash<string>()(key.first);
+    };
+    auto equaler= [](const MyKey1& k1, const MyKey1& k2) {
+        return k1.first == k2.first;
+    };
 
-                {{"6th2"}, 260},
-                {{"7th2"}, 270},
+    unordered_map<MyKey1, int, decltype(hasher), decltype(equaler)> um1_1 = {{
+            {{"1st"}, 10},
+            {{"2nd"}, 20},
+            {{"3st"}, 30},
+            {{"5th"}, 50},
+            {{"6th"}, 60},
+            {{"7th"}, 70},
+            {{"4th"}, 40},
 
-                {{"6th3"}, 360},
-                {{"7th3"}, 370},
+            {{"6th1"}, 160},
+            {{"7th1"}, 170},
 
-                {{"6th4"}, 460},
-                {{"7th4"}, 470},
+            {{"6th2"}, 260},
+            {{"7th2"}, 270},
 
-                {{"6th5"}, 560},
-                {{"7th5"}, 570},
-            },
-            2, hasher, equaler
-        };
-*/
-        unordered_map<MyKey1, int, decltype(hasher), decltype(equaler)> um1_1 {2, hasher, equaler};
+            {{"6th3"}, 360},
+            {{"7th3"}, 370},
 
-        {
-            MyKey1 k1 {"1st"};
-            MyKey1 k2 {"2nd"};
-            MyKey1 k3 {"3st"};
-            um1_1.emplace(k1, 10);
-            um1_1.emplace(k2, 20);
-            um1_1.emplace(k3, 30);
-        }
+            {{"6th4"}, 460},
+            {{"7th4"}, 470},
 
-        for (auto& entry : um1_1) {
-            cout << "{" << entry.first.first << ", " << entry.second << "}" << endl;
-        }
+            {{"6th5"}, 560},
+            {{"7th5"}, 570},
+        },
+        2, hasher, equaler
+    };
 
-        {
-            MyKey1 k1{"1"};
-            MyKey1 k2{"1s"};
-            MyKey1 k3{"1st"};
-            for (auto& k : {k1, k2, k3}) {
-                auto it = um1_1.find(k);
-                if (it != um1_1.end()) {
-                    cout << "found '" << k.first << "': "
-                         << it->first.first << ", " << it->second << endl;
-                } else {
-                    cout << "not found: '" << k.first << "'" << endl;
-                }
-            }
-        }
+    um1_1.insert({{"8th"},80});
+    um1_1.emplace(MyKey1{"7th"}, 70);
 
-        {
-            MyKey1 k1{"6"};
-            MyKey1 k2{"6t"};
-            MyKey1 k3{"6th"};
-            MyKey1 k4{"6th1"};
-            MyKey1 k5{"6th2"};
-            MyKey1 k6{"6th3"};
-            for (auto& k : {k1, k2, k3, k4, k5, k6}) {
-                auto it = um1_1.find(k);
-                if (it != um1_1.end()) {
-                    cout << "found '" << k.first << "': "
-                         << it->first.first << ", " << it->second << endl;
-                } else {
-                    cout << "not found: '" << k.first << "'" << endl;
-                }
-            }
-        }
-
-//        um1_1.insert({{"8th"},80});
-//        um1_1.emplace(MyKey1{"7th"}, 70);
-    }
-/*
     // MyKey2
+    cout << "----------MyKey2----------" << endl;
     unordered_map<MyKey2, int, decltype(&MyKey2_Hash), decltype(&MyKey2_Compare)> um2(10, MyKey2_Hash, MyKey2_Compare); 
     um2 = {
         {{"1st","_1_"}, 10},
@@ -282,7 +215,9 @@ run_hashmap() {
     if (itk != um2.end()) {
         cout << itk->first.ToString() << "|" << itk->second << endl;
     }
+
     // MyKey3
+    cout << "----------MyKey3----------" << endl;
     unordered_map<MyKey3, int> um3 = {
         {{"1st","_1_","one"}, 10},
         {{"2nd","_2_","two"}, 20},
@@ -298,7 +233,17 @@ run_hashmap() {
     if (it!= um3.end()) {
         cout << it->first.ToString() << "|" << it->second << endl;
     }
-*/
+
+    // MyHashMap
+    cout << "----------MyHashMap----------" << endl;
+    MyHashMap tm{1};
+    tm.add("1", 10);
+    tm.add("1a", 10);
+    tm.add("1ab", 10);
+    tm.add("1abc", 10);
+    tm.add("2", 10);
+
+    tm.print();
 }
 
 #endif

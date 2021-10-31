@@ -22,7 +22,7 @@ CC = g++
 C11 = -std=c++11
 C14 = -std=c++14
 C17 = -std=c++17
-C20 = -std=c++20
+C20 = -std=c++2a
 #CFLAGS = -Wall -W -lpthread $(C11)
 #CFLAGS = $(C11) -w -L/opt/gtest/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
 CFLAGS = $(C11) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
