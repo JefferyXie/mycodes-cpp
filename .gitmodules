@@ -28,3 +28,6 @@
 [submodule "__learn/hffix"]
 	path = __learn/hffix
 	url = https://github.com/jamesdbrock/hffix.git
+[submodule "__learn/allocator"]
+	path = __learn/allocator
+	url = https://github.com/moya-lang/Allocator.git
