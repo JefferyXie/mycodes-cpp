@@ -28,3 +28,6 @@
 [submodule "__learn/allocator"]
 	path = __learn/allocator
 	url = https://github.com/moya-lang/Allocator.git
+[submodule "__learn/cppcon2017"]
+	path = __learn/cppcon2017
+	url = https://github.com/CppCon/CppCon2017.git
