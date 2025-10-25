@@ -7,10 +7,10 @@
 // https://www.hackerrank.com/challenges/largest-permutation/problem
 //
 
-vector<int> array_largest_permutation(int k, vector<int> arr)
+std::vector<int> array_largest_permutation(int k, std::vector<int> arr)
 {
-    const auto       len = arr.size();
-    vector<unsigned> idx(len + 1);
+    const auto            len = arr.size();
+    std::vector<unsigned> idx(len + 1);
     for (unsigned i = 0; i < len; ++i) {
         idx[arr[i]] = i;
     }

@@ -30,23 +30,23 @@ public:
     void Push(T&& v);
     T    Pop();
 
-    int    Length() { return _length; }
-    string ToString();
+    int         Length() { return _length; }
+    std::string ToString();
 
 private:
-    void  enlarge();
-    void  reset();
-    T**   _head;
-    int   _offset;
-    int   _length;
-    int   _capacity;
-    mutex _mu;
+    void       enlarge();
+    void       reset();
+    T**        _head;
+    int        _offset;
+    int        _length;
+    int        _capacity;
+    std::mutex _mu;
 };
 
 template <class T>
 void my_queue<T>::Push(const T& v)
 {
-    lock_guard<mutex> lg(_mu);
+    std::lock_guard<std::mutex> lg(_mu);
     if (_length + _offset >= _capacity) {
         enlarge();
     }
@@ -57,7 +57,7 @@ void my_queue<T>::Push(const T& v)
 template <class T>
 void my_queue<T>::Push(T&& v)
 {
-    lock_guard<mutex> lg(_mu);
+    std::lock_guard<std::mutex> lg(_mu);
     if (_length + _offset >= _capacity) {
         enlarge();
     }
@@ -71,22 +71,22 @@ template <class T>
 T my_queue<T>::Pop()
 {
     while (_length <= 0) {
-        cout << "yield" << endl;
-        this_thread::sleep_for(chrono::seconds(1));
+        std::cout << "yield" << std::endl;
+        std::this_thread::sleep_for(std::chrono::seconds(1));
         // this_thread::yield();
     }
-    lock_guard<mutex> lg(_mu);
+    std::lock_guard<std::mutex> lg(_mu);
     _length--;
     return *(_head[_offset++]);
 }
 
 template <class T>
-string my_queue<T>::ToString()
+std::string my_queue<T>::ToString()
 {
-    string str;
-    str += "capacity:" + to_string(_capacity);
-    str += ",offset:" + to_string(_offset);
-    str += ",length:" + to_string(_length);
+    std::string str;
+    str += "capacity:" + std::to_string(_capacity);
+    str += ",offset:" + std::to_string(_offset);
+    str += ",length:" + std::to_string(_length);
     return str;
 }
 

@@ -15,30 +15,30 @@
  Input: 3 4 5 8 1 4 10, k=4
  Output: 8 8 8 10
 */
-string print_k_max_1(int arr[], int n, int k)
+std::string print_k_max_1(int arr[], int n, int k)
 {
     if (n < k) {
         return "";
     }
-    string     result;
-    int        maxEle = 0;
-    int        popped = 0;
-    deque<int> dq;
+    std::string     result;
+    int             maxEle = 0;
+    int             popped = 0;
+    std::deque<int> dq;
     for (int i = 0; i < n; ++i) {
         int pushed = arr[i];
         dq.push_back(pushed);
         if (popped < maxEle) {
-            maxEle = max(maxEle, pushed);
+            maxEle = std::max(maxEle, pushed);
         } else if (popped <= pushed) {
             maxEle = pushed;
         } else {
             maxEle = 0;
             for_each(begin(dq), end(dq), [&maxEle](int a) {
-                maxEle = max(maxEle, a);
+                maxEle = std::max(maxEle, a);
             });
         }
         if ((int)dq.size() == k) {
-            result += to_string(maxEle) + ' ';
+            result += std::to_string(maxEle) + ' ';
             // cout << maxEle << ' ';
             popped = dq.front();
             dq.pop_front();
@@ -52,8 +52,8 @@ string print_k_max_1(int arr[], int n, int k)
 // 2) the first element in deque always the biggest
 // 3) the last element in deque always the smallest
 // 4) keep removing last elements if newly added element is big
-deque<int> q;
-void       add(int x)
+std::deque<int> q;
+void            add(int x)
 {
     while (!q.empty() && q.back() < x)
         q.pop_back();
@@ -65,17 +65,17 @@ void remove(int x)
         q.pop_front();
     }
 }
-string print_k_max_2(int arr[], int n, int k)
+std::string print_k_max_2(int arr[], int n, int k)
 {
     if (n < k)
         return "";
     q.clear();
-    string result;
+    std::string result;
     for (int i = 0; i < k; ++i) {
         add(arr[i]);
     }
     for (int i = k; i <= n; ++i) {
-        result += to_string(q.front()) + ' ';
+        result += std::to_string(q.front()) + ' ';
         // cout << q.front() << ' ';
         remove(arr[i - k]);
         add(arr[i]);

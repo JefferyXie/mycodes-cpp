@@ -1,40 +1,43 @@
-#ifndef FLAGSET_H
-#define FLAGSET_H
+#pragma once
 
 #include "../main/header.h"
 
-// 
-// http://codereview.stackexchange.com/questions/96146/c-flagset-typesafe-usage-of-enumeration-as-bitset-bitmask
+/**
+ * Some random enum to use in tests.
+ */
+enum class Options : uint64_t { FULLSCREEN, INVERT_MOUSE, BLA, RED_BACKGROUND, RED_FOREGROUND, LAST_VALUE };
+
+//
+// http://codereview.stackexchange.com/questions/96146/c-flag_set_t-typesafe-usage-of-enumeration-as-bitset-bitmask
 //
 // Below link includes multiple solutions to support enum bitwise operations by overriding operators
 // http://stackoverflow.com/questions/1448396/how-to-use-enums-as-flags-in-c
 
 /**
- * FlagSet implements a _bitset usable with `enum` and `enum class`.
+ * flag_set_t implements a _bitset usable with `enum` and `enum class`.
  *
  * It provides a typesafe interface for manipulating the _bitset. This helps
  * to avoid mistake as the various operator and function will refuse a
  * parameter that doesn't match the expected enum type.
  *
- * A flagset supports one user-defined enumeration. The number of flags
+ * A flag_set_t supports one user-defined enumeration. The number of flags
  * (i.e. the member of the user enumeration) is not limited, as the underlying
  * _bitset (std::_bitset) can have an arbitrary large size.
- * 
+ *
  * REQUIREMENTS:
  *      * This code source required C++14 to compile.
  *      * The user enumeration shall not explicitely set any value.
  *      * The last enumeration member shall be: "LAST_VALUE"
  *
  */
-template<typename T>
-struct FlagSet
-{
-    FlagSet() = default;
+template <typename T>
+struct flag_set_t {
+    flag_set_t() = default;
 
     // &(T)
-    FlagSet operator&(const T& val)
+    flag_set_t operator&(const T& val)
     {
-        FlagSet ret(*this);
+        flag_set_t ret(*this);
         ret &= val;
 
         assert(ret._bitset.count() <= 1);
@@ -42,7 +45,7 @@ struct FlagSet
     }
 
     // &=(T)
-    FlagSet& operator&=(const T& val)
+    flag_set_t& operator&=(const T& val)
     {
         bool tmp = _bitset[static_cast<utype>(val)];
         _bitset.reset();
@@ -50,26 +53,26 @@ struct FlagSet
         return *this;
     }
 
-    // &(FlagSet)
-    FlagSet operator&(const FlagSet& val)
+    // &(flag_set_t)
+    flag_set_t operator&(const flag_set_t& val)
     {
-        FlagSet ret(*this);
+        flag_set_t ret(*this);
         ret._bitset &= val._bitset;
 
         return ret;
     }
 
-    // &=(FlagSet)
-    FlagSet& operator&=(const FlagSet& o)
+    // &=(flag_set_t)
+    flag_set_t& operator&=(const flag_set_t& o)
     {
         _bitset &= o._bitset;
         return *this;
     }
 
     // |(T)
-    FlagSet operator|(const T& val)
+    flag_set_t operator|(const T& val)
     {
-        FlagSet ret(*this);
+        flag_set_t ret(*this);
         ret |= val;
 
         assert(ret._bitset.count() >= 1);
@@ -77,95 +80,80 @@ struct FlagSet
     }
 
     // |=(T)
-    FlagSet& operator|=(const T& val)
+    flag_set_t& operator|=(const T& val)
     {
         set_true(val);
         return *this;
     }
 
-    // |(FlagSet)
-    FlagSet operator|(const FlagSet& val)
+    // |(flag_set_t)
+    flag_set_t operator|(const flag_set_t& val)
     {
-        FlagSet ret(*this);
+        flag_set_t ret(*this);
         ret._bitset |= val._bitset;
 
         return ret;
     }
 
-    // |=(FlagSet)
-    FlagSet& operator|=(const FlagSet& o)
+    // |=(flag_set_t)
+    flag_set_t& operator|=(const flag_set_t& o)
     {
         _bitset |= o._bitset;
         return *this;
     }
 
     // ~
-    FlagSet operator~()
+    flag_set_t operator~()
     {
-        FlagSet cp(*this);
+        flag_set_t cp(*this);
         cp._bitset.flip();
 
         return cp;
     }
 
     // bool()
-    explicit operator bool() const
-    {
-        return _bitset.any();
-    }
+    explicit operator bool() const { return _bitset.any(); }
 
-    // ==(FlagSet)
-    bool operator==(const FlagSet& o) const
-    {
-        return _bitset == o._bitset;
-    }
+    // ==(flag_set_t)
+    bool operator==(const flag_set_t& o) const { return _bitset == o._bitset; }
 
-    bool operator[](const T& val)
-    {
-        return _bitset[static_cast<utype>(val)];
-    }
+    bool operator[](const T& val) { return _bitset[static_cast<utype>(val)]; }
 
-    std::size_t size() const
-    {
-        return _bitset.size();
-    }
+    std::size_t size() const { return _bitset.size(); }
 
-    std::size_t count() const
-    {
-        return _bitset.count();
-    }
+    std::size_t count() const { return _bitset.count(); }
 
-    FlagSet& set()
+    flag_set_t& set()
     {
         _bitset.set();
         return *this;
     }
 
-    FlagSet& reset()
+    flag_set_t& reset()
     {
         _bitset.reset();
         return *this;
     }
 
-    FlagSet& flip()
+    flag_set_t& flip()
     {
         _bitset.flip();
         return *this;
     }
 
-    FlagSet& set(const T& val, bool value = true)
+    flag_set_t& set(const T& val, bool value = true)
     {
         _bitset.set(static_cast<utype>(val), value);
         return *this;
     }
 
-    FlagSet &reset(const T& val)
+    flag_set_t& reset(const T& val)
     {
         _bitset.reset(static_cast<utype>(val));
         return *this;
     }
 
-    FlagSet& flip(const T& val)
+    flag_set_t& flip(const T& val)
     {
         _bitset.flip(static_cast<utype>(val));
         return *this;
@@ -174,32 +162,25 @@ struct FlagSet
     /**
      * Overload for std::ostream
      */
-    friend std::ostream& operator<<(std::ostream& stream, const FlagSet& me)
-    {
-        return stream << me._bitset;
-    }
+    friend std::ostream& operator<<(std::ostream& stream, const flag_set_t& me) { return stream << me._bitset; }
 
-    private:
+private:
     using utype = typename std::underlying_type<T>::type;
     std::bitset<static_cast<utype>(T::LAST_VALUE)> _bitset;
     // using below line doesn't need the LAST_VALUE declaration but may bring compile error
-    //std::bitset<std::numeric_limits<utype>::max()> _bitset;
+    // std::bitset<std::numeric_limits<utype>::max()> _bitset;
 
-    void set_true(const T& val)
-    {
-        _bitset[static_cast<utype>(val)] = 1;
-    }
+    void set_true(const T& val) { _bitset[static_cast<utype>(val)] = 1; }
 };
 
 /**
  * Provide a free operator allowing to combine two enumeration
- * member into a FlagSet.
+ * member into a flag_set_t.
  */
-template<typename T>
-typename std::enable_if<std::is_enum<T>::value, FlagSet<T>>::type
-operator|(const T& lhs, const T& rhs)
+template <typename T>
+typename std::enable_if<std::is_enum<T>::value, flag_set_t<T>>::type operator|(const T& lhs, const T& rhs)
 {
-    FlagSet<T> bs;
+    flag_set_t<T> bs;
     bs |= lhs;
     bs |= rhs;
 
@@ -209,23 +190,9 @@ operator|(const T& lhs, const T& rhs)
 ///////////////////////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////
 
-/**
- * Some random enum to use in tests.
- */ 
-enum class Options : uint64_t
-{
-    FULLSCREEN,
-    INVERT_MOUSE,
-    BLA,
-    RED_BACKGROUND,
-    RED_FOREGROUND,
-    LAST_VALUE
-};
-
-
 void test_AND()
 {
-    FlagSet<Options> red(Options::RED_FOREGROUND | Options::RED_BACKGROUND);
+    flag_set_t<Options> red(Options::RED_FOREGROUND | Options::RED_BACKGROUND);
 
     auto ret = red & Options::RED_BACKGROUND;
     assert(ret);
@@ -246,18 +213,18 @@ void test_AND()
 
 void test_OR()
 {
-    FlagSet<Options> red;
+    flag_set_t<Options> red;
     red |= Options::RED_FOREGROUND | Options::RED_BACKGROUND;
     assert(red.count() == 2);
 
-    FlagSet<Options> opt;
+    flag_set_t<Options> opt;
     opt |= (Options::FULLSCREEN | Options::BLA);
 
     // FULLSCREEN and BLA match, so this evaluates to true.
     assert(opt & (Options::FULLSCREEN | Options::BLA | Options::RED_FOREGROUND | Options::RED_BACKGROUND));
 
     // Ensure that a group of flag is set
-    FlagSet<Options> expected;
+    flag_set_t<Options> expected;
     expected |= (Options::FULLSCREEN);
     assert((opt & expected) == expected);
 
@@ -271,7 +238,7 @@ void test_OR()
 
 void test_set_reset()
 {
-    FlagSet<Options> opt;
+    flag_set_t<Options> opt;
 
     assert(opt.count() == 0);
     opt.set();
@@ -282,19 +249,17 @@ void test_set_reset()
     opt.set(Options::BLA);
     assert(opt.count() == 1 && opt[Options::BLA]);
     opt.set(Options::BLA, false);
-    assert(opt.count() == 0);  
+    assert(opt.count() == 0);
 }
 
 void test_type_safety()
 {
     // The following will not compile.
-    FlagSet<Options> bs;
+    flag_set_t<Options> bs;
 
     // bs & 42;
     // bs &= 42;
     // bs |= 42;
     // bs | 42;
 }
-
-#endif
 

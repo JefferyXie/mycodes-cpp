@@ -1,9 +1,8 @@
-#ifndef FORMATTER_H
-#define FORMATTER_H
+#pragma once
 
-#include "header.h"
+#include "../main/header.h"
 
-namespace formatter {
+namespace my_formatter {
 
 //
 // center alignment the text
@@ -45,7 +44,7 @@ centered(const std::string& str) {
 
 */
 
-template <typename T, typename std::enable_if_t<!std::is_arithmetic<T>::value>* = nullptr>
+template <typename T, typename std::enable_if_t<!std::is_arithmetic_v<T>>* = nullptr>
 center_helper<std::string::value_type> centered(T v, char fill = ' ')
 {
     // keep ONE buffer around
@@ -55,7 +54,7 @@ center_helper<std::string::value_type> centered(T v, char fill = ' ')
     str += buf;
     return center_helper<std::string::value_type, std::string::traits_type>(str, fill);
 }
-template <typename T, typename std::enable_if_t<std::is_arithmetic<T>::value>* = nullptr>
+template <typename T, typename std::enable_if_t<std::is_arithmetic_v<T>>* = nullptr>
 center_helper<std::string::value_type, std::string::traits_type> centered(T v, char fill = ' ')
 {
     auto str = std::to_string(v);
@@ -83,25 +82,24 @@ operator<<(std::basic_ostream<charT, traits>& s, const center_helper<charT, trai
     return s;
 }
 
-}    // end namespace formatter
+}    // end namespace my_formatter
 
 // clang-format off
-#define FUNC_BEGIN(name)                        \
-    std::cout << "\n"                           \
-              << std::setw(80)                  \
-              << formatter::centered(#name, '>')\
+#define FUNC_BEGIN(name)                            \
+    std::cout << "\n"                               \
+              << std::setw(80)                      \
+              << my_formatter::centered(#name, '>') \
               << std::endl;
 
-#define FUNC_END(name)                          \
-    std::cout << std::setw(80)                  \
-              << formatter::centered(#name, '<')\
-              << "\n"                           \
+#define FUNC_END(name)                              \
+    std::cout << std::setw(80)                      \
+              << my_formatter::centered(#name, '<') \
+              << "\n"                               \
               << std::endl;
 
-#define SECTION_BEGIN(name)                     \
-    std::cout << std::setw(80)                  \
-              << formatter::centered(#name, '-')\
+#define SECTION_BEGIN(name)                         \
+    std::cout << std::setw(80)                      \
+              << my_formatter::centered(#name, '-') \
               << std::endl;
 // clang-format on
 
-#endif

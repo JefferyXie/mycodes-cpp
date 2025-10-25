@@ -23,8 +23,6 @@ int possible_paths_top_bottom_v1(int m, int n)
     // + numberOfPaths(m-1,n-1);
 }
 
-// Returns count of possible paths to reach cell at row number m and column
-// number n from the topmost leftmost cell (cell at 1, 1)
 int possible_paths_top_bottom_v2(int m, int n)
 {
     // Create a 2D table to store results of subproblems
@@ -50,4 +48,3 @@ int possible_paths_top_bottom_v2(int m, int n)
 }
 
 #endif
-

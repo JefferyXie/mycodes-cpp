@@ -13,23 +13,23 @@ public:
     my_list(const my_list& other);
     my_list& operator=(const my_list& other);
 
-    ListNode<T>* Insert(ListNode<T>* pBefore, T& v);
-    ListNode<T>* Insert2Head(T& v);
-    ListNode<T>* Insert2End(T& v);
-    ListNode<T>* Add(T& v);
-    void         Remove(T& v);
-    ListNode<T>* Find(T& v);
-    ListNode<T>* Reverse();
-    int          Size();
-    void         Display();
-    ListNode<T>* GetHead() { return m_pHead; }
+    list_node<T>* Insert(list_node<T>* pBefore, T& v);
+    list_node<T>* Insert2Head(T& v);
+    list_node<T>* Insert2End(T& v);
+    list_node<T>* Add(T& v);
+    void          Remove(T& v);
+    list_node<T>* Find(T& v);
+    list_node<T>* Reverse();
+    list_node<T>* GetHead() const;
+    int           Size();
+    void          Display();
 
 protected:
-    ListNode<T>* GetCurrent() { return m_pCurrent; }
+    list_node<T>* GetCurrent() { return m_pCurrent; }
 
 private:
-    ListNode<T>* m_pHead;
-    ListNode<T>* m_pCurrent;
+    list_node<T>* m_pHead;
+    list_node<T>* m_pCurrent;
 };
 
 template <class T>
@@ -42,10 +42,10 @@ my_list<T>::my_list()
 template <class T>
 my_list<T>::~my_list()
 {
-    ListNode<T>* pNode = m_pHead;
+    list_node<T>* pNode = m_pHead;
     while (NULL != pNode) {
-        ListNode<T>* pTemp = pNode;
-        pNode              = pNode->GetPNext();
+        list_node<T>* pTemp = pNode;
+        pNode               = pNode->next;
         delete pTemp;
     }
 }
@@ -70,13 +70,13 @@ my_list<T>& my_list<T>::operator=(const my_list<T>& rhs)
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Insert(ListNode<T>* pBefore, T& v)
+list_node<T>* my_list<T>::Insert(list_node<T>* pBefore, T& v)
 {
-    ListNode<T>* pNew = new ListNode<T>(v, NULL);
+    list_node<T>* pNew = new list_node<T>(v, NULL);
     if (NULL != pBefore) {
-        ListNode<T>* pNext = pBefore->GetPNext();
-        pNew->SetPNext(pNext);
-        pBefore->SetPNext(pNew);
+        list_node<T>* pNext = pBefore->next;
+        pNew->next          = pNext;
+        pBefore->next       = pNew;
     } else {
         m_pHead    = pNew;
         m_pCurrent = pNew;
@@ -85,24 +85,24 @@ ListNode<T>* my_list<T>::Insert(ListNode<T>* pBefore, T& v)
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Insert2Head(T& v)
+list_node<T>* my_list<T>::Insert2Head(T& v)
 {
-    m_pHead = new ListNode<T>(v, m_pHead);
+    m_pHead = new list_node<T>(v, m_pHead);
     return m_pHead;
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Insert2End(T& v)
+list_node<T>* my_list<T>::Insert2End(T& v)
 {
-    ListNode<T>* pTail = m_pCurrent;
-    while (NULL != pTail && NULL != pTail->GetPNext()) {
-        pTail = pTail->GetPNext();
+    list_node<T>* pTail = m_pCurrent;
+    while (NULL != pTail && NULL != pTail->next) {
+        pTail = pTail->next;
     }
     return Insert(pTail, v);
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Add(T& v)
+list_node<T>* my_list<T>::Add(T& v)
 {
     return Insert2End(v);
 }
@@ -110,13 +110,13 @@ ListNode<T>* my_list<T>::Add(T& v)
 template <class T>
 void my_list<T>::Remove(T& v)
 {
-    ListNode<T>* p    = m_pHead;
-    ListNode<T>* pPre = NULL;
+    list_node<T>* p    = m_pHead;
+    list_node<T>* pPre = NULL;
     while (NULL != p) {
-        ListNode<T>* pNext = p->GetPNext();
-        if (p->GetValue() == v) {
+        list_node<T>* pNext = p->next;
+        if (p->data == v) {
             if (pPre != NULL) {
-                pPre->SetPNext(pNext);
+                pPre->next = pNext;
             } else {
                 m_pHead = pNext;
             }
@@ -129,28 +129,28 @@ void my_list<T>::Remove(T& v)
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Find(T& v)
+list_node<T>* my_list<T>::Find(T& v)
 {
-    ListNode<T>* p = m_pHead;
+    list_node<T>* p = m_pHead;
     while (NULL != p) {
-        if (p->GetValue() == v)
+        if (p->data == v)
             break;
-        p = p->GetPNext();
+        p = p->next;
     }
     return p;
 }
 
 template <class T>
-ListNode<T>* my_list<T>::Reverse()
+list_node<T>* my_list<T>::Reverse()
 {
-    ListNode<T>* p        = m_pHead;
-    ListNode<T>* pOldPre  = NULL;
-    ListNode<T>* pOldNext = NULL;
+    list_node<T>* p        = m_pHead;
+    list_node<T>* pOldPre  = NULL;
+    list_node<T>* pOldNext = NULL;
     while (NULL != p) {
-        pOldNext = p->GetPNext();
-        p->SetPNext(pOldPre);
-        pOldPre = p;
-        p       = pOldNext;
+        pOldNext = p->next;
+        p->next  = pOldPre;
+        pOldPre  = p;
+        p        = pOldNext;
     }
     m_pHead = pOldPre;
     return m_pHead;
@@ -159,24 +159,29 @@ ListNode<T>* my_list<T>::Reverse()
 template <class T>
 int my_list<T>::Size()
 {
-    int          len = 0;
-    ListNode<T>* p   = m_pHead;
+    int           len = 0;
+    list_node<T>* p   = m_pHead;
     while (NULL != p) {
-        p = p->GetPNext();
+        p = p->next;
         ++len;
     }
     return len;
+}
+template <class T>
+list_node<T>* my_list<T>::GetHead() const
+{
+    return m_pHead;
 }
 
 template <class T>
 void my_list<T>::Display()
 {
     std::cout << "List size is " << Size() << std::endl;
-    int          i = 0;
-    ListNode<T>* p = m_pHead;
+    int           i = 0;
+    list_node<T>* p = m_pHead;
     while (NULL != p) {
-        std::cout << i++ << "  : " << p->GetValue() << std::endl;
-        p = p->GetPNext();
+        std::cout << i++ << "  : " << p->data << std::endl;
+        p = p->next;
     }
 }
 

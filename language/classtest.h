@@ -45,23 +45,6 @@ public:
     }
 };
 
-struct MyMember {
-    static int  s_count;
-    int         value;
-    std::string name;
-    // list<int> ls;
-    MyMember()
-    {
-        value = s_count++;
-        name  = "name[" + std::to_string(value) + "]";
-        std::cout << "MyMember() " << value << std::endl;
-    }
-    ~MyMember() { std::cout << "~MyMember() " << value << std::endl; }
-    std::string ToString() { return "value:" + std::to_string(value) + ",name:" + name; }
-    MyMember&   operator=(const MyMember&) = delete;
-};
-int MyMember::s_count = 0;
-
 struct Plain {
     Plain() { std::cout << "Plain(): construct a Plain object" << std::endl; }
     Plain(const Plain&) { std::cout << "Plain(const Plain&): copy construct a Plain object" << std::endl; }

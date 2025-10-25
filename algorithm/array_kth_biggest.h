@@ -7,7 +7,7 @@
 // Find the k-th biggest number in an unordered integer array
 //
 
-int array_kth_biggest(vector<int> arr, size_t k)
+int array_kth_biggest(std::vector<int> arr, size_t k)
 {
     int min_value = std::numeric_limits<int>::max();
     int max_value = std::numeric_limits<int>::min();
@@ -35,7 +35,7 @@ int array_kth_biggest(vector<int> arr, size_t k)
 }
 
 // Use minimum priority queue (top node is min value)
-int array_kth_biggest_v2(vector<int> arr, size_t k)
+int array_kth_biggest_v2(std::vector<int> arr, size_t k)
 {
     std::priority_queue<int, std::vector<int>, std::greater<int>> pri_queue;
     for (size_t i = 0; i < arr.size(); i++) {
@@ -54,7 +54,7 @@ int array_kth_biggest_v2(vector<int> arr, size_t k)
 // 3) if i == k - 1, return arr[i];
 //    if i > k - 1, do 1-2) again with arr[0] to arr[i - 1];
 //    if i < k - 1, do 1-2) again with arr[i + 1] to arr[n], k = k - i - 1;
-int array_kth_biggest_v3(vector<int> arr, size_t k)
+int array_kth_biggest_v3(std::vector<int> arr, size_t k)
 {
     // TODO: ...
     return 0;

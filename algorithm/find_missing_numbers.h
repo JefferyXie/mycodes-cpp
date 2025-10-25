@@ -4,14 +4,14 @@
 #include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/missing-numbers
-set<int> find_missing_numbers(int* A, int n, int* B, int m)
+std::set<int> find_missing_numbers(int* A, int n, int* B, int m)
 {
-    set<int> missingSet;
-    int      min_B = *B;
-    int      max_B = *B;
+    std::set<int> missingSet;
+    int           min_B = *B;
+    int           max_B = *B;
     for (int i = 1; i < m; ++i) {
-        min_B = min(*(B + i), min_B);
-        max_B = max(*(B + i), max_B);
+        min_B = std::min(*(B + i), min_B);
+        max_B = std::max(*(B + i), max_B);
     }
     int existing[max_B - min_B + 1];
     memset(existing, 0, sizeof(existing));

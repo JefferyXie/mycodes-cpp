@@ -1,6 +1,8 @@
 #ifndef HEADLANDS_H
 #define HEADLANDS_H
 
+#include <cstring>
+#include <cstdint>
 #include <istream>
 #include <iterator>
 #include <ostream>
@@ -17,7 +19,7 @@ class csv_reader final
 public:
     csv_reader(std::string_view file)
     {
-        if (ifs_.open(file); !ifs_.is_open()) {
+        if (ifs_.open(file.data()); !ifs_.is_open()) {
             throw std::invalid_argument("Failed to open file: " + std::string{file});
         }
     }
@@ -57,7 +59,7 @@ private:
 class date final
 {
 public:
-    //date(std::string_view yyyymmdd, char delimiter = '\0')
+    // date(std::string_view yyyymmdd, char delimiter = '\0')
     date(std::string_view yyyymmdd, char delimiter = '-')
     {
         if (delimiter == '\0') {
@@ -213,9 +215,7 @@ struct my_job {
     std::string name;
     std::string next_job;
 
-    bool valid() {
-        return !date.empty() && !name.empty();
-    }
+    bool valid() { return !date.empty() && !name.empty(); }
 
     friend std::istream& operator>>(std::istream& is, my_job& job)
     {
@@ -264,7 +264,7 @@ struct my_job {
             }
 
             *field = line.substr(start, pos - start);
-            start = pos + 1;
+            start  = pos + 1;
         }
 
         /*
@@ -306,11 +306,12 @@ struct my_job {
     }
 };
 
-void run_stream_test() {
+void run_stream_test()
+{
     std::ifstream ifs;
     ifs.open("./interview/headlands/jobs.csv");
     std::vector<my_job> jobs;
-    my_job job;
+    my_job              job;
     while (ifs >> job) {
         if (job.valid()) {
             jobs.emplace_back(std::move(job));

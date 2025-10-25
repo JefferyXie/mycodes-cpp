@@ -63,7 +63,6 @@ mutex: can multi-process in linux share same mutex?
 
 *******************************************************************************/
 
-
 //
 // http://www.alexonlinux.com/pthread-mutex-vs-pthread-spinlock
 //
@@ -83,28 +82,29 @@ pthread_spinlock_t spinlock;
 pthread_mutex_t mutex_p;
 #endif
 
-//pid_t gettid() { return syscall( __NR_gettid ); }
-
-pid_t gettid() {
+pid_t gettid()
+{
+#ifdef __APPLE__
     uint64_t tid;
     pthread_threadid_np(NULL, &tid);
     return tid;
+#else
+    return ::syscall(SYS_gettid);
+#endif
 }
 
-void *consumer(void *ptr)
+void* consumer(void* ptr)
 {
     printf("Consumer TID %lu\n", (unsigned long)gettid());
 
-    while (1)
-    {
+    while (1) {
 #ifdef USE_SPINLOCK
         pthread_spin_lock(&spinlock);
 #else
         pthread_mutex_lock(&mutex_p);
 #endif
 
-        if (the_list.empty())
-        {
+        if (the_list.empty()) {
 #ifdef USE_SPINLOCK
             pthread_spin_unlock(&spinlock);
 #else
@@ -128,7 +128,7 @@ void *consumer(void *ptr)
 
 void Run_mutex_spinlock()
 {
-    pthread_t thr1, thr2;
+    pthread_t      thr1, thr2;
     struct timeval tv1, tv2;
 
 #ifdef USE_SPINLOCK
@@ -155,14 +155,12 @@ void Run_mutex_spinlock()
     // Measuring time after threads finished...
     gettimeofday(&tv2, NULL);
 
-    if (tv1.tv_usec > tv2.tv_usec)
-    {
+    if (tv1.tv_usec > tv2.tv_usec) {
         tv2.tv_sec--;
         tv2.tv_usec += 1000000;
     }
 
-    printf("Total time elapsed (seconds): %ld.%ld\n",
-           tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
+    printf("Total time elapsed (seconds): %ld.%ld\n", tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
 
 #ifdef USE_SPINLOCK
     pthread_spin_destroy(&spinlock);

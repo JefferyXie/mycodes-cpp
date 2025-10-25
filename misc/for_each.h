@@ -79,6 +79,8 @@ inline constexpr void for_each_with_step(F&& f)
 
 void run_for_each()
 {
+// TODO: linux likely requires __atomic_always_lock_free(sz, ...) @sz compile time number...
+#ifdef __APPLE__
     // Rule: sizeof(M) must be power of 2, and not exceed 16
     for_each_run<0, 32>([](auto sz) {
         std::cout << "sizeof(A)=" << sz << ", __atomic_always_lock_free=" << __atomic_always_lock_free(sz, 0)
@@ -112,6 +114,7 @@ void run_for_each()
         std::cout << "sizeof(A)=" << sz << ", __atomic_always_lock_free=" << __atomic_always_lock_free(sz, 0)
                   << std::endl;
     });
+#endif
 }
 
 #endif

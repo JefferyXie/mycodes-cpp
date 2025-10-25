@@ -10,20 +10,21 @@
 // 3) get the min_diff value
 // problems for this solution -
 // 1) spend a lot of time when building the tree, O(n^depth), will be time out
-// 2) doesn't use information that each pair represents vertices' index
+// 2) doesn't use information that each std::pair represents vertices' index
 template <class T>
 class TreeNode_Cut
 {
 public:
-    T                       data;       // index
-    int                     vertice;    // vertice value
-    vector<TreeNode_Cut<T>> children;
+    T                            data;       // index
+    int                          vertice;    // vertice value
+    std::vector<TreeNode_Cut<T>> children;
 };
 
 int SumAllVertices = 0;
 
-TreeNode_Cut<int>
-BuildTree(int parent, const vector<int>& vertices, const vector<pair<int, int>>& edges, vector<bool>& visited)
+TreeNode_Cut<int> BuildTree(
+    int parent, const std::vector<int>& vertices, const std::vector<std::pair<int, int>>& edges,
+    std::vector<bool>& visited)
 {
     TreeNode_Cut<int> nodeParent;
     nodeParent.data    = parent;
@@ -62,18 +63,18 @@ int Calc_treediff(const TreeNode_Cut<int>& root)
     int min_diff = SumAllVertices;
     for (int i = 0; i < (int)root.children.size(); ++i) {
         int sumBranch = SumBranchVertices(root.children[i]);
-        min_diff      = min(abs(SumAllVertices - 2 * sumBranch), min_diff);
-        min_diff      = min(Calc_treediff(root.children[i]), min_diff);
+        min_diff      = std::min(abs(SumAllVertices - 2 * sumBranch), min_diff);
+        min_diff      = std::min(Calc_treediff(root.children[i]), min_diff);
     }
     return min_diff;
 }
-int CutTree(const vector<int>& vertices, const vector<pair<int, int>>& edges)
+int CutTree(const std::vector<int>& vertices, const std::vector<std::pair<int, int>>& edges)
 {
     for_each(begin(vertices), end(vertices), [](int v) {
         SumAllVertices += v;
     });
-    vector<bool> visited(edges.size(), false);
-    auto         root = BuildTree(1, vertices, edges, visited);
+    std::vector<bool> visited(edges.size(), false);
+    auto              root = BuildTree(1, vertices, edges, visited);
     return Calc_treediff(root);
 }
 

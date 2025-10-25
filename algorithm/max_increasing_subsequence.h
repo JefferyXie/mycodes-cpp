@@ -15,10 +15,10 @@
 // arr = [10, 7, 12, 30, 11, 5, 60, 9]
 // max = [1,  1,  2,  3,  2, 1,  4, 2]
 
-unsigned max_increasing_subsequence(vector<int> arr)
+unsigned max_increasing_subsequence(std::vector<int> arr)
 {
-    unsigned         result = 1;
-    vector<unsigned> max_subsequence(arr.size(), 1);
+    unsigned              result = 1;
+    std::vector<unsigned> max_subsequence(arr.size(), 1);
     for (size_t i = 1; i < arr.size(); ++i) {
         for (size_t j = 0; j < i; ++j) {
             // 1) get max increasing sequence if current arr[i] is part of that -
@@ -32,14 +32,14 @@ unsigned max_increasing_subsequence(vector<int> arr)
             result = max_subsequence[i];
         }
     }
-    auto print = [](string prefix, auto& input) {
-        cout << prefix << ": [";
+    auto print = [](std::string prefix, auto& input) {
+        std::cout << prefix << ": [";
         for (size_t i = 0; i < input.size(); ++i) {
             if (i > 0)
-                cout << ", ";
-            cout << setfill(' ') << setw(4) << input.at(i);
+                std::cout << ", ";
+            std::cout << std::setfill(' ') << std::setw(4) << input.at(i);
         }
-        cout << "]" << endl;
+        std::cout << "]" << std::endl;
     };
     print("arr", arr);
     print("max", max_subsequence);

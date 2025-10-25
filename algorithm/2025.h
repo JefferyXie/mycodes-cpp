@@ -297,12 +297,12 @@ void run_find_min_steps_to_1_bitwise()
 }
 
 // find all paths from root to each individual leaf nodes
-void tree_all_paths(TreeNode<int>* root)
+void tree_all_paths(tree_node_int_t* root)
 {
     if (!root)
         return;
 
-    std::vector<TreeNode<int>*> path;
+    std::vector<tree_node_int_t*> path;
     path.push_back(root);
 
     auto print = [&]() {
@@ -317,8 +317,8 @@ void tree_all_paths(TreeNode<int>* root)
         std::cout << " ]" << std::endl;
     };
 
-    using impl_t    = std::function<void(TreeNode<int>*)>;
-    impl_t traverse = [&](TreeNode<int>* node) {
+    using impl_t    = std::function<void(tree_node_int_t*)>;
+    impl_t traverse = [&](tree_node_int_t* node) {
         if (!node->left && !node->right) {
             // dump path
             print();
@@ -342,10 +342,10 @@ void tree_all_paths(TreeNode<int>* root)
     traverse(root);
 }
 
-void tree_all_paths_v2(TreeNode<int>* root)
+void tree_all_paths_v2(tree_node_int_t* root)
 {
-    std::vector<TreeNode<int>*> path;
-    auto                        print = [&]() {
+    std::vector<tree_node_int_t*> path;
+    auto                          print = [&]() {
         std::cout << "[ ";
         for (size_t i = 0; i < path.size(); ++i) {
             if (i == path.size() - 1) {
@@ -357,8 +357,8 @@ void tree_all_paths_v2(TreeNode<int>* root)
         std::cout << " ]" << std::endl;
     };
 
-    using impl_t    = std::function<void(TreeNode<int>*)>;
-    impl_t traverse = [&](TreeNode<int>* node) {
+    using impl_t    = std::function<void(tree_node_int_t*)>;
+    impl_t traverse = [&](tree_node_int_t* node) {
         if (!node) {
             return;
         }
@@ -379,17 +379,17 @@ void tree_all_paths_v2(TreeNode<int>* root)
 
 void run_tree_all_paths()
 {
-    std::shared_ptr<TreeNode<int>> root(new TreeNode<int>(100));
-    std::shared_ptr<TreeNode<int>> n1(new TreeNode<int>(1));
-    std::shared_ptr<TreeNode<int>> n2(new TreeNode<int>(2));
-    std::shared_ptr<TreeNode<int>> n3(new TreeNode<int>(3));
-    std::shared_ptr<TreeNode<int>> n4(new TreeNode<int>(4));
-    std::shared_ptr<TreeNode<int>> n5(new TreeNode<int>(5));
-    std::shared_ptr<TreeNode<int>> n6(new TreeNode<int>(6));
-    std::shared_ptr<TreeNode<int>> n7(new TreeNode<int>(7));
-    std::shared_ptr<TreeNode<int>> n8(new TreeNode<int>(8));
-    std::shared_ptr<TreeNode<int>> n9(new TreeNode<int>(9));
-    std::shared_ptr<TreeNode<int>> n0(new TreeNode<int>(0));
+    std::shared_ptr<tree_node_int_t> root(new tree_node_int_t(100));
+    std::shared_ptr<tree_node_int_t> n1(new tree_node_int_t(1));
+    std::shared_ptr<tree_node_int_t> n2(new tree_node_int_t(2));
+    std::shared_ptr<tree_node_int_t> n3(new tree_node_int_t(3));
+    std::shared_ptr<tree_node_int_t> n4(new tree_node_int_t(4));
+    std::shared_ptr<tree_node_int_t> n5(new tree_node_int_t(5));
+    std::shared_ptr<tree_node_int_t> n6(new tree_node_int_t(6));
+    std::shared_ptr<tree_node_int_t> n7(new tree_node_int_t(7));
+    std::shared_ptr<tree_node_int_t> n8(new tree_node_int_t(8));
+    std::shared_ptr<tree_node_int_t> n9(new tree_node_int_t(9));
+    std::shared_ptr<tree_node_int_t> n0(new tree_node_int_t(0));
 
     root->left  = n1.get();
     root->right = n2.get();
@@ -412,7 +412,7 @@ void run_tree_all_paths()
 // leetcode 114: given a binary tree, change it to list
 // - left child is null, right child is 'next'
 // - follow pre-order traversal
-TreeNode<int>* tree_to_list(TreeNode<int>* root)
+tree_node_int_t* tree_to_list(tree_node_int_t* root)
 {
     std::cout << root->data << ",";
 
@@ -432,7 +432,7 @@ TreeNode<int>* tree_to_list(TreeNode<int>* root)
 }
 
 // this is kind of BFS, each cycle put the right child to right-bottom from left branch, and put left child on right
-void tree_to_list_2(TreeNode<int>* root)
+void tree_to_list_2(tree_node_int_t* root)
 {
     while (root) {
         std::cout << root->data << ",";
@@ -452,17 +452,17 @@ void tree_to_list_2(TreeNode<int>* root)
 void run_tree_to_list()
 {
     auto create_tree = []() {
-        auto root = new TreeNode<int>(100);
-        auto n1   = new TreeNode<int>(1);
-        auto n2   = new TreeNode<int>(2);
-        auto n3   = new TreeNode<int>(3);
-        auto n4   = new TreeNode<int>(4);
-        auto n5   = new TreeNode<int>(5);
-        auto n6   = new TreeNode<int>(6);
-        auto n7   = new TreeNode<int>(7);
-        auto n8   = new TreeNode<int>(8);
-        auto n9   = new TreeNode<int>(9);
-        auto n0   = new TreeNode<int>(0);
+        auto root = new tree_node_int_t(100);
+        auto n1   = new tree_node_int_t(1);
+        auto n2   = new tree_node_int_t(2);
+        auto n3   = new tree_node_int_t(3);
+        auto n4   = new tree_node_int_t(4);
+        auto n5   = new tree_node_int_t(5);
+        auto n6   = new tree_node_int_t(6);
+        auto n7   = new tree_node_int_t(7);
+        auto n8   = new tree_node_int_t(8);
+        auto n9   = new tree_node_int_t(9);
+        auto n0   = new tree_node_int_t(0);
 
         root->left  = n1;
         root->right = n2;
@@ -1549,10 +1549,10 @@ void run_merge_arrays()
 //
 // Convert binary tree into double linked list so that node's left child is previous node and right child is next node
 // The list is inorder: left > root > right
-TreeNode<int>* binary_tree_2_double_list(TreeNode<int>* root)
+tree_node_int_t* binary_tree_2_double_list(tree_node_int_t* root)
 {
-    using return_t                               = std::pair<TreeNode<int>*, TreeNode<int>*>;
-    std::function<return_t(TreeNode<int>*)> impl = [&](TreeNode<int>* node) {
+    using return_t                                 = std::pair<tree_node_int_t*, tree_node_int_t*>;
+    std::function<return_t(tree_node_int_t*)> impl = [&](tree_node_int_t* node) {
         if (!node) {
             return return_t{nullptr, nullptr};
         }
@@ -1577,12 +1577,12 @@ TreeNode<int>* binary_tree_2_double_list(TreeNode<int>* root)
 }
 void run_binary_tree_2_double_list()
 {
-    auto root         = new TreeNode(10);
-    root->left        = new TreeNode(12);
-    root->right       = new TreeNode(15);
-    root->left->left  = new TreeNode(25);
-    root->left->right = new TreeNode(30);
-    root->right->left = new TreeNode(36);
+    auto root         = new tree_node_int_t(10);
+    root->left        = new tree_node_int_t(12);
+    root->right       = new tree_node_int_t(15);
+    root->left->left  = new tree_node_int_t(25);
+    root->left->right = new tree_node_int_t(30);
+    root->right->left = new tree_node_int_t(36);
 
     auto result = binary_tree_2_double_list(root);
     while (result) {

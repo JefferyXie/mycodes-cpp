@@ -7,19 +7,19 @@
 // https://www.hackerrank.com/challenges/bus-station
 //
 
-vector<int> array_bus_station(vector<int> arr)
+std::vector<int> array_bus_station(std::vector<int> arr)
 {
     int lower = 0;
     int sum   = 0;
     // 1) get cumulative sum
-    unordered_set<int> cum_sum;
+    std::unordered_set<int> cum_sum;
     for (auto v : arr) {
-        lower = max(v, lower);
+        lower = std::max(v, lower);
         sum += v;
         cum_sum.insert(sum);
     }
-    set<int> factors;
-    int      fct = 0;
+    std::set<int> factors;
+    int           fct = 0;
     // 2) get all factors of sum so that sum % factor == 0
     // https://www.rookieslab.com/posts/most-efficient-way-to-find-all-factors-of-a-number-python-cpp
     while (++fct) {
@@ -36,7 +36,7 @@ vector<int> array_bus_station(vector<int> arr)
     }
 
     // 3) check each factor with cumulative sum
-    vector<int> rets;
+    std::vector<int> rets;
     for (auto factor : factors) {
         int cum_bus_cap = factor;
         while (true) {
@@ -53,7 +53,7 @@ vector<int> array_bus_station(vector<int> arr)
     return rets;
 }
 
-vector<int> array_bus_station_v2(vector<int> arr)
+std::vector<int> array_bus_station_v2(std::vector<int> arr)
 {
     std::vector<int> result;
     int              cum_count = 0;

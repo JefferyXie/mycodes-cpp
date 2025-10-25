@@ -1,7 +1,7 @@
 #ifndef MAKE_ENUM_H
 #define MAKE_ENUM_H
 
-#include "../main/formatter.h"
+#include "../core/my_formatter.h"
 
 //
 // https://stackoverflow.com/questions/207976/how-to-easily-map-c-enums-to-strings

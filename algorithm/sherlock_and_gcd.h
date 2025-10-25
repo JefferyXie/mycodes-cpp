@@ -17,7 +17,7 @@ int gcd(int a, int b) {
 int gcd(int arr[], int size, int pos) {
     if (size - pos < 2) return -1;
     else if (size - pos == 2) return gcd(arr[pos], arr[pos+1]);
-    return gcd(arr, size, pos+1);
+    return gcd(arr[pos], gcd(arr, size, pos+1));
 }
 void print(int arr[], int size) {
     for (int i = 0; i < size; ++i) {

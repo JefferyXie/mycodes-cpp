@@ -10,7 +10,7 @@
 //
 // list permutation with order consideration
 template <class T>
-int PossiblePermutation_WithOrder(vector<T>& target, int pos, vector<vector<T>>& allTargets)
+int PossiblePermutation_WithOrder(std::vector<T>& target, int pos, std::vector<std::vector<T>>& allTargets)
 {
     if ((int)target.size() < pos)
         return 0;
@@ -31,15 +31,15 @@ int PossiblePermutation_WithOrder(vector<T>& target, int pos, vector<vector<T>>&
     return count;
 }
 // list permutation that has elements as M without order consideration
-int PossiblePermutation_NoOrder(const vector<int>& source, int pos, int M, vector<int>& target)
+int PossiblePermutation_NoOrder(const std::vector<int>& source, int pos, int M, std::vector<int>& target)
 {
     if ((int)source.size() < M || (int)source.size() < pos)
         return -1;
     if ((int)target.size() == M) {
         for_each(target.begin(), target.end(), [](int a) {
-            cout << a << ",";
+            std::cout << a << ",";
         });
-        cout << endl;
+        std::cout << std::endl;
         return 1;
     }
 
@@ -52,7 +52,7 @@ int PossiblePermutation_NoOrder(const vector<int>& source, int pos, int M, vecto
     return count;
 }
 // list permutation that has elements as M with order consideration
-int PossiblePermutation_WithOrder(const vector<int>& source, int pos, int M, vector<int>& target)
+int PossiblePermutation_WithOrder(const std::vector<int>& source, int pos, int M, std::vector<int>& target)
 {
     if ((int)source.size() < M || (int)source.size() < pos)
         return 0;
@@ -60,14 +60,14 @@ int PossiblePermutation_WithOrder(const vector<int>& source, int pos, int M, vec
         /*cout << "*******************" << endl;
         for_each(target.begin(), target.end(), [](int a) { cout << a << ","; });
         cout << endl;*/
-        vector<vector<int>> allTargets;
-        int                 n = PossiblePermutation_WithOrder(target, 0, allTargets);
-        for_each(allTargets.begin(), allTargets.end(), [](vector<int>& v) {
-            cout << "******" << endl;
+        std::vector<std::vector<int>> allTargets;
+        int                           n = PossiblePermutation_WithOrder(target, 0, allTargets);
+        for_each(allTargets.begin(), allTargets.end(), [](std::vector<int>& v) {
+            std::cout << "******" << std::endl;
             for_each(v.begin(), v.end(), [](int a) {
-                cout << a << ",";
+                std::cout << a << ",";
             });
-            cout << endl;
+            std::cout << std::endl;
         });
         return n;
     }
@@ -87,13 +87,13 @@ struct Coordinate {
     {
         return (long long)(X - d.X) * (X - d.X) + (long long)(Y - d.Y) * (Y - d.Y);
     }
-    string ToString() const { return "(" + to_string(X) + "," + to_string(Y) + ")"; }
+    std::string ToString() const { return "(" + std::to_string(X) + "," + std::to_string(Y) + ")"; }
 };
 
 // permutation with order
 int PossiblePermutation(
-    const vector<Coordinate>& s1, int pos, int perm_length, vector<Coordinate>& target,
-    vector<vector<Coordinate>>& allTargets)
+    const std::vector<Coordinate>& s1, int pos, int perm_length, std::vector<Coordinate>& target,
+    std::vector<std::vector<Coordinate>>& allTargets)
 {
     if ((int)s1.size() < pos)
         return 0;
@@ -111,16 +111,17 @@ int PossiblePermutation(
     }
     return count;
 }
-vector<vector<Coordinate>> ListAllPermutation(const vector<Coordinate>& s, int perm_length)
+std::vector<std::vector<Coordinate>> ListAllPermutation(const std::vector<Coordinate>& s, int perm_length)
 {
-    vector<Coordinate>         target;
-    vector<vector<Coordinate>> allTargets;
+    std::vector<Coordinate>              target;
+    std::vector<std::vector<Coordinate>> allTargets;
     PossiblePermutation(s, 0, perm_length, target, allTargets);
     return allTargets;
 }
-long long CalcShortestTime(const vector<vector<Coordinate>>& s1, const vector<vector<Coordinate>>& s2, int Kth)
+long long CalcShortestTime(
+    const std::vector<std::vector<Coordinate>>& s1, const std::vector<std::vector<Coordinate>>& s2, int Kth)
 {
-    cout << s1.size() << "," << s2.size() << endl;
+    std::cout << s1.size() << "," << s2.size() << std::endl;
     if (s1[0].size() != s2[0].size() || Kth > (int)s1[0].size())
         return -1;
 
@@ -129,7 +130,7 @@ long long CalcShortestTime(const vector<vector<Coordinate>>& s1, const vector<ve
         for (int j = 0; j < (int)s2.size(); ++j) {
             // cout << "~~~~~~~~~~~~~~~~~~~" << endl;
             //  record distance for all persons
-            multiset<long long> allDistances;
+            std::multiset<long long> allDistances;
             for (int k = 0; k < (int)s1[i].size(); ++k) {
                 long long time = s1[i][k].SquareDistance(s2[j][k]);
                 allDistances.insert(time);
@@ -138,13 +139,13 @@ long long CalcShortestTime(const vector<vector<Coordinate>>& s1, const vector<ve
             auto it = allDistances.begin();
             advance(it, Kth - 1);
             // cout << *it << endl;
-            shortestTime = (shortestTime < 0 ? *it : min(*it, shortestTime));
+            shortestTime = (shortestTime < 0 ? *it : std::min(*it, shortestTime));
         }
     }
     return shortestTime;
 }
 
-long long BikeRacerShortestTime(vector<Coordinate>& bikers, vector<Coordinate>& bikes, int Kth)
+long long BikeRacerShortestTime(std::vector<Coordinate>& bikers, std::vector<Coordinate>& bikes, int Kth)
 {
     auto bikersPerm = ListAllPermutation(bikers, Kth);
     auto bikesPerm  = ListAllPermutation(bikes, Kth);

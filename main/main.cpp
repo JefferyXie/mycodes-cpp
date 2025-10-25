@@ -17,6 +17,7 @@ int main(int argc, char** argv)
 #include "../algorithm/2023.h"
 #include "../algorithm/2024.h"
 #include "../algorithm/2025.h"
+#include "../algorithm/2026.h"
 #include "../algorithm/bitwise_operation.h"
 #include "../algorithm/stock_max_profit.h"
 #include "../algorithm/str_palindrome.h"
@@ -27,10 +28,6 @@ int main(int argc, char** argv)
 #include "../interview/worldquant/orderbook.h"
 
 #include "../language/c++11.h"
-
-#include "../message/detect_func_args.h"
-#include "../message/message.h"
-#include "../message/chain.h"
 
 #include "../misc/builtin_expect.h"
 #include "../misc/atomic_is_lock_free.h"
@@ -45,10 +42,81 @@ int main(int argc, char** argv)
 
 #include "../thread/mutex_spinlock.h"
 #include "../thread/thread_pool.h"
-#include "../thread/lock_rw.h"
 
-int main()
+int main(int argc, char** argv)
 {
+    run_longest_valid_parentheses();
+
+    run_is_palindrome();
+
+    run_binary_tree_burn_down_time();
+
+    run_validate_binary_search_tree();
+
+    run_find_all_possible_ips();
+
+    run_reverse_every_k_list();
+
+    run_largest_area_histogram();
+
+    run_remove_more_than_2_dup();
+
+    run_gas_station();
+
+    run_generate_spiral_matrix();
+
+    run_pow_x();
+
+    run_find_first_missing_integer();
+
+    run_count_and_say();
+
+    run_max_profile_job_sequence();
+
+    run_switch_neighbors_list();
+
+    run_largest_number_by_one_swap();
+
+    run_min_candy_distributed();
+
+    run_max_thieves_caught();
+
+    run_min_platforms_required();
+
+    run_min_oper_mod_for_permutation();
+
+    run_queue_removal_find_positions();
+
+    run_get_billion_users_day();
+
+    run_min_length_substring_cover_all();
+
+    run_matching_pairs_after_one_swap();
+
+    run_rotational_cipher();
+
+    run_reverse_signed_int();
+
+    run_transform_str_zigzag();
+
+    run_find_longest_palindrome();
+
+    run_find_max_non_dupe_substring();
+
+    run_reverse_list();
+
+    run_thread_atom_perf_test();
+
+    run_perf_test();
+
+    run_repo_recovery();
+
+    run_validity_pyramid_dominoes();
+
+    run_good_or_bad();
+
+    run_task_parser();
+
     run_number_sum_k();
 
     run_contiguous_sub_array();
@@ -138,17 +206,17 @@ int main()
     run_min_path_sum_matrix();
 
     {
-        std::shared_ptr<TreeNode<int>> root(new TreeNode<int>(100));
-        std::shared_ptr<TreeNode<int>> n1(new TreeNode<int>(1));
-        std::shared_ptr<TreeNode<int>> n2(new TreeNode<int>(2));
-        std::shared_ptr<TreeNode<int>> n3(new TreeNode<int>(3));
-        std::shared_ptr<TreeNode<int>> n4(new TreeNode<int>(4));
-        std::shared_ptr<TreeNode<int>> n5(new TreeNode<int>(5));
-        std::shared_ptr<TreeNode<int>> n6(new TreeNode<int>(6));
-        std::shared_ptr<TreeNode<int>> n7(new TreeNode<int>(7));
-        std::shared_ptr<TreeNode<int>> n8(new TreeNode<int>(8));
-        std::shared_ptr<TreeNode<int>> n9(new TreeNode<int>(9));
-        std::shared_ptr<TreeNode<int>> n0(new TreeNode<int>(0));
+        std::shared_ptr<tree_node_int_t> root(new tree_node_int_t(100));
+        std::shared_ptr<tree_node_int_t> n1(new tree_node_int_t(1));
+        std::shared_ptr<tree_node_int_t> n2(new tree_node_int_t(2));
+        std::shared_ptr<tree_node_int_t> n3(new tree_node_int_t(3));
+        std::shared_ptr<tree_node_int_t> n4(new tree_node_int_t(4));
+        std::shared_ptr<tree_node_int_t> n5(new tree_node_int_t(5));
+        std::shared_ptr<tree_node_int_t> n6(new tree_node_int_t(6));
+        std::shared_ptr<tree_node_int_t> n7(new tree_node_int_t(7));
+        std::shared_ptr<tree_node_int_t> n8(new tree_node_int_t(8));
+        std::shared_ptr<tree_node_int_t> n9(new tree_node_int_t(9));
+        std::shared_ptr<tree_node_int_t> n0(new tree_node_int_t(0));
 
         root->left  = n1.get();
         root->right = n2.get();
@@ -242,10 +310,6 @@ int main()
     }
 
     {
-        run_lock_reader_writer();
-    }
-
-    {
         run_matching_engine_FIFO();
     }
 
@@ -299,12 +363,6 @@ int main()
         std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
     }
 
-    build_chain();
-
-    run_message_check();
-
-    detect_class_member();
-
     {
         std::vector<int> arr = {7, 1, 5, 3, 6, 4};
         print_array(arr);
@@ -357,7 +415,7 @@ int main()
 
     {
         int A[] = {2};
-        int B[] = {};
+        int B[] = {0};
         std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
     }
 
@@ -480,4 +538,3 @@ int main()
 
     return 0;
 }
-

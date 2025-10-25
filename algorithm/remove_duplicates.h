@@ -35,7 +35,7 @@ int remove_duplicates_1(int* arr, int length)
 // 1) Sort the elements.
 // 2) Now in a loop, keep two positions, one to result's index, the other to checking character's index,
 //    move checking index further if current character is duplicate
-// 3) Remove extra characters at the end of the resultant string.
+// 3) Remove extra characters at the end of the result string.
 char* removeDupsSorted(char* str)
 {
     int res_ind = 1, ip_ind = 1;
@@ -61,7 +61,7 @@ char* remove_duplicates_2(char* str)
     int n = strlen(str);
 
     // Sort the character array
-    sort(str, str + n);
+    std::sort(str, str + n);
 
     // Remove duplicates from sorted
     return removeDupsSorted(str);

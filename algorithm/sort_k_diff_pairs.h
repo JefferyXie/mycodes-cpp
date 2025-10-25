@@ -7,7 +7,7 @@
 // https://www.hackerrank.com/challenges/pairs
 //
 
-int sort_k_diff_pairs(vector<int>& a, int k)
+int sort_k_diff_pairs(std::vector<int>& a, int k)
 {
     int ans = 0;
     sort(a.begin(), a.end());

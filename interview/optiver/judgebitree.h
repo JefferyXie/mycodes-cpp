@@ -9,19 +9,24 @@ struct NodePair {
     char child;
 };
 
-class Node {
+class Node
+{
 public:
-    char value;
-    Node* left;
-    Node* right;
-    string GetSExpression() {
-        //return getSExpression(this);
+    char        value;
+    Node*       left;
+    Node*       right;
+    std::string GetSExpression()
+    {
+        // return getSExpression(this);
         return '(' + getSExpression(this) + ')';
     }
+
 private:
-    string getSExpression(Node* pNode) {
-        if (pNode == NULL) return "";
-        string exp;
+    std::string getSExpression(Node* pNode)
+    {
+        if (pNode == NULL)
+            return "";
+        std::string exp;
         exp += pNode->value;
         if (pNode->left != NULL) {
             exp += '(';
@@ -34,7 +39,7 @@ private:
             exp += ')';
         }
         return exp;
-        /*string exp;
+        /*std::string exp;
         if (pNode == NULL) {
             exp += ')';
             return exp;
@@ -47,51 +52,51 @@ private:
     }
 };
 
-class Parser {
+class Parser
+{
 private:
-    string _input;
-    vector<NodePair> _pairs;
-    Node* _TreeRoot;
-    
-public:
-    Parser(string input) : _input(input), _TreeRoot(NULL) {}
-    ~Parser() {
-        releaseNode(_TreeRoot);
-    }
+    std::string           _input;
+    std::vector<NodePair> _pairs;
+    Node*                 _TreeRoot;
 
-    bool Parse(){
-        string input = _input;
-        if (input.length() < 5) return false;
+public:
+    Parser(std::string input) : _input(input), _TreeRoot(NULL) {}
+    ~Parser() { releaseNode(_TreeRoot); }
+
+    bool Parse()
+    {
+        std::string input = _input;
+        if (input.length() < 5)
+            return false;
         int pos = 0;
         _pairs.clear();
         while (true) {
-            int pos1 = input.find(' ', pos);
-            string strNode = input.substr(pos, pos1-pos);
+            int         pos1    = input.find(' ', pos);
+            std::string strNode = input.substr(pos, pos1 - pos);
             // parse and get node info
-            if (strNode.length() != 5 || strNode.at(0) != '(' ||
-                strNode.at(1) > 'Z' || strNode.at(1) < 'A' ||
-                strNode.at(2) != ',' ||
-                strNode.at(3) > 'Z' || strNode.at(3) < 'A' ||
-                strNode.at(4) != ')') {
+            if (strNode.length() != 5 || strNode.at(0) != '(' || strNode.at(1) > 'Z' || strNode.at(1) < 'A' ||
+                strNode.at(2) != ',' || strNode.at(3) > 'Z' || strNode.at(3) < 'A' || strNode.at(4) != ')') {
                 return false;
             }
             NodePair nodePair;
             nodePair.parent = strNode.at(1);
-            nodePair.child = strNode.at(3);
+            nodePair.child  = strNode.at(3);
             _pairs.push_back(nodePair);
-            pos = pos1+1;
-            if (pos1 < 0) break;
+            pos = pos1 + 1;
+            if (pos1 < 0)
+                break;
         }
         return true;
     }
 
-    bool HaveDuplicatePairs() {
+    bool HaveDuplicatePairs()
+    {
         for (unsigned i = 0; i < _pairs.size(); ++i) {
             const NodePair& pair1 = _pairs.at(i);
             for (unsigned j = i + 1; j < _pairs.size(); ++j) {
                 const NodePair& pair2 = _pairs.at(j);
                 if ((pair1.parent == pair2.parent && pair1.child == pair2.child) ||
-                   (pair1.parent == pair2.child && pair1.child == pair2.parent)) {
+                    (pair1.parent == pair2.child && pair1.child == pair2.parent)) {
                     return true;
                 }
             }
@@ -99,31 +104,34 @@ public:
         return false;
     }
 
-    bool HaveMoreChildren() {
+    bool HaveMoreChildren()
+    {
         for (unsigned i = 0; i < _pairs.size(); ++i) {
-            int numChildren = 1;
-            const NodePair& pair1 = _pairs.at(i);
-            for (unsigned j = i+1; j < _pairs.size(); ++j) {
+            int             numChildren = 1;
+            const NodePair& pair1       = _pairs.at(i);
+            for (unsigned j = i + 1; j < _pairs.size(); ++j) {
                 const NodePair& pair2 = _pairs.at(j);
                 if (pair1.parent == pair2.parent) {
                     numChildren++;
                 }
-                if (numChildren > 2) return true;
+                if (numChildren > 2)
+                    return true;
             }
         }
         return false;
     }
 
-    bool HaveMultipleRoots() {
+    bool HaveMultipleRoots()
+    {
         char root = 0;
         for (unsigned i = 0; i < _pairs.size(); ++i) {
-            char tempRoot = _pairs.at(i).parent;
-            string path;
+            char        tempRoot = _pairs.at(i).parent;
+            std::string path;
             tempRoot = findRoot(_pairs, tempRoot, path);
             if (root != 0 && root != tempRoot) {
                 NodePair node;
                 node.parent = root;
-                node.child = tempRoot;
+                node.child  = tempRoot;
                 // if two nodes connect, they make cycle instead of multiple roots
                 if (!isNodeExisted(node))
                     return true;
@@ -133,19 +141,21 @@ public:
         return false;
     }
 
-    bool HaveCycleChain() {
-        vector<string> paths = getAllPaths(_pairs);
+    bool HaveCycleChain()
+    {
+        std::vector<std::string> paths = getAllPaths(_pairs);
         for (unsigned i = 0; i < paths.size(); ++i) {
-            string path = paths.at(i);
-            char c1 = path.front();
-            char c2 = path.back();
-            for (unsigned j = i+1; j < paths.size(); ++j) {
-                string path1 = paths.at(j);
-                char d1 = path1.front();
-                char d2 = path1.back();
-                if (path == path1) continue;
-                if ((path.find(d1) != string::npos && path.find(d2) != string::npos) ||
-                    (path1.find(c1) != string::npos && path1.find(c2) != string::npos)) {
+            std::string path = paths.at(i);
+            char        c1   = path.front();
+            char        c2   = path.back();
+            for (unsigned j = i + 1; j < paths.size(); ++j) {
+                std::string path1 = paths.at(j);
+                char        d1    = path1.front();
+                char        d2    = path1.back();
+                if (path == path1)
+                    continue;
+                if ((path.find(d1) != std::string::npos && path.find(d2) != std::string::npos) ||
+                    (path1.find(c1) != std::string::npos && path1.find(c2) != std::string::npos)) {
                     return true;
                 }
             }
@@ -153,19 +163,21 @@ public:
         return false;
     }
 
-    Node* BuildTree() {
-        string path;
-        char tempRoot = _pairs.at(0).parent;
-        char root = findRoot(_pairs, tempRoot, path);
-        Node* pRoot = new Node();
-        pRoot->value = root;
+    Node* BuildTree()
+    {
+        std::string path;
+        char        tempRoot = _pairs.at(0).parent;
+        char        root     = findRoot(_pairs, tempRoot, path);
+        Node*       pRoot    = new Node();
+        pRoot->value         = root;
         buildNode(_pairs, pRoot);
         _TreeRoot = pRoot;
         return pRoot;
     }
 
 private:
-    void releaseNode(Node* p) {
+    void releaseNode(Node* p)
+    {
         if (p != NULL) {
             releaseNode(p->left);
             releaseNode(p->right);
@@ -173,11 +185,13 @@ private:
             p = NULL;
         }
     }
-    char findRoot(const vector<NodePair>& pairs, char root, string& path) {
+    char findRoot(const std::vector<NodePair>& pairs, char root, std::string& path)
+    {
         // avoid cycle path
-        if (path.find(root) != string::npos) return root;
+        if (path.find(root) != std::string::npos)
+            return root;
 
-        path = root + path;
+        path    = root + path;
         auto it = pairs.end();
         while (it-- != pairs.begin()) {
             if (root == it->child) {
@@ -188,7 +202,8 @@ private:
         return root;
     }
 
-    bool isNodeExisted(const NodePair& node) {
+    bool isNodeExisted(const NodePair& node)
+    {
         for (const NodePair& ele : _pairs) {
             if ((node.parent == ele.parent && node.child == ele.child) ||
                 (node.parent == ele.child && node.child == ele.parent))
@@ -197,39 +212,44 @@ private:
         return false;
     }
 
-    vector<string> getAllPaths(const vector<NodePair>& pairs) {
-        vector<string> paths;
+    std::vector<std::string> getAllPaths(const std::vector<NodePair>& pairs)
+    {
+        std::vector<std::string> paths;
         for (unsigned i = 0; i < pairs.size(); ++i) {
-            const NodePair& curPair = pairs.at(i);
-            char curParent = curPair.parent;
-            char curChild = curPair.child;
-            string path(1, curChild);
+            const NodePair& curPair   = pairs.at(i);
+            char            curParent = curPair.parent;
+            char            curChild  = curPair.child;
+            std::string     path(1, curChild);
             findRoot(pairs, curParent, path);
-           
+
             addChildPath(pairs, path.back(), path);
 
             paths.push_back(path);
         }
         return paths;
     }
-    char addChildPath(const vector<NodePair>& pairs, char child, string& path) {
+    char addChildPath(const std::vector<NodePair>& pairs, char child, std::string& path)
+    {
         for (auto it = pairs.begin(); it != pairs.end(); ++it) {
             if (child == it->parent) {
                 child = it->child;
                 // avoid cycle path
-                if (path.find(child) != string::npos) return child;
+                if (path.find(child) != std::string::npos)
+                    return child;
                 path += child;
                 return addChildPath(pairs, child, path);
             }
         }
         return child;
     }
-    void buildNode(const vector<NodePair>& pairs, Node* pRoot) {
-        if (pRoot == NULL) return;
+    void buildNode(const std::vector<NodePair>& pairs, Node* pRoot)
+    {
+        if (pRoot == NULL)
+            return;
         for (unsigned i = 0; i < pairs.size(); ++i) {
             const NodePair& pair = pairs.at(i);
             if (pRoot->value == pair.parent) {
-                Node* p = new Node();
+                Node* p  = new Node();
                 p->value = pair.child;
                 if (pRoot->left == NULL) {
                     pRoot->left = p;
@@ -238,9 +258,10 @@ private:
                         pRoot->right = p;
                     } else {
                         pRoot->right = pRoot->left;
-                        pRoot->left = p;
+                        pRoot->left  = p;
                     }
-                } else break;
+                } else
+                    break;
             }
         }
         // boths children nodes are ready
@@ -249,9 +270,10 @@ private:
     }
 };
 
-string JudgeBiTree(string input) {
+std::string JudgeBiTree(std::string input)
+{
     /* Enter your code here. Read input from STDIN. Print output to STDOUT */
-    /*string input;
+    /*std::string input;
     getline(cin, input);*/
 
     Parser parser(input);
@@ -259,9 +281,9 @@ string JudgeBiTree(string input) {
         return "E1";
     }
     bool duplicatePairs = parser.HaveDuplicatePairs();
-    bool moreChildren = parser.HaveMoreChildren();
-    bool multipleRoots = parser.HaveMultipleRoots();
-    bool cycleChain = parser.HaveCycleChain();
+    bool moreChildren   = parser.HaveMoreChildren();
+    bool multipleRoots  = parser.HaveMultipleRoots();
+    bool cycleChain     = parser.HaveCycleChain();
     if (duplicatePairs) {
         return "E2";
     }
@@ -274,8 +296,8 @@ string JudgeBiTree(string input) {
     if (cycleChain) {
         return "E5";
     }
-    Node* pRoot = parser.BuildTree();
-    string exp = pRoot->GetSExpression();
+    Node*       pRoot = parser.BuildTree();
+    std::string exp   = pRoot->GetSExpression();
     return exp;
 }
 

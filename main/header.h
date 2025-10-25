@@ -18,11 +18,14 @@
 #include <semaphore.h>
 
 // head files for std
+#include <ios>
 #include <iostream>
+#include <limits>
 #include <fstream>
 #include <sstream>
 #include <set>
 #include <stack>
+#include <string>
 #include <array>
 #include <vector>
 #include <list>
@@ -56,10 +59,12 @@
 #include <future>
 #include <condition_variable>
 #include <climits>
+#include <filesystem>
 
 #include <experimental/type_traits>
 
 // boost start
+#include <boost/functional/hash.hpp>
 #include <boost/format.hpp>
 #include <boost/math/special_functions/prime.hpp>
 // boost end

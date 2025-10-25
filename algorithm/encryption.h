@@ -4,34 +4,33 @@
 #include "../main/header.h"
 
 // https://www.hackerrank.com/challenges/encryption
-string encryption(string text) {
-    int L = text.length();
+std::string encryption(std::string text)
+{
+    int L       = text.length();
     int L_floor = floor(sqrt(L));
-    int L_ceil = ceil(sqrt(L));
+    int L_ceil  = ceil(sqrt(L));
     int row, col;
-    if (L_floor*L_ceil == L) {
+    if (L_floor * L_ceil == L) {
         row = L_ceil;
         col = L_ceil;
-    } else if (L_ceil*L_floor > L) {
+    } else if (L_ceil * L_floor > L) {
         row = L_floor;
         col = L_ceil;
     } else {
         row = L_ceil;
         col = L_ceil;
     }
-    string result;
+    std::string result;
     for (int i = 0; i < col; ++i) {
         for (int j = 0; j < row; ++j) {
-            int index = j*col + i;
+            int index = j * col + i;
             if (index < L)
                 result += text[index];
         }
         result += ' ';
     }
-    return result.erase(result.length()-1,1);
+    return result.erase(result.length() - 1, 1);
 }
 
-
 #endif
-
 

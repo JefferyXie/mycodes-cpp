@@ -2,39 +2,25 @@
 #define NODE_H
 #include "header.h"
 
-template<class T> class TreeNode {
-public:
-   T data;
-   TreeNode* left   = nullptr;
-   TreeNode* right  = nullptr;
-   
-   TreeNode(const T& value) {
-    data = value;
-    left = nullptr;
-    right = nullptr;
-   }
-   TreeNode(const T& value, TreeNode<T>* l, TreeNode<T>* r) : TreeNode(value) {
-    left = l;
-    right = r;
-   }
+template <class T>
+struct tree_node {
+    T             data{};
+    tree_node<T>* left{nullptr};
+    tree_node<T>* right{nullptr};
 };
 
-template<class T> class ListNode
-{
-public:
-    ListNode() : m_pNext(NULL) { }
-    ListNode(T& v, ListNode<T>* p) : m_value(v), m_pNext(p) { }
-    ListNode(const ListNode<T>& obj) : m_value(obj.m_value), m_pNext(obj.m_pNext) { }
+template <typename T>
+using TreeNode        = tree_node<T>;
+using tree_node_int_t = tree_node<int>;
 
-    void SetValue(T& v) { m_value = v; }
-    T GetValue() { return m_value; }
-    void SetPNext(ListNode<T>* p) { m_pNext = p; }
-    ListNode<T>* GetPNext() { return m_pNext; }
-
-private:
-    T m_value;
-    ListNode<T>* m_pNext;
+template <class T>
+struct list_node {
+    T             data{};
+    list_node<T>* next{nullptr};
 };
+
+template <typename T>
+using ListNode        = list_node<T>;
+using list_node_int_t = list_node<int>;
 
 #endif
-

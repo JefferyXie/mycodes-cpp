@@ -15,20 +15,20 @@
 //
 
 // solution 1), keep all steps' values, not space efficient
-vector<int> subarray_max_sum_1(vector<int> arr)
+std::vector<int> subarray_max_sum_1(std::vector<int> arr)
 {
     const auto                    len = arr.size();
     std::vector<std::vector<int>> dp(3, std::vector<int>(len, std::numeric_limits<int>::min()));
-    dp[0][0] = numeric_limits<int>::min();
+    dp[0][0] = std::numeric_limits<int>::min();
     dp[1][0] = arr[0];
     dp[2][0] = arr[0];
     for (unsigned i = 1; i < len; ++i) {
-        dp[0][i] = max(dp[0][i - 1], dp[1][i - 1]);
-        dp[1][i] = max(arr[i], arr[i] + dp[1][i - 1]);
+        dp[0][i] = std::max(dp[0][i - 1], dp[1][i - 1]);
+        dp[1][i] = std::max(arr[i], arr[i] + dp[1][i - 1]);
 
-        dp[2][i] = max(max(arr[i], arr[i] + dp[2][i - 1]), dp[2][i - 1]);
+        dp[2][i] = std::max(std::max(arr[i], arr[i] + dp[2][i - 1]), dp[2][i - 1]);
     }
-    auto max_subarr = max(dp[0][len - 1], dp[1][len - 1]);
+    auto max_subarr = std::max(dp[0][len - 1], dp[1][len - 1]);
     auto max_subseq = dp[2][len - 1];
     return {max_subarr, max_subseq};
 }
@@ -37,17 +37,17 @@ vector<int> subarray_max_sum_1(vector<int> arr)
 //
 // REMINDER: refer to ./max_increasing_subsequence.h that counts the number of max increasing sub-sequence
 //
-vector<int> subarray_max_sum_2(vector<int> arr)
+std::vector<int> subarray_max_sum_2(std::vector<int> arr)
 {
     int max_subarr_so_far = arr[0];
     int max_subarr_ending = arr[0];
     int max_subsequence   = arr[0];
     for (size_t i = 1; i < arr.size(); ++i) {
-        max_subarr_ending = max(max_subarr_ending + arr[i], arr[i]);
-        max_subarr_so_far = max(max_subarr_so_far, max_subarr_ending);
-        max_subsequence   = max({max_subsequence, max_subsequence + arr[i], arr[i]});
+        max_subarr_ending = std::max(max_subarr_ending + arr[i], arr[i]);
+        max_subarr_so_far = std::max(max_subarr_so_far, max_subarr_ending);
+        max_subsequence   = std::max({max_subsequence, max_subsequence + arr[i], arr[i]});
     }
-    return {max(max_subarr_so_far, max_subarr_ending), max_subsequence};
+    return {std::max(max_subarr_so_far, max_subarr_ending), max_subsequence};
 }
 
 #endif
