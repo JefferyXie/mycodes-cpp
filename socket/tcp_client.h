@@ -1,4 +1,4 @@
-#include "../main/header.h"
+#include "socket_common.h"
 
 class tcp_client
 {

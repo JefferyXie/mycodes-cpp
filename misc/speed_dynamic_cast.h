@@ -1,14 +1,27 @@
+#pragma once
+
 /*
-* Copyright 2010 Tino Didriksen <tino@didriksen.cc>
-* http://tinodidriksen.com/
-*/
+ * Copyright 2010 Tino Didriksen <tino@didriksen.cc>
+ * http://tinodidriksen.com/
+ */
+
+//
+// C++ dynamic_cast performance
+// http://tinodidriksen.com/2010/04/14/cpp-dynamic-cast-performance/
+// http://tinodidriksen.com/uploads/code/cpp/speed-dynamic-cast.cpp
+//
+// How expensive is RTTI?
+// http://stackoverflow.com/questions/579887/how-expensive-is-rtti
+//
 
 #ifdef _MSC_VER
-    #define _SECURE_SCL 0
-    #define _CRT_SECURE_NO_DEPRECATE 1
-    #define WIN32_LEAN_AND_MEAN
-    #define VC_EXTRALEAN
-    #define NOMINMAX
+
+#define _SECURE_SCL 0
+#define _CRT_SECURE_NO_DEPRECATE 1
+#define WIN32_LEAN_AND_MEAN
+#define VC_EXTRALEAN
+#define NOMINMAX
+
 #endif
 
 #include <cstdlib>
@@ -21,16 +34,17 @@
 #include <iomanip>
 #include "cycle.h"
 
-const size_t N = 1000000;
-const size_t R = 7;
+const size_t          N = 1000000;
+const size_t          R = 7;
 std::vector<uint32_t> numbers;
 
-void PrintStats(std::vector<double> timings) {
+void PrintStats(std::vector<double> timings)
+{
     double fastest = std::numeric_limits<double>::max();
 
     std::cout << std::fixed << std::setprecision(2);
     std::cout << "[";
-    for (size_t i = 1 ; i<timings.size()-1 ; ++i) {
+    for (size_t i = 1; i < timings.size() - 1; ++i) {
         fastest = std::min(fastest, timings[i]);
         std::cout << timings[i] << ",";
     }
@@ -38,17 +52,17 @@ void PrintStats(std::vector<double> timings) {
     std::cout << "]";
 
     double sum = 0.0;
-    for (size_t i = 1 ; i<timings.size() ; ++i) {
+    for (size_t i = 1; i < timings.size(); ++i) {
         sum += timings[i];
     }
-    double avg = sum / double(timings.size()-1);
+    double avg = sum / double(timings.size() - 1);
 
     sum = 0.0;
-    for (size_t i = 1 ; i<timings.size() ; ++i) {
-        timings[i] = pow(timings[i]-avg, 2);
+    for (size_t i = 1; i < timings.size(); ++i) {
+        timings[i] = pow(timings[i] - avg, 2);
         sum += timings[i];
     }
-    double var = sum/(timings.size()-2);
+    double var = sum / (timings.size() - 2);
     double sdv = sqrt(var);
 
     std::cout << " with fastest " << fastest << ", average " << avg << ", stddev " << sdv;
@@ -69,36 +83,22 @@ struct OneBase {
     OneBase() : type(T_ONE_BASE) {}
     virtual ~OneBase() {}
 
-    virtual TYPES getType() {
-        return T_ONE_BASE;
-    }
+    virtual TYPES getType() { return T_ONE_BASE; }
 };
 
 struct OneLevel1 : OneBase {
-    OneLevel1() {
-        type = T_ONE_LEVEL1;
-    }
-    virtual TYPES getType() {
-        return T_ONE_LEVEL1;
-    }
+    OneLevel1() { type = T_ONE_LEVEL1; }
+    virtual TYPES getType() { return T_ONE_LEVEL1; }
 };
 
 struct OneLevel2 : OneLevel1 {
-    OneLevel2() {
-        type = T_ONE_LEVEL2;
-    }
-    virtual TYPES getType() {
-        return T_ONE_LEVEL2;
-    }
+    OneLevel2() { type = T_ONE_LEVEL2; }
+    virtual TYPES getType() { return T_ONE_LEVEL2; }
 };
 
 struct OneLevel3 : OneLevel2 {
-    OneLevel3() {
-        type = T_ONE_LEVEL3;
-    }
-    TYPES getType() {
-        return T_ONE_LEVEL3;
-    }
+    OneLevel3() { type = T_ONE_LEVEL3; }
+    TYPES getType() { return T_ONE_LEVEL3; }
 };
 
 struct TwoBase {
@@ -107,249 +107,244 @@ struct TwoBase {
     TwoBase() : type(T_TWO_BASE) {}
     virtual ~TwoBase() {}
 
-    virtual TYPES getType() {
-        return T_TWO_BASE;
-    }
+    virtual TYPES getType() { return T_TWO_BASE; }
 };
 
 struct TwoLevel1 : TwoBase {
-    TwoLevel1() {
-        type = T_TWO_LEVEL1;
-    }
-    virtual TYPES getType() {
-        return T_TWO_LEVEL1;
-    }
+    TwoLevel1() { type = T_TWO_LEVEL1; }
+    virtual TYPES getType() { return T_TWO_LEVEL1; }
 };
 
-int main() {
-    std::vector< std::vector<double> > timings(17);
+void run_speed_dynamic_cast()
+{
+    std::vector<std::vector<double>> timings(17);
 
-    for (size_t r=0 ; r<R ; ++r) {
-        OneBase a;
+    for (size_t r = 0; r < R; ++r) {
+        OneBase   a;
         OneLevel1 b;
         OneLevel2 c;
         OneLevel3 d;
-        OneBase* ones[] = {&a, &b, &c, &d};
+        OneBase*  ones[] = {&a, &b, &c, &d};
 
-        ticks start, end;
+        ticks  start, end;
         double timed = 0.0;
-        size_t res = 0;
+        size_t res   = 0;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel3 *a = reinterpret_cast<OneLevel3*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel3* a = reinterpret_cast<OneLevel3*>(ones[3]);
             res += a->getType();
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[0].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             if (ones[2]->getType() == T_ONE_LEVEL2) {
-                OneLevel2 *a = reinterpret_cast<OneLevel2*>(ones[2]);
+                OneLevel2* a = reinterpret_cast<OneLevel2*>(ones[2]);
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[1].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneBase *a = dynamic_cast<OneBase*>(ones[0]);
+        for (size_t i = 0; i < N; ++i) {
+            OneBase* a = dynamic_cast<OneBase*>(ones[0]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[2].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel1 *a = dynamic_cast<OneLevel1*>(ones[1]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel1* a = dynamic_cast<OneLevel1*>(ones[1]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[3].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel2 *a = dynamic_cast<OneLevel2*>(ones[2]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel2* a = dynamic_cast<OneLevel2*>(ones[2]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[4].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel3 *a = dynamic_cast<OneLevel3*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel3* a = dynamic_cast<OneLevel3*>(ones[3]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[5].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneBase *a = dynamic_cast<OneBase*>(ones[1]);
+        for (size_t i = 0; i < N; ++i) {
+            OneBase* a = dynamic_cast<OneBase*>(ones[1]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[6].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneBase *a = dynamic_cast<OneBase*>(ones[2]);
+        for (size_t i = 0; i < N; ++i) {
+            OneBase* a = dynamic_cast<OneBase*>(ones[2]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[7].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneBase *a = dynamic_cast<OneBase*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            OneBase* a = dynamic_cast<OneBase*>(ones[3]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[8].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel1 *a = dynamic_cast<OneLevel1*>(ones[2]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel1* a = dynamic_cast<OneLevel1*>(ones[2]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[9].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel1 *a = dynamic_cast<OneLevel1*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel1* a = dynamic_cast<OneLevel1*>(ones[3]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[10].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            OneLevel2 *a = dynamic_cast<OneLevel2*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            OneLevel2* a = dynamic_cast<OneLevel2*>(ones[3]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[11].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            TwoBase *a = dynamic_cast<TwoBase*>(ones[0]);
+        for (size_t i = 0; i < N; ++i) {
+            TwoBase* a = dynamic_cast<TwoBase*>(ones[0]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[12].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            TwoBase *a = dynamic_cast<TwoBase*>(ones[1]);
+        for (size_t i = 0; i < N; ++i) {
+            TwoBase* a = dynamic_cast<TwoBase*>(ones[1]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[13].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            TwoBase *a = dynamic_cast<TwoBase*>(ones[2]);
+        for (size_t i = 0; i < N; ++i) {
+            TwoBase* a = dynamic_cast<TwoBase*>(ones[2]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[14].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
-            TwoBase *a = dynamic_cast<TwoBase*>(ones[3]);
+        for (size_t i = 0; i < N; ++i) {
+            TwoBase* a = dynamic_cast<TwoBase*>(ones[3]);
             if (a) {
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[15].push_back(timed);
         std::cerr << res << std::endl;
 
-        res = 0;
+        res   = 0;
         start = getticks();
-        for (size_t i=0 ; i<N ; ++i) {
+        for (size_t i = 0; i < N; ++i) {
             if (ones[3]->type == T_ONE_LEVEL3) {
-                OneLevel3 *a = reinterpret_cast<OneLevel3*>(ones[3]);
+                OneLevel3* a = reinterpret_cast<OneLevel3*>(ones[3]);
                 res += a->getType();
             }
         }
-        end = getticks();
+        end   = getticks();
         timed = elapsed(end, start);
         timings[16].push_back(timed);
         std::cerr << res << std::endl;
@@ -427,3 +422,4 @@ int main() {
 
     std::cout << std::endl;
 }
+

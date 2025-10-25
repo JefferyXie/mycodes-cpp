@@ -15,7 +15,15 @@ OBJ_FILES = $(CPP_FILES:%.cpp=%.o)
 H_FILES = *.h # header.h utility.h node.h 
 LIB_DIR = ./lib 
 SRC_DIR = ./ 
-#INCLUDES = -I/opt/gtest/include
+
+# typically when using external lib, you need -I for included files, -L for *.a, *.so path, and -l for lib name;
+# g++ -I/your/path/include -L/your/path/lib -l{lib_name} ...
+#
+# we don't need this since the libs are available under /usr/local/lib, header files are under /usr/local/include
+# i.e. /usr/local/lib/libboost_xxx, /usr/local/lib/libgtest.xxx
+#      /usr/local/include/boost, /usr/local/include/googletest, /usr/local/include/tinyxml.h
+BOOST_ROOT = /usr/local/Cellar/boost/1.86.0
+BOOST_INC  = $(BOOST_ROOT)/include
 
 # compiler settings
 CC = g++
@@ -24,9 +32,8 @@ C14 = -std=c++14
 C17 = -std=c++17
 C20 = -std=c++2a
 #CFLAGS = -Wall -W -lpthread $(C11)
-#CFLAGS = $(C11) -w -L/opt/gtest/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
-CFLAGS = $(C11) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
-CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
+CFLAGS = $(C11) -v -w -I$(BOOST_ROOT) -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl -pedantic # disable warning
+CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl -pedantic -ltinyxml # disable warning
 CFLAGS_DEBUG = -g $(CFLAGS)
 #CFLAGS_DEBUG = $(CFLAGS) -O3
 

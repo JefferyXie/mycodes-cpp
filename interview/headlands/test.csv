@@ -1,0 +1,8 @@
+---THIS IS A CSV FILE FOR TEST ONLY---
+Line 1: empty
+Line 2: cannot tell what this means
+ AH
+Line 3: but I know this is highly valuable
+
+Line 4: delimiter,comma,works or not,12345,##@$%^&,cool!
+Line 5: delimiter|bar|works or not|12345|##@$%^&|cool!

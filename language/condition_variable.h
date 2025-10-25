@@ -4,16 +4,14 @@
 #include "../main/header.h"
 
 // test std::condition_variable and std::unique_lock
-struct CV_notify_before_unlock 
-{
-    std::mutex _mtx;
+struct CV_notify_before_unlock {
+    std::mutex              _mtx;
     std::condition_variable _cv;
-    int _cargo = 0;
+    int                     _cargo = 0;
 
     void consume(int n)
     {
-        for (int i = 0; i < n; ++i)
-        {
+        for (int i = 0; i < n; ++i) {
             std::unique_lock<std::mutex> lk(_mtx);
             _cv.wait(lk, [&]() {
                 // this callback only executes after the mutex is released by other thread
@@ -28,14 +26,14 @@ struct CV_notify_before_unlock
             _cargo = 0;
         }
     }
+
     void run()
     {
-        int num_cargos = 5;
+        int         num_cargos = 5;
         std::thread consumer_thread(&CV_notify_before_unlock::consume, this, num_cargos);
 
         // produce cargos...
-        for (int i = 0; i < num_cargos; ++i)
-        {
+        for (int i = 0; i < num_cargos; ++i) {
             while (_cargo != 0)
                 std::this_thread::yield();
             std::unique_lock<mutex> lk(_mtx);
@@ -55,16 +53,14 @@ struct CV_notify_before_unlock
     }
 };
 
-struct CV_notify_after_unlock
-{
-    std::mutex _mtx;
+struct CV_notify_after_unlock {
+    std::mutex              _mtx;
     std::condition_variable _cv;
-    int _cargo = 0;
+    int                     _cargo = 0;
 
     void consume(int n)
     {
-        for (int i = 0; i < n; ++i)
-        {
+        for (int i = 0; i < n; ++i) {
             std::unique_lock<std::mutex> lk(_mtx);
             _cv.wait(lk, [&]() {
                 if (_cargo != 0) {
@@ -80,12 +76,11 @@ struct CV_notify_after_unlock
     }
     void run()
     {
-        int num_cargos = 5;
+        int         num_cargos = 5;
         std::thread consumer_thread(&CV_notify_after_unlock::consume, this, num_cargos);
 
         // produce cargos...
-        for (int i = 0; i < num_cargos; ++i)
-        {
+        for (int i = 0; i < num_cargos; ++i) {
             while (_cargo != 0)
                 std::this_thread::yield();
             std::unique_lock<mutex> lk(_mtx);
@@ -105,14 +100,14 @@ struct CV_notify_after_unlock
     }
 };
 
-struct CV_notify_all
-{
-    std::mutex _mtx;
+struct CV_notify_all {
+    std::mutex              _mtx;
     std::condition_variable _cv;
-    int _cargo = 0;
-    int _consumed = 0;
+    int                     _cargo    = 0;
+    int                     _consumed = 0;
 
-    void consume(int cargos) {
+    void consume(int cargos)
+    {
         while (1) {
             std::unique_lock<std::mutex> lk(_mtx);
             cout << "[" << this_thread::get_id() << "] before wait" << endl;
@@ -131,17 +126,19 @@ struct CV_notify_all
                 return false;
             });
             if (_consumed++ >= cargos) {
-                cout << "[" << this_thread::get_id() << "] break " << (_consumed-1) << endl;
+                cout << "[" << this_thread::get_id() << "] break " << (_consumed - 1) << endl;
                 break;
             }
             // start consuming...
-            cout << "[" << this_thread::get_id() << "] " <<  _cargo << endl;
+            cout << "[" << this_thread::get_id() << "] " << _cargo << endl;
             _cargo = 0;
         }
         cout << "[" << this_thread::get_id() << "] ends." << endl;
     }
-    void run() {
-        int num_cargos = 3;
+
+    void run()
+    {
+        int         num_cargos = 3;
         std::thread consumer_thread1(&CV_notify_all::consume, this, num_cargos);
         std::thread consumer_thread2(&CV_notify_all::consume, this, num_cargos);
         std::thread consumer_thread3(&CV_notify_all::consume, this, num_cargos);
@@ -156,11 +153,11 @@ struct CV_notify_all
             lk.unlock();
             // if using notify_one, only one waiting thread can receive the signal
             //_cv.notify_one();
-            // if using notify_all, all waiting threads are guaranteed to receive a signal 
-            // respectively when multiple threads are waiting, we should use notify_all, 
+            // if using notify_all, all waiting threads are guaranteed to receive a signal
+            // respectively when multiple threads are waiting, we should use notify_all,
             // otherwise, some threads will never receive signal and will stuck there.
             _cv.notify_all();
-        } 
+        }
 
         consumer_thread1.join();
         consumer_thread2.join();

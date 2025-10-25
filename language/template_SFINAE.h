@@ -11,11 +11,39 @@
 // https://en.wikipedia.org/wiki/Substitution_failure_is_not_an_error
 // 
 
+
+// https://www.youtube.com/watch?v=-Z7EOWVkb3M&ab_channel=platis.solutions
+struct SFINAE_test {
+    void aa(char (*f)[0] = nullptr) {
+        std::cout << "aa: " << sizeof(f) << std::endl;
+    }
+    void aa(char (*f)[1] = nullptr) {
+        std::cout << "bb: " << sizeof(f) << std::endl;
+    }
+
+    void run() {
+        char* ff[0];
+        std::cout << sizeof(ff) << std::endl;
+
+        {
+            // 0 size array is not allowed by standard, somehow it goes well :))
+            char ch[0];
+            auto chh = &ch;
+            aa(chh);
+        }
+        {
+            char ch[1] = {};
+            auto chh = &ch;
+            aa(chh);
+        }
+    }
+};
+
+
 struct foo
 {
     using foobar = float;
 };
-
 
 // 
 // version 1: before c++11

@@ -3,90 +3,80 @@
 
 #include "../main/header.h"
 
-class A {
+class A
+{
 protected:
-	int _n = 10;
-	string _name = "object A";
+    int         _n    = 10;
+    std::string _name = "object A";
+
 public:
-	A() = default;
-    A(int n, string name) : _n(n), _name(name) {}
-	A(A&& ref) {
-		cout << "A(A&&)" << endl;
-		_n = ref._n;
-		_name = move(ref._name);
-	}
-	A& operator=(A&& obj) = delete;
-	virtual void Fo() { }
-    virtual string Process(const string&, const string&) { 
-        cout << "A::Process(const string&, const string&)" << endl;
-        return ""; 
+    A() = default;
+    A(int n, std::string name) : _n(n), _name(name) {}
+    A(A&& ref)
+    {
+        std::cout << "A(A&&)" << std::endl;
+        _n    = ref._n;
+        _name = std::move(ref._name);
     }
-	void Go() {
-        cout << "A::Go()" << endl;
+    A&                  operator=(A&& obj) = delete;
+    virtual void        Fo() {}
+    virtual std::string Process(const std::string&, const std::string&)
+    {
+        std::cout << "A::Process(const string&, const string&)" << std::endl;
+        return "";
     }
-    virtual string ToString() {
-        return "_n:" + to_string(_n) + ",_name:" + _name;
-    }
+    void                Go() { std::cout << "A::Go()" << std::endl; }
+    virtual std::string ToString() { return "_n:" + std::to_string(_n) + ",_name:" + _name; }
 };
 
-class B : public A {
+class B : public A
+{
 private:
-	string m_nameB = "class B name";
+    std::string m_nameB = "class B name";
+
 public:
-	void Fo() final {
-        cout << "B::Fo() final" << endl;
-    }
-	void Go() {
-        cout << "B::Go()" << endl;
-    }
-	int Calc(int a, int b) {
-        cout << "B::Calc" << endl;
+    void Fo() final { std::cout << "B::Fo() final" << std::endl; }
+    void Go() { std::cout << "B::Go()" << std::endl; }
+    int  Calc(int a, int b)
+    {
+        std::cout << "B::Calc" << std::endl;
         Go();
-        return a+b;
+        return a + b;
     }
 };
 
 struct MyMember {
-    static int s_count;
-	int value;
-	string name;
-    //list<int> ls;
-    MyMember() {
+    static int  s_count;
+    int         value;
+    std::string name;
+    // list<int> ls;
+    MyMember()
+    {
         value = s_count++;
-        name = "name[" + to_string(value) + "]";
-        cout << "MyMember() " << value << endl;
+        name  = "name[" + std::to_string(value) + "]";
+        std::cout << "MyMember() " << value << std::endl;
     }
-    ~MyMember() {
-        cout << "~MyMember() " << value << endl;
-    }
-    string ToString() {
-        return "value:" + to_string(value) + ",name:" + name;
-    }
-    MyMember& operator=(const MyMember&) = delete;
+    ~MyMember() { std::cout << "~MyMember() " << value << std::endl; }
+    std::string ToString() { return "value:" + std::to_string(value) + ",name:" + name; }
+    MyMember&   operator=(const MyMember&) = delete;
 };
 int MyMember::s_count = 0;
 
 struct Plain {
-    Plain() {
-        std::cout << "Plain(): construct a Plain object" << std::endl;
-    }
-    Plain(const Plain&) {
-        std::cout << "Plain(const Plain&): copy construct a Plain object" << std::endl;
-    }
-    Plain& operator=(const Plain&) {
+    Plain() { std::cout << "Plain(): construct a Plain object" << std::endl; }
+    Plain(const Plain&) { std::cout << "Plain(const Plain&): copy construct a Plain object" << std::endl; }
+    Plain& operator=(const Plain&)
+    {
         std::cout << "operator=(const Plain&): copy assignment a Plain object" << std::endl;
         return *this;
     }
-    Plain(Plain&&) {
-        std::cout << "Plain(Plain&&): move construct a Plain object" << std::endl;
-    }
-    Plain& operator=(Plain&&) {
+    Plain(Plain&&) { std::cout << "Plain(Plain&&): move construct a Plain object" << std::endl; }
+    Plain& operator=(Plain&&)
+    {
         std::cout << "operator=(Plain&&): move assignment a Plain object" << std::endl;
         return *this;
     }
-    ~Plain() {
-        std::cout << "~Plain(): destruct a Plain object" << std::endl;
-    }
+    ~Plain() { std::cout << "~Plain(): destruct a Plain object" << std::endl; }
 };
 
 #endif

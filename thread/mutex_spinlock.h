@@ -75,7 +75,7 @@ mutex: can multi-process in linux share same mutex?
 
 #define LOOPS 10000000
 
-list<int> the_list;
+std::list<int> the_list;
 
 #ifdef USE_SPINLOCK
 pthread_spinlock_t spinlock;
@@ -83,12 +83,16 @@ pthread_spinlock_t spinlock;
 pthread_mutex_t mutex_p;
 #endif
 
-pid_t gettid() { return syscall( __NR_gettid ); }
+//pid_t gettid() { return syscall( __NR_gettid ); }
+
+pid_t gettid() {
+    uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+}
 
 void *consumer(void *ptr)
 {
-    int i;
-
     printf("Consumer TID %lu\n", (unsigned long)gettid());
 
     while (1)
@@ -109,7 +113,7 @@ void *consumer(void *ptr)
             break;
         }
 
-        i = the_list.front();
+        [[maybe_unused]] auto i = the_list.front();
         the_list.pop_front();
 
 #ifdef USE_SPINLOCK
@@ -124,7 +128,6 @@ void *consumer(void *ptr)
 
 void Run_mutex_spinlock()
 {
-    int i;
     pthread_t thr1, thr2;
     struct timeval tv1, tv2;
 
@@ -137,7 +140,7 @@ void Run_mutex_spinlock()
 #endif
 
     // Creating the list content...
-    for (i = 0; i < LOOPS; i++)
+    for (int i = 0; i < LOOPS; i++)
         the_list.push_back(i);
 
     // Measuring time before starting the threads...
@@ -158,8 +161,8 @@ void Run_mutex_spinlock()
         tv2.tv_usec += 1000000;
     }
 
-    printf("Result - %ld.%ld\n", tv2.tv_sec - tv1.tv_sec,
-        tv2.tv_usec - tv1.tv_usec);
+    printf("Total time elapsed (seconds): %ld.%ld\n",
+           tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
 
 #ifdef USE_SPINLOCK
     pthread_spin_destroy(&spinlock);

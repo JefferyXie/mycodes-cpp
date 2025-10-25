@@ -30,7 +30,7 @@ auto DoCalc(Func& func, const std::vector<input_t<Args...>>& inputs) {
     results.resize(inputs.size());
 
     thread_pool pool;
-    auto num_threads = pool.start();
+    [[maybe_unused]] auto num_threads = pool.start();
     
     using namespace std::placeholders;
     
@@ -49,4 +49,3 @@ auto DoCalc(Func& func, const std::vector<input_t<Args...>>& inputs) {
 }
 
 #endif
-

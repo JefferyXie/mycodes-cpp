@@ -10,7 +10,7 @@
 // string s3 = "5310   ";
 string normalize_phone_number(string& S)
 {
-    char arr[S.size()] = {'\0'};
+    vector<char> arr(S.size(), '\0');
     unsigned int len_total = 0;
     unsigned int len_digits = 0;
     for (unsigned int i = 0; i < S.size(); ++i)
@@ -32,7 +32,7 @@ string normalize_phone_number(string& S)
         arr[len_total-3] = arr[len_total-2];
         arr[len_total-2] = digit;
     }
-    return string(arr);
+    return string(arr.data());
 }
 
 // 

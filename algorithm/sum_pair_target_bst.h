@@ -5,6 +5,7 @@
 
 // 
 // http://www.geeksforgeeks.org/find-a-pair-with-given-sum-in-bst/
+//
 // Given a Balanced Binary Search Tree and a target sum, write a function that returns
 // true if there is a pair with sum equals to target sum, otherwise return false.
 // Expected time complexity is O(n) and only O(Logn) extra space can be used.
@@ -30,6 +31,7 @@
 // target sum, we return true. If the sum is more than target sum, we move to next node
 // in reverse inorder traversal, otherwise we move to next node in normal inorder traversal.
 // If any of the traversals is finished without finding a pair, we return false.
+//
 
 struct node
 {
@@ -47,42 +49,40 @@ struct node * NewNode(int val)
 
 bool sum_pair_target_bst(struct node* root,int sum)
 {
-    if(!root) return false;
+    if (!root) return false;
 
-    stack<node*> S1,S2;
-    node* curr1 =root,*curr2=root;
-    while(1)
+    stack<node*> S1, S2;
+    node* curr1         = root;
+    node* curr2         = root;
+    while (true)
     {
-        if(curr1)
+        if (curr1)
         {
+            // nodes in S1 are ordered smallest nodes
             S1.push(curr1);
-            curr1 = curr1->left;
+            curr1       = curr1->left;
         }
-        else if(curr2)
+        else if (curr2)
         {
+            // nodes in S1 are ordered largest nodes
             S2.push(curr2);
-            curr2= curr2->right;
+            curr2       = curr2->right;
         }
-        else if(!S1.empty() && !S2.empty())
+        else if (!S1.empty() && !S2.empty())
         {
-            curr1=S1.top();
-            curr2 = S2.top();
-            if(curr1->val+curr2->val==sum)
-            {
-                cout<<curr1->val<<"+"<<curr2->val<<"="<<sum;
+            curr1       = S1.top();
+            curr2       = S2.top();
+            if (curr1->val + curr2->val == sum) {
+                cout << curr1->val << "+" << curr2->val << "=" << sum;
                 return true;
-            }
-            else if(curr1->val+curr2->val>sum)
-            {
+            } else if (curr1->val + curr2->val > sum) {
                 S2.pop();
-                curr2 = curr2->left;
-                curr1=NULL;
-            }
-            else
-            {
+                curr2   = curr2->left;
+                curr1   = nullptr;
+            } else {
                 S1.pop();
-                curr1=curr1->right;
-                curr2=NULL;
+                curr1   = curr1->right;
+                curr2   = nullptr;
             }
         }
         else
@@ -91,25 +91,24 @@ bool sum_pair_target_bst(struct node* root,int sum)
     return false;
 }
 
-// Driver program to test above functions
 void run_sum_pair_target_bst()
 {
     /*
-       15
-       /     \
-       10      20
+            15
+         /      \
+       10       20
        / \     /  \
-       8  12   16  25
-       */
-    struct node *root =  NewNode(15);
-    root->left = NewNode(10);
-    root->right = NewNode(20);
-    root->left->left = NewNode(8);
-    root->left->right = NewNode(12);
-    root->right->left = NewNode(16);
-    root->right->right = NewNode(25);
+      8  12   16  25
+    */
+    struct node *root   =  NewNode(15);
+    root->left          = NewNode(10);
+    root->right         = NewNode(20);
+    root->left->left    = NewNode(8);
+    root->left->right   = NewNode(12);
+    root->right->left   = NewNode(16);
+    root->right->right  = NewNode(25);
 
-    int target = 33;
+    int target          = 33;
     if (sum_pair_target_bst(root, target) == false)
         printf("\n No such values are found\n");
 }

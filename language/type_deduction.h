@@ -1,14 +1,18 @@
 #ifndef TYPE_DEDUCTION_H
 #define TYPE_DEDUCTION_H
 
+#include "../main/formatter.h"
 #include "../main/header.h"
 #include "../main/utility.h"
 
-int g_arr[] = {1,2,3};
-int* get_i() {
+int  g_arr[] = {1, 2, 3};
+int* get_i()
+{
     //  static int g_i = 10;
     return g_arr;
 }
+
+// clang-format off
 #define CHECK_BODY(t)                                                                                                                           \
 do {                                                                                                                                            \
     cout << setw(12) << left << "sizeof(T):"    << sizeof(T)    << endl;                                                                        \
@@ -26,21 +30,26 @@ do {                                                                            
     cout << setw(12) << left << "lvalue_ref: "  << setw(6) << is_lvalue_reference<T>::value << is_lvalue_reference<decltype(t)>::value  << endl;\
     cout << setw(12) << left << "rvalue_ref: "  << setw(6) << is_rvalue_reference<T>::value << is_rvalue_reference<decltype(t)>::value  << endl;\
 } while (0)
+// clang-format on
 
 template <typename T>
-void check_plain(T t) {
+void check_plain(T t)
+{
     CHECK_BODY(t);
 }
 template <typename T>
-void check_pointer(T* t) {
+void check_pointer(T* t)
+{
     CHECK_BODY(t);
 }
 template <typename T>
-void check_reference(T& t) {
+void check_reference(T& t)
+{
     CHECK_BODY(t);
 }
 template <typename T>
-void check_universal(T&& t) {
+void check_universal(T&& t)
+{
     CHECK_BODY(t);
 }
 

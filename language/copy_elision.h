@@ -1,4 +1,3 @@
-#include "../main/header.h"
 #include "classtest.h"
 
 //
@@ -6,22 +5,21 @@
 // http://www.tuicool.com/articles/F7Fjuu3
 // http://en.cppreference.com/w/cpp/language/copy_elision
 //
-Plain getPlain() {
+Plain getPlain()
+{
     return Plain();
 }
 
-Plain getPlainWithName() {
+Plain getPlainWithName()
+{
     Plain temp;
     return temp;
 }
 
-vector<Plain> getVector() {
+std::vector<Plain> getVector()
+{
     // copy elision from tempory object to 'temp', omit copy and move constructor
-    vector<Plain> temp = vector<Plain>(1); 
-
-    cout << "message after vector is created." << endl;
-
-    return temp; // NRVO temp to returned 
+    std::vector<Plain> temp = std::vector<Plain>(1);
+    std::cout << "message after vector is created." << std::endl;
+    return temp;    // NRVO temp to returned
 }
-
-

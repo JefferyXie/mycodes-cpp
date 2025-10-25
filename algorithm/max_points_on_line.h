@@ -4,7 +4,7 @@
 #include "../main/header.h"
 
 // 
-// Given a set of points, find line with max points
+// Given a set of points, find line with the most number of points
 // 
 
 int gcd(int a, int b) {

@@ -1,5 +1,5 @@
-#ifndef OPERATORNEWDELETE_H
-#define OPERATORNEWDELETE_H
+#ifndef NEW_DELETE_H
+#define NEW_DELETE_H
 
 #include "../main/header.h"
 
@@ -60,5 +60,4 @@ public:
 #endif
 
 #endif
-
 

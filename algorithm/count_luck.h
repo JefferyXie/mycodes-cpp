@@ -95,9 +95,12 @@ int count_luck(const vector<vector<char> >& forest)
     vector<vector<bool> > visited(N, vector<bool>(M, false));
     vector<pair<int,int> > waveHandList;
     find_port_key(forest, visited, startN, startM, waveHandList);
+
+/*
     for_each(begin(waveHandList), end(waveHandList), [](pair<int,int>& p) {
         cout << "(" << p.first << "," << p.second << ")" << endl;
     });
+*/
     return waveHandList.size();;
 }
 

@@ -1,0 +1,6 @@
+start_job,date,next_job
+intern01,2010-01-01,intern02
+intern02,2010-04-01,intern03
+intern03,2011-06-15,intern04
+intern04,2011-08-01,intern05
+intern05,2012-01-01
