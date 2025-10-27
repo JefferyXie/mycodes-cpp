@@ -3,9 +3,9 @@
 #include "../main/header.h"
 #include "../main/math.h"
 
-#include "../core/my_list.h"
-#include "../core/my_queue.h"
-#include "../core/my_smartpointer.h"
+#include "../data_structure/my_list.h"
+#include "../data_structure/my_queue.h"
+#include "../data_structure/my_smartpointer.h"
 
 #include "../language/classtest.h"
 

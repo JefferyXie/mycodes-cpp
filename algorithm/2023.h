@@ -533,13 +533,13 @@ int find_duplicate(int* arr, int len)
 // given root node of a complete binary tree, find total number of nodes
 // time complexity should be less than O(n)
 //
-int tree_count_complete_tree_nodes(TreeNode<int>* root)
+int tree_count_complete_tree_nodes(tree_node_t<int>* root)
 {
     if (!root)
         return 0;
 
-    using lambda_t     = std::function<int(TreeNode<int>*)>;
-    lambda_t get_depth = [&](TreeNode<int>* node) {
+    using lambda_t     = std::function<int(tree_node_t<int>*)>;
+    lambda_t get_depth = [&](tree_node_t<int>* node) {
         if (!node)
             return 0;
         return 1 + get_depth(node->left);
@@ -558,7 +558,7 @@ int tree_count_complete_tree_nodes(TreeNode<int>* root)
 }
 
 // a variant question: given root, find total number of leaf nodes
-int tree_count_complete_tree_leaves(TreeNode<int>* root)
+int tree_count_complete_tree_leaves(tree_node_t<int>* root)
 {
     if (!root) {
         return 0;
@@ -571,7 +571,7 @@ int tree_count_complete_tree_leaves(TreeNode<int>* root)
 
 // get any type of tree max depth
 // TODO: need test
-int get_any_tree_depth(TreeNode<int>* node)
+int get_any_tree_depth(tree_node_t<int>* node)
 {
     if (!node)
         return 0;
@@ -583,7 +583,7 @@ int get_any_tree_depth(TreeNode<int>* node)
 
 // check if an arbitrary tree is balanced
 // TODO: need test
-bool check_if_balanced_tree(TreeNode<int>* node, int& depth)
+bool check_if_balanced_tree(tree_node_t<int>* node, int& depth)
 {
     if (!node)
         return true;

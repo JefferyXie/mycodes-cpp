@@ -1,8 +1,8 @@
 /*
 #include <gtest/gtest.h>
 
-#include "../test/Test_Fixture.h"
 #include "../test/Test_algorithm.h"
+#include "../test/Test_fixture.h"
 #include "../test/Test_language.h"
 #include "../test/Test_multithreading.h"
 #include "../test/Test_utility.h"
@@ -22,7 +22,7 @@ int main(int argc, char** argv)
 #include "../algorithm/stock_max_profit.h"
 #include "../algorithm/str_palindrome.h"
 
-#include "../core/my_tuple.h"
+#include "../data_structure/my_tuple.h"
 
 #include "../interview/headlands/headlands.h"
 #include "../interview/worldquant/orderbook.h"

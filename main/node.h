@@ -1,26 +1,21 @@
-#ifndef NODE_H
-#define NODE_H
+#pragma once
+
 #include "header.h"
 
 template <class T>
-struct tree_node {
-    T             data{};
-    tree_node<T>* left{nullptr};
-    tree_node<T>* right{nullptr};
+struct tree_node_t {
+    T               data{};
+    tree_node_t<T>* left{nullptr};
+    tree_node_t<T>* right{nullptr};
 };
 
-template <typename T>
-using TreeNode        = tree_node<T>;
-using tree_node_int_t = tree_node<int>;
+using tree_node_int_t = tree_node_t<int>;
 
 template <class T>
-struct list_node {
-    T             data{};
-    list_node<T>* next{nullptr};
+struct list_node_t {
+    T               data{};
+    list_node_t<T>* next{nullptr};
 };
 
-template <typename T>
-using ListNode        = list_node<T>;
-using list_node_int_t = list_node<int>;
+using list_node_int_t = list_node_t<int>;
 
-#endif

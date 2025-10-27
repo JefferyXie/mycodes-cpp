@@ -11,7 +11,7 @@
 // Use recursive
 //
 template <class T>
-TreeNode<T>* find_common_ancestor(TreeNode<T>* root, TreeNode<T>* n1, TreeNode<T>* n2)
+tree_node_t<T>* find_common_ancestor(tree_node_t<T>* root, tree_node_t<T>* n1, tree_node_t<T>* n2)
 {
     // 1) root == nullptr: wrong branch, no node any more
     // 2) root == n1 || root == n2: reach node itself, return itself
@@ -31,9 +31,9 @@ TreeNode<T>* find_common_ancestor(TreeNode<T>* root, TreeNode<T>* n1, TreeNode<T
 
 // Find the whole path/route from root to n1 and n2 respectively, then get the common ancestor
 template <class T>
-TreeNode<T>* find_common_ancestor_v2(TreeNode<T>* root, TreeNode<T>* n1, TreeNode<T>* n2)
+tree_node_t<T>* find_common_ancestor_v2(tree_node_t<T>* root, tree_node_t<T>* n1, tree_node_t<T>* n2)
 {
-    using NodePtr_t    = TreeNode<T>*;
+    using NodePtr_t    = tree_node_t<T>*;
     using NodePtrVec_t = std::vector<NodePtr_t>;
     using Lambda_t     = std::function<bool(NodePtr_t, NodePtr_t, NodePtrVec_t&)>;
     Lambda_t impl      = [&](NodePtr_t node_root, NodePtr_t node_target, NodePtrVec_t& route) {
