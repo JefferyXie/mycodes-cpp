@@ -1,25 +1,24 @@
-#ifndef MY_SORT_H
-#define MY_SORT_H
+#pragma once
 
 #include "../main/header.h"
 
 // sorting algorithm, http://blog.csdn.net/semo_1006/article/details/4706890
 // method 1: insertion sort
 template <class T>
-void sort_insertion(const vector<T>& src, vector<T>& out)
+void sort_insertion(const std::vector<T>& src, std::vector<T>& out)
 {
 }
 
 // method 2: merge sort
 // http://blog.chinaunix.net/uid-24774106-id-2240452.html
 template <class T>
-void sort_merge(const vector<T>& src, vector<T>& out)
+void sort_merge(const std::vector<T>& src, std::vector<T>& out)
 {
 }
 
 // method 3: quick sort
 template <class T>
-void sort_quick(const vector<T>& src, vector<T>& out)
+void sort_quick(const std::vector<T>& src, std::vector<T>& out)
 {
 }
 
@@ -47,4 +46,3 @@ void quickSort(T s[], int l, int r)
     }
 }
 
-#endif

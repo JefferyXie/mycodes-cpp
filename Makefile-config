@@ -36,7 +36,7 @@ CFLAGS = $(C11) -v -w -I$(BOOST_ROOT) -L/usr/local/lib -lgtest -lgtest_main -lpt
 CFLAGS = $(C11) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
 CFLAGS = $(C17) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
 CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl # disable warning
-CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl -pedantic -ltinyxml # disable warning
+CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lbenchmark -lpthread -lssl -lcrypto -lcurl -pedantic -ltinyxml # disable warning
 CFLAGS_DEBUG = -g $(CFLAGS)
 #CFLAGS_DEBUG = $(CFLAGS) -O3
 

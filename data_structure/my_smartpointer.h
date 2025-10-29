@@ -1,5 +1,4 @@
-#ifndef MY_SMARTPOINTER_H
-#define MY_SMARTPOINTER_H
+#pragma once
 
 #include "../main/header.h"
 
@@ -196,4 +195,3 @@ auto my_make_shared(Args&&... args)
     return my_smartpointer<T>(cntl_block);
 }
 
-#endif

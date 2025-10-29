@@ -1,20 +1,15 @@
-#ifndef MY_HASH_MAP_H
-#define MY_HASH_MAP_H
+#pragma once
 
 #include "../main/header.h"
+#include "../main/node.h"
 #include "../main/utility.h"
 
 // TODO: initial version, need more test
 template <typename T>
 class my_hash_map
 {
-    struct node_t {
-        T       object{};
-        node_t* next{nullptr};
-    };
-
 public:
-    explicit my_hash_map(size_t init_bucket_count = 16) : hasher_{std::hash<T>{}.operator()}
+    explicit my_hash_map(size_t init_bucket_count = 16) : hasher_{std::hash<T>{}}
     {
         buckets_.resize(init_bucket_count, nullptr);
     }
@@ -46,16 +41,17 @@ public:
 
         auto bucket_head = buckets_[bucket_idx];
         auto bucket_node = bucket_head;
+
         while (bucket_node) {
-            if (obj == bucket_node->object) {
-                return {false, &bucket_node->object};
+            if (obj == bucket_node->data) {
+                return {false, &bucket_node->data};
             }
             bucket_node = bucket_node->next;
         }
 
-        auto new_node = new node_t{
-            .object = std::move(obj),
-            .next   = bucket_head,
+        auto new_node = new list_node_t<T>{
+            .data = std::move(obj),
+            .next = bucket_head,
         };
         if (!new_node) {
             throw std::bad_alloc();
@@ -66,7 +62,7 @@ public:
         ++node_count_;
         try_rehash();
 
-        return {true, &new_node->object};
+        return {true, &new_node->data};
     }
 
     template <typename... Args>
@@ -79,8 +75,8 @@ public:
         auto bucket_head = buckets_[bucket_idx];
         auto bucket_node = bucket_head;
         while (bucket_node) {
-            if (obj == bucket_node->object) {
-                return &bucket_node->object;
+            if (obj == bucket_node->data) {
+                return &bucket_node->data;
             }
             bucket_node = bucket_node->next;
         }
@@ -95,11 +91,11 @@ public:
         const auto hash_code  = hasher_(*obj);
         const auto bucket_idx = hash_code % buckets_.size();
 
-        node_t* bucket_node_prev = nullptr;
-        node_t* bucket_head      = buckets_[bucket_idx];
-        node_t* bucket_node      = bucket_head;
+        list_node_t<T>* bucket_node_prev = nullptr;
+        list_node_t<T>* bucket_head      = buckets_[bucket_idx];
+        list_node_t<T>* bucket_node      = bucket_head;
         while (bucket_node) {
-            if (obj == &bucket_node->object) {
+            if (obj == &bucket_node->data) {
                 auto next = bucket_node->next;
                 if (bucket_node_prev) {
                     bucket_node_prev->next = next;
@@ -110,7 +106,7 @@ public:
                 --node_count_;
                 delete bucket_node;
                 if (next) {
-                    return &next->object;
+                    return &next->data;
                 }
                 return nullptr;
             }
@@ -127,11 +123,11 @@ public:
         const auto hash_code  = hasher_(obj);
         const auto bucket_idx = hash_code % buckets_.size();
 
-        node_t* bucket_node_prev = nullptr;
-        node_t* bucket_head      = buckets_[bucket_idx];
-        node_t* bucket_node      = bucket_head;
+        list_node_t<T>* bucket_node_prev = nullptr;
+        list_node_t<T>* bucket_head      = buckets_[bucket_idx];
+        list_node_t<T>* bucket_node      = bucket_head;
         while (bucket_node) {
-            if (obj == bucket_node->object) {
+            if (obj == bucket_node->data) {
                 auto next = bucket_node->next;
                 if (bucket_node_prev) {
                     bucket_node_prev->next = next;
@@ -142,7 +138,7 @@ public:
                 --node_count_;
                 delete bucket_node;
                 if (next) {
-                    return &next->object;
+                    return &next->data;
                 }
                 return nullptr;
             }
@@ -167,42 +163,38 @@ public:
 private:
     void try_rehash()
     {
-        if (node_count_ > 2 * buckets_.size()) {
-            std::cout << __FUNCTION__ << ": node_count=" << node_count_ << ", # buckets=" << buckets_.size()
-                      << std::endl;
-
-            const auto           new_bucket_count = node_count_ * 2;
-            std::vector<node_t*> new_buckets(new_bucket_count, nullptr);
-            for (auto bucket_head : buckets_) {
-                auto node = bucket_head;
-                while (node) {
-                    auto temp = node->next;
-
-                    const auto hash_code  = hasher_(node->object);
-                    const auto bucket_idx = hash_code % new_bucket_count;
-                    if (new_buckets[bucket_idx]) {
-                        node->next = new_buckets[bucket_idx];
-                    }
-                    new_buckets[bucket_idx] = node;
-
-                    node = temp;
-                }
-            }
-
-            std::swap(buckets_, new_buckets);
+        if (node_count_ < 2 * buckets_.size()) {
+            return;
         }
+
+        const auto                   new_bucket_count = node_count_ * 2;
+        std::vector<list_node_t<T>*> new_buckets(new_bucket_count, nullptr);
+        for (auto bucket_head : buckets_) {
+            auto node = bucket_head;
+            while (node) {
+                auto temp = node->next;
+
+                const auto hash_code    = hasher_(node->data);
+                const auto bucket_idx   = hash_code % new_bucket_count;
+                node->next              = new_buckets[bucket_idx];
+                new_buckets[bucket_idx] = node;
+
+                node = temp;
+            }
+        }
+        std::swap(buckets_, new_buckets);
+        // std::cout << __FUNCTION__ << ": node_count=" << node_count_ << ", # buckets=" << buckets_.size() <<
+        // std::endl;
     }
 
 private:
     size_t                          node_count_{0};
-    std::vector<node_t*>            buckets_;
+    std::vector<list_node_t<T>*>    buckets_;
     std::function<size_t(const T&)> hasher_;
 };
 
 void run_my_hash_map()
 {
-    cout << __FILE__ << ":" << __FUNCTION__ << endl;
-
     {
         my_hash_map<int> hm;
         hm.emplace(1);
@@ -237,11 +229,9 @@ void run_my_hash_map()
         for (int i = -100; i < 100; ++i) {
             hm.emplace(std::to_string(i));
         }
-        auto obj = hm.find(0);
+        auto obj = hm.find(std::to_string(0));
         while (obj) {
             obj = hm.erase(obj);
         }
     }
 }
-
-#endif

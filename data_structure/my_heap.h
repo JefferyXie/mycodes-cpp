@@ -1,7 +1,5 @@
-#ifndef MY_HEAP_H
-#define MY_HEAP_H
+#pragma once
 
-#include "../main/header.h"
 #include "../main/utility.h"
 
 //
@@ -48,7 +46,7 @@ void min_to_max_node(int* arr, int len, int idx)
         idx_max = idx_right_child;
     }
 
-    if (idx_max < len && *(arr + idx_max)> * (arr + idx)) {
+    if (idx_max < len && *(arr + idx_max) > *(arr + idx)) {
         std::swap(*(arr + idx), *(arr + idx_max));
         min_to_max_node(arr, len, idx_max);
     }
@@ -64,20 +62,20 @@ void min_heap_to_max_heap(int* arr, int len)
 
 void run_min_heap_to_max_heap()
 {
-    cout << __FILE__ << ":" << __FUNCTION__ << endl;
+    std::cout << __FILE__ << ":" << __FUNCTION__ << std::endl;
 
     // input: A[] = [1 2]
     // output: [2 1]
     {
         int arr[] = {1, 2};
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
     }
 
@@ -85,14 +83,14 @@ void run_min_heap_to_max_heap()
     // output: [3 1 2]
     {
         int arr[] = {1, 3, 2};
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
     }
 
@@ -100,16 +98,15 @@ void run_min_heap_to_max_heap()
     // output: A[] = [20 18 10 12 9 9 3 5 6 8]
     {
         int arr[] = {3, 5, 9, 6, 8, 20, 10, 12, 18, 9};
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        cout << "\n";
+        std::cout << "\n";
         print_array(arr);
     }
 }
 
-#endif

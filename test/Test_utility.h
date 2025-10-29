@@ -3,11 +3,17 @@
 #include "../main/header.h"
 #include "../main/math.h"
 
+#include "../data_structure/my_hash_map.h"
+#include "../data_structure/my_heap.h"
 #include "../data_structure/my_list.h"
 #include "../data_structure/my_queue.h"
+#include "../data_structure/my_sort.h"
 #include "../data_structure/my_smartpointer.h"
+#include "../data_structure/my_tuple.h"
 
 #include "../language/classtest.h"
+
+#include "../thread/thread_order.h"
 
 namespace {
 
@@ -47,7 +53,17 @@ TEST(utility, math_prime)
     static_assert(math::compile_time_count_primes(30) == 9);
 }
 
-TEST(core, my_list)
+TEST(utility, my_hash_map)
+{
+    run_my_hash_map();
+}
+
+TEST(utility, my_heap)
+{
+    run_min_heap_to_max_heap();
+}
+
+TEST(utility, my_list)
 {
     my_list<int> olist;
     int          i_2  = 2;
@@ -78,7 +94,7 @@ TEST(core, my_list)
     olist.Display();
 }
 
-TEST(DISABLED_core, my_queue_int)
+TEST(DISABLED_utility, my_queue_int)
 {
     my_queue<int> q1, q2;
     for (int i = 0; i < 100; ++i) {
@@ -116,7 +132,7 @@ TEST(DISABLED_core, my_queue_int)
     th_reader.join();
 }
 
-TEST(DISABLED_core, my_queue_class)
+TEST(DISABLED_utility, my_queue_class)
 {
     {
         my_queue<MyMember> q1;
@@ -162,7 +178,7 @@ TEST(DISABLED_core, my_queue_class)
     std::cout << "test end!" << std::endl;
 }
 
-TEST(core, my_smartpointer)
+TEST(utility, my_smartpointer)
 {
     my_smartpointer<int> s5;
     EXPECT_EQ(s5.use_count(), 0);
@@ -240,5 +256,20 @@ TEST(core, my_smartpointer)
 
     auto p2 = my_make_shared<PPlain>();
     p1      = p2;
+}
+
+TEST(DISABLED_utility, my_tuple)
+{
+    run_my_tuple();
+}
+
+TEST(DISABLED_utility, UseMutex)
+{
+    UseMutex();
+}
+
+TEST(DISABLED_utility, UseSemaphore)
+{
+    UseSemaphore();
 }
 

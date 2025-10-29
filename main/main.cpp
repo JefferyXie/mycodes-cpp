@@ -1,16 +1,27 @@
 /*
+#include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
-#include "../test/Test_algorithm.h"
-#include "../test/Test_fixture.h"
-#include "../test/Test_language.h"
-#include "../test/Test_multithreading.h"
-#include "../test/Test_utility.h"
+#include "../test/test_algorithm.h"
+#include "../test/test_fixture.h"
+#include "../test/test_language.h"
+#include "../test/test_utility.h"
+#include "../test/benchmark_test.h"
 
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);
-    return RUN_ALL_TESTS();
+
+    // Run Google Tests
+    int gtest_result = RUN_ALL_TESTS();
+
+    // Run Google Benchmarks only if tests passed or desired
+    if (gtest_result == 0) {
+        ::benchmark::Initialize(&argc, argv);
+        ::benchmark::RunSpecifiedBenchmarks();
+    }
+
+    return gtest_result;
 }
 */
 
@@ -538,3 +549,4 @@ int main(int argc, char** argv)
 
     return 0;
 }
+

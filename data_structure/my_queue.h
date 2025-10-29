@@ -1,5 +1,4 @@
-#ifndef MY_QUEUE_H
-#define MY_QUEUE_H
+#pragma once
 
 #include "../main/header.h"
 
@@ -111,4 +110,3 @@ void my_queue<T>::reset()
     _head = NULL;
 }
 
-#endif

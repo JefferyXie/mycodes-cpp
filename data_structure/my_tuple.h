@@ -1,5 +1,4 @@
-#ifndef MY_TUPLE_H
-#define MY_TUPLE_H
+#pragma once
 
 #include "../main/header.h"
 
@@ -70,8 +69,8 @@ template <typename First, typename... Rest>
 struct my_tuple_2 {
     my_tuple_2(First first, Rest... rest) : first(first), rest(my_tuple_2<Rest...>(rest...)) {}
 
-    First first;
-    my_tuple_2<Rest...> rest; // object composition
+    First               first;
+    my_tuple_2<Rest...> rest;    // object composition
 };
 
 template <typename First>
@@ -86,15 +85,11 @@ struct GET {
 };
 template <int Index, typename First, typename... Rest>
 struct GET<Index, First, Rest...> {
-    static auto value(const my_tuple_2<First, Rest...>& t) {
-        return GET<Index - 1, Rest...>::value(t.rest);
-    }
+    static auto value(const my_tuple_2<First, Rest...>& t) { return GET<Index - 1, Rest...>::value(t.rest); }
 };
 template <typename First, typename... Rest>
 struct GET<0, First, Rest...> {
-    static auto value(const my_tuple_2<First, Rest...>& t) {
-        return t.first;
-    }
+    static auto value(const my_tuple_2<First, Rest...>& t) { return t.first; }
 };
 
 template <int Index, typename First, typename... Rest>
@@ -137,4 +132,3 @@ void run_my_tuple()
     }
 }
 
-#endif
