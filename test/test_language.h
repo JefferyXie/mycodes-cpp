@@ -143,7 +143,7 @@ TEST(DISABLED_language, lambda)
         3,
     };
     v.push_back(10);
-    list<std::string> ll;
+    std::list<std::string> ll;
     ll.push_back("1st ele");
     ll.push_back("2nd ele");
     ll.push_back("3rd ele");

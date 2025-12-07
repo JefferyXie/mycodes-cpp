@@ -89,6 +89,8 @@ void run_move()
 
     using A = movement::A;
     using B = movement::B;
+    using C = movement::C;
+    using D = movement::D;
 
     A a1, a2;
     std::cout << "Trying to move-assign A from rvalue temporary\n";

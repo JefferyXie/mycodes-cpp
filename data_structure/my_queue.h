@@ -61,8 +61,8 @@ void my_queue<T>::Push(T&& v)
         enlarge();
     }
     //_head[_length+_offset] = v;
-    //_head[_length+_offset] = new T(move(v));
-    _head[_length + _offset] = new T(forward<T>(v));
+    //_head[_length+_offset] = new T(std::move(v));
+    _head[_length + _offset] = new T(std::forward<T>(v));
     _length++;
 }
 
