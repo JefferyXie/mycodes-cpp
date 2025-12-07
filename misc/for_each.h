@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/utility.h"
+#include "../core/util.h"
 
 // for_each: call 'F' with integer from range [I, N)
 // this version is implemented with 'constexpr', and can be easily upgraded to support 'Step'

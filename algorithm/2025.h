@@ -1,11 +1,7 @@
 #pragma once
 
 #include "../core/node.h"
-#include "../core/utility.h"
-#include <queue>
-#include <tuple>
-#include <utility>
-#include <vector>
+#include "../core/util.h"
 
 // Worst Trade Reporter
 // https://leetcode.com/discuss/interview-question/3812812/Optiver-or-OA-or-Worst-Trade-Reporter

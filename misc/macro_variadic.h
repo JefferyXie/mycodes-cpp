@@ -1,7 +1,6 @@
-#ifndef MACRO_VARIADIC_H
-#define MACRO_VARIADIC_H
+#pragma once
 
-#include "../core/my_formatter.h"
+#include "../core/util_formatter.h"
 
 //
 // https://codecraft.co/2014/11/25/variadic-macros-tricks/
@@ -93,4 +92,3 @@ void run_macro_variadic()
         112, 123, 135)
 }
 
-#endif

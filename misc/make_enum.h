@@ -1,7 +1,6 @@
-#ifndef MAKE_ENUM_H
-#define MAKE_ENUM_H
+#pragma once
 
-#include "../core/my_formatter.h"
+#include "../core/util_formatter.h"
 
 //
 // https://stackoverflow.com/questions/207976/how-to-easily-map-c-enums-to-strings
@@ -156,6 +155,4 @@ void run_make_enum()
     if (!nm)
         std::cout << "empty" << std::endl;
 }
-
-#endif
 

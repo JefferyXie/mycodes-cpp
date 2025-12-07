@@ -41,9 +41,12 @@ int main(int argc, char** argv)
 #include "../language/template_SFINAE.h"
 #include "../language/template_special.h"
 #include "../language/template_special2.h"
+#include "../language/type_deduction.h"
 
 int main(int argc, char** argv)
 {
+    run_type_deduction();
+
     run_meta();
     run_move();
     run_template_concept();

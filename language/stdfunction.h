@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../core/my_formatter.h"
-#include "../core/utility.h"
+#include "../core/util_formatter.h"
+#include "../core/util.h"
 
 using namespace std::placeholders;
 
@@ -9,7 +9,7 @@ typedef int (*PFUN)(char);
 
 int fun_fo(char ch)
 {
-    cout << "fun_fo(ch): " << ch << endl;
+    std::cout << "fun_fo(ch): " << ch << std::endl;
     return 10;
 }
 
@@ -18,41 +18,41 @@ class A_function
 public:
     int Go(char ch)
     {
-        cout << "A::Go(char): " << ch << endl;
+        std::cout << "A::Go(char): " << ch << std::endl;
         return 5;
     }
-    void Test(function<int(char)> fun)
+    void Test(std::function<int(char)> fun)
     {
-        cout << "<<Test(function)" << endl;
-        cout << fun('8') << endl;
-        cout << ">>Test(function)" << endl;
+        std::cout << "<<Test(function)" << std::endl;
+        std::cout << fun('8') << std::endl;
+        std::cout << ">>Test(function)" << std::endl;
     }
     void Test(PFUN pf)
     {
-        cout << "<<Test(PFUN): " << endl;
-        cout << pf('t') << endl;
-        cout << ">>Test(PFUN)" << endl;
+        std::cout << "<<Test(PFUN): " << std::endl;
+        std::cout << pf('t') << std::endl;
+        std::cout << ">>Test(PFUN)" << std::endl;
     }
     void Use()
     {
-        cout << "<<Use" << endl;
+        std::cout << "<<Use" << std::endl;
 
         // 5-1) call Test(PFUN) since it best fits, without Test(PFUN), it calls Test(function)
         Test(fun_fo);
 
         // 5-2) call Test(function) since it best fits
-        function<int(char)> fun = fun_fo;
+        std::function<int(char)> fun = fun_fo;
         Test(fun);
 
         // 5-3) construct function<..> with bind, taking 'this' object
-        function<int(char)> fun_1 = std::bind(&A_function::Go, this, _1);
+        std::function<int(char)> fun_1 = std::bind(&A_function::Go, this, _1);
         Test(fun_1);
 
         // 5-4) construct function<..> with bind, taking 'this' object, fixing para with 'p'
-        function<int(char)> fun_2 = std::bind(&A_function::Go, this, 'p');
+        std::function<int(char)> fun_2 = std::bind(&A_function::Go, this, 'p');
         Test(fun_2);
 
-        cout << ">>Use" << endl;
+        std::cout << ">>Use" << std::endl;
     }
 };
 
@@ -62,48 +62,48 @@ void run_std_function_1()
 
     // 0) function pointer
     PFUN pf = fun_fo;
-    cout << pf('u') << endl;
+    std::cout << pf('u') << std::endl;
 
     // 1) function<..> of function
-    function<int(char)> f_fo = fun_fo;
-    cout << f_fo('x') << endl;
+    std::function<int(char)> f_fo = fun_fo;
+    std::cout << f_fo('x') << std::endl;
 
     // 2) function<..> of lambda
-    function<int(char)> f_go = [](char c) {
-        cout << "<<lambda" << endl;
+    std::function<int(char)> f_go = [](char c) {
+        std::cout << "<<lambda" << std::endl;
         fun_fo(c);
-        cout << "lambda>>" << endl;
+        std::cout << "lambda>>" << std::endl;
         return 1;
     };
-    cout << f_go('m') << endl;
+    std::cout << f_go('m') << std::endl;
 
     // 3) function<..> of function pointer
-    function<int(char)> pf_go = pf;
-    cout << pf_go('q') << endl;
+    std::function<int(char)> pf_go = pf;
+    std::cout << pf_go('q') << std::endl;
 
     // 5) use function<..> inside class member function
     A_function a, b;
     a.Use();
 
     // 6) bind with class member function with object fixed
-    function<int(char)> fun_obj = std::bind(&A_function::Go, b, _1);
-    cout << fun_obj('b') << endl;
+    std::function<int(char)> fun_obj = std::bind(&A_function::Go, b, _1);
+    std::cout << fun_obj('b') << std::endl;
 
     // 7) bind with class memeber function with object fixed, function-self's para fixed too
-    function<int()> fun_oo = std::bind(&A_function::Go, b, 'y');
-    cout << fun_oo() << endl;
+    std::function<int()> fun_oo = std::bind(&A_function::Go, b, 'y');
+    std::cout << fun_oo() << std::endl;
 
     // 8) bind with class member function with object as input para
-    function<int(A_function&, char)> fun_A = std::bind(&A_function::Go, _1, _2);
-    cout << "<<function<int(A_function&,char)>" << endl;
-    cout << fun_A(b, 'q') << endl;
-    cout << ">>function<int(A_function&,char)>" << endl;
+    std::function<int(A_function&, char)> fun_A = std::bind(&A_function::Go, _1, _2);
+    std::cout << "<<function<int(A_function&,char)>" << std::endl;
+    std::cout << fun_A(b, 'q') << std::endl;
+    std::cout << ">>function<int(A_function&,char)>" << std::endl;
 
     // 9) bind with class member function with object as input para, fix function-self's para
-    function<int(A_function&)> fun_B = std::bind(&A_function::Go, _1, 'w');
-    cout << "<<function<int(A_function&)>" << endl;
-    cout << fun_B(b) << endl;
-    cout << ">>function<int(A_function&)>" << endl;
+    std::function<int(A_function&)> fun_B = std::bind(&A_function::Go, _1, 'w');
+    std::cout << "<<function<int(A_function&)>" << std::endl;
+    std::cout << fun_B(b) << std::endl;
+    std::cout << ">>function<int(A_function&)>" << std::endl;
 }
 
 //
@@ -113,7 +113,7 @@ class func_caller
 public:
     // 1) add_callback: class member method as input
     template <class T>
-    void add_callback(T* const object, char (T::*const mf)(bool, int))
+    void add_callback(T* const object, char (T::* const mf)(bool, int))
     {
         using namespace std::placeholders;
         callbacks_.emplace_back(std::bind(mf, object, _1, _2));
@@ -147,19 +147,19 @@ private:
 struct func_class {
     char in_class_func(bool, int)
     {
-        cout << "in_class_func" << endl;
+        std::cout << "in_class_func" << std::endl;
         return '1';
     }
 };
 char regular_func(bool, int)
 {
-    cout << "regular_func" << endl;
+    std::cout << "regular_func" << std::endl;
     return '2';
 }
 struct functor_class {
     char operator()(bool, int)
     {
-        cout << "functor_class operator()" << endl;
+        std::cout << "functor_class operator()" << std::endl;
         return 'c';
     }
 };
@@ -191,7 +191,7 @@ void run_std_function_2()
     std::function<char(bool, int)> fn2 = &regular_func;      // function pointer
     std::function<char(bool, int)> fn3 = functor_class();    // function object
     std::function<char(bool, int)> fn4 = [](bool, int) {     // lambda expression
-        cout << "lambda" << endl;
+        std::cout << "lambda" << std::endl;
         return 'd';
     };
     caller.add_callback(std::move(fn1));

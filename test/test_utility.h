@@ -1,6 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../core/math.h"
+#include "../core/util_math.h"
 
 #include "../data_structure/my_hash_map.h"
 #include "../data_structure/my_heap.h"
@@ -37,19 +37,19 @@ int MyMember::s_count = 0;
 
 TEST(utility, math_prime)
 {
-    static_assert(!math::compile_time_is_prime(0));
-    static_assert(!math::compile_time_is_prime(1));
-    static_assert(!math::compile_time_is_prime(2));
-    static_assert(math::compile_time_is_prime(3));
-    static_assert(!math::compile_time_is_prime(4));
-    static_assert(math::compile_time_is_prime(5));
-    static_assert(!math::compile_time_is_prime(6));
+    static_assert(!util_math::compile_time_is_prime(0));
+    static_assert(!util_math::compile_time_is_prime(1));
+    static_assert(!util_math::compile_time_is_prime(2));
+    static_assert(util_math::compile_time_is_prime(3));
+    static_assert(!util_math::compile_time_is_prime(4));
+    static_assert(util_math::compile_time_is_prime(5));
+    static_assert(!util_math::compile_time_is_prime(6));
 
-    static_assert(math::compile_time_count_primes(0) == 0);
-    static_assert(math::compile_time_count_primes(5) == 1);
-    static_assert(math::compile_time_count_primes(10) == 3);
-    static_assert(math::compile_time_count_primes(20) == 7);
-    static_assert(math::compile_time_count_primes(30) == 9);
+    static_assert(util_math::compile_time_count_primes(0) == 0);
+    static_assert(util_math::compile_time_count_primes(5) == 1);
+    static_assert(util_math::compile_time_count_primes(10) == 3);
+    static_assert(util_math::compile_time_count_primes(20) == 7);
+    static_assert(util_math::compile_time_count_primes(30) == 9);
 }
 
 TEST(utility, my_hash_map)

@@ -3,7 +3,7 @@
 #include "header.h"
 
 // TODO: c++20 std::format(..) may handle all the cases here...
-namespace my_formatter {
+namespace util_formatter {
 
 //
 // center alignment the text
@@ -83,24 +83,24 @@ operator<<(std::basic_ostream<charT, traits>& s, const center_helper<charT, trai
     return s;
 }
 
-}    // end namespace my_formatter
+}    // namespace util_formatter
 
 // clang-format off
-#define FUNC_BEGIN(name)                            \
-    std::cout << "\n"                               \
-              << std::setw(80)                      \
-              << my_formatter::centered(#name, '>') \
+#define FUNC_BEGIN(name)                                \
+    std::cout << "\n"                                   \
+              << std::setw(80)                          \
+              << util_formatter::centered(#name, '>')   \
               << std::endl;
 
-#define FUNC_END(name)                              \
-    std::cout << std::setw(80)                      \
-              << my_formatter::centered(#name, '<') \
-              << "\n"                               \
+#define FUNC_END(name)                                  \
+    std::cout << std::setw(80)                          \
+              << util_formatter::centered(#name, '<')   \
+              << "\n"                                   \
               << std::endl;
 
-#define SECTION_BEGIN(name)                         \
-    std::cout << std::setw(80)                      \
-              << my_formatter::centered(#name, '-') \
+#define SECTION_BEGIN(name)                             \
+    std::cout << std::setw(80)                          \
+              << util_formatter::centered(#name, '-')   \
               << std::endl;
 // clang-format on
 

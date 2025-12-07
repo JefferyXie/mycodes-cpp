@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/node.h"
-#include "../core/utility.h"
+#include "../core/util.h"
 
 // TODO: initial version, need more test
 template <typename T>

@@ -5,7 +5,7 @@
 #include <execinfo.h>
 #include <typeindex>
 
-class class_util
+class util_class
 {
 public:
     template <typename T>

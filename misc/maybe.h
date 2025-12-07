@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../core/my_formatter.h"
-#include "../core/utility.h"
+#include "../core/util_formatter.h"
+#include "../core/util.h"
 
 #ifndef _VA_LIST
 typedef __builtin_va_list va_list;

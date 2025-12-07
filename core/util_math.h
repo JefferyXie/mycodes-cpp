@@ -2,7 +2,7 @@
 
 #include "header.h"
 
-namespace math {
+namespace util_math {
 
 inline bool is_prime(size_t n)
 {
@@ -50,5 +50,5 @@ constexpr uint32_t compile_time_count_primes(uint64_t N)
     return count;
 }
 
-};    // namespace math
+};    // namespace util_math
 

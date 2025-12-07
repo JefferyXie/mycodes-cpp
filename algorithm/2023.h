@@ -1,9 +1,7 @@
 #pragma once
 
 #include "../core/node.h"
-#include "../core/utility.h"
-#include <functional>
-#include <utility>
+#include "../core/util.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //

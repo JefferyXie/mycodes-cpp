@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../core/utility.h"
+#include "../core/util.h"
 
 //
 // https://www.hackerrank.com/challenges/stockmax/problem

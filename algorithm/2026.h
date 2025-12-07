@@ -1,7 +1,7 @@
 #pragma once
 
 #include "../core/node.h"
-#include "../core/utility.h"
+#include "../core/util.h"
 
 // There are two types of persons:
 // Good person: The person who always tells the truth.
