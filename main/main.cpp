@@ -57,6 +57,9 @@ int main(int argc, char** argv)
 
 #include "../thread/mutex_spinlock.h"
 #include "../thread/thread_pool.h"
+#include <type_traits>
+#include <utility>
+
 
 int main(int argc, char** argv)
 {

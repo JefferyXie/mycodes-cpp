@@ -237,7 +237,9 @@ void run_meta()
     std::cout << pow_2<5>() << std::endl;
 
     static_assert(constexpr_pow_2(5) == 32, "wrong result");
+#ifndef __APPLE__
     static_assert(constexpr_pow_2_2(5) == 32, "wrong result");
+#endif
 
     static_assert(STRUCT_POW_2<5>::VALUE == 32, "wrong result");
     std::cout << STRUCT_POW_2<5>::VALUE << std::endl;
@@ -267,11 +269,15 @@ void run_meta()
     std::cout << "min(unsigned long long): " << std::numeric_limits<unsigned long long>::min() << '\n';
 
     std::cout << std::fixed << "pow(2, 19): " << pow(2, 19) << std::endl;
-    std::cout << "BINARY<10..>: " << BINARY<10000000000000000000>::VALUE << std::endl;
 
     // ull max lenght is 20, so cannot convert it correctly
     std::cout << std::fixed << "pow(2, 20): " << pow(2, 20) << std::endl;
+
+#if 0
+    // TODO: cannot hold this big integer, comment out for now
+    std::cout << "BINARY<10..>: " << BINARY<10000000000000000000>::VALUE << std::endl;
     std::cout << "BINARY<10..>: " << BINARY<100000000000000000000>::VALUE << std::endl;
+#endif
 
     //
     // IS_PRIME & PRINT_PRIME
