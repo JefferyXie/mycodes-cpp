@@ -26,9 +26,8 @@
 //
 uint32_t find_min_packet_length(const std::vector<uint32_t>& messages, uint32_t max_packets_count)
 {
-    std::cout << __FUNCTION__ << ": [INPUT] max_packets_count=" << max_packets_count << ", messages=";
-    print_array(messages);
-    std::cout << std::endl;
+    std::cout << __FUNCTION__ << ": [INPUT] max_packets_count=" << max_packets_count
+              << ", messages=" << dump_array(messages) << std::endl;
 
     const auto num_messages = messages.size();
     if (num_messages == 0 || max_packets_count == 0) {
@@ -91,9 +90,7 @@ uint32_t find_min_packet_length(const std::vector<uint32_t>& messages, uint32_t 
         }
     }
 
-    std::cout << "\tdp[" << (num_messages - 1) << "]=";
-    print_array(dp[num_messages - 1]);
-    std::cout << std::endl;
+    std::cout << "\tdp[" << (num_messages - 1) << "]=" << dump_array(dp[num_messages - 1]) << std::endl;
 
     return dp[num_messages - 1][max_packets_count - 1];
 }

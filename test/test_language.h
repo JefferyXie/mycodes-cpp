@@ -5,7 +5,7 @@
 #include "../language/classtest.h"
 #include "../language/copy_elision.h"
 #include "../language/matrix.h"
-#include "../language/memoryleakdetector.h"
+#include "../language/memory_leak_detector.h"
 #include "../language/new_delete.h"
 #include "../language/template_constraints.h"
 #include "../language/thread.h"
@@ -177,7 +177,7 @@ TEST(DISABLED_language, new_delete)
 #endif
 }
 
-TEST(language, memoryleakdetector)
+TEST(language, memory_leak_detector)
 {
 #if MEMORYLEAK_ENABLED > 0
     int* p = NEW(int);
@@ -207,7 +207,7 @@ TEST(language, circular_buf)
         cbuf.read();
     }
     cbuf.write("uvwxyz", 6);
-    string s;
+    std::string s;
     while (1) {
         char ch = cbuf.read();
         std::cout << ch;
@@ -219,14 +219,14 @@ TEST(language, circular_buf)
         }
     }
 
-    EXPECT_EQ(s, string("ijklmnopqrst"));
+    EXPECT_EQ(s, std::string("ijklmnopqrst"));
 
     circular_buf cbuf1;
     auto         writer = [&cbuf1]() {
         const char* letters = "abcdefghijklmnopqrstuvwxyz";
-        int         count   = 0;
-        int         i       = 0;
-        string      ss;
+        size_t      count   = 0;
+        size_t      i       = 0;
+        std::string ss;
         while (i < strlen(letters)) {
             int ret = cbuf1.write(letters + i, 1);
             if (ret <= 0) {
@@ -242,8 +242,8 @@ TEST(language, circular_buf)
     };
     bool stopped = false;
     auto reader  = [&cbuf1, &stopped]() {
-        int    count = 0;
-        string ss;
+        int         count = 0;
+        std::string ss;
         while (1) {
             char ch = cbuf1.read();
             if (ch == '\0') {

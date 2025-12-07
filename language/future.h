@@ -1,5 +1,4 @@
-#ifndef FUTURE_H
-#define FUTURE_H
+#pragma once
 
 #include "../main/header.h"
 
@@ -10,34 +9,44 @@
  * http://jakascorner.com/blog/2016/03/promise-difference.html
  * http://en.cppreference.com/w/cpp/thread/shared_future
 
- * std::packaged_task is just a lower level feature for implementing std::async (which is why it can do more than std::async if 
- * used together with other lower level stuff, like std::thread). Simply spoken a std::packaged_task is a std::function linked 
+ * std::packaged_task is just a lower level feature for implementing std::async (which is why it can do more than
+ std::async if
+ * used together with other lower level stuff, like std::thread). Simply spoken a std::packaged_task is a std::function
+ linked
  * to a std::future and std::async wraps and calls a std::packaged_task (possibly in a different thread).
- * std::promise is a powerful mechanism, for example you can pass a value to new thread without need of any additional synchronizing
- * mechanism. The std::promise can explicitly set a value to a std::future anytime and not only at the end of a function call as 
- * std::async and std::packaged_task do. 
+ * std::promise is a powerful mechanism, for example you can pass a value to new thread without need of any additional
+ synchronizing
+ * mechanism. The std::promise can explicitly set a value to a std::future anytime and not only at the end of a function
+ call as
+ * std::async and std::packaged_task do.
 */
 
 void run_future()
 {
-    auto sleep = [](int s) { std::this_thread::sleep_for(std::chrono::seconds(s)); cout << std::this_thread::get_id() << endl; };
-
-    auto time_consumed = [](const chrono::steady_clock::time_point& begin, const chrono::steady_clock::time_point& end) {
-        std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count() <<std::endl;
-        // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end - begin).count() <<std::endl;
+    auto sleep = [](int s) {
+        std::this_thread::sleep_for(std::chrono::seconds(s));
+        std::cout << std::this_thread::get_id() << std::endl;
     };
-    
+
+    auto time_consumed = [](const std::chrono::steady_clock::time_point& begin,
+                            const std::chrono::steady_clock::time_point& end) {
+        std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::seconds>(end - begin).count()
+                  << std::endl;
+        // std::cout << "Time difference = " << std::chrono::duration_cast<std::chrono::nanoseconds> (end -
+        // begin).count() <<std::endl;
+    };
+
     std::chrono::steady_clock::time_point begin, end;
 
-    cout << "----------std::async----------" << endl;
-    
-    cout << "f" << endl;
+    std::cout << "----------std::async----------" << std::endl;
+
+    std::cout << "f" << std::endl;
     begin = std::chrono::steady_clock::now();
     // std::launch::async flag will force a new thread spawned
     // std::~future will block until spawned thread finishes
     {
         auto f = std::async(std::launch::async, sleep, 2);
-        
+
         end = std::chrono::steady_clock::now();
         // time difference == 0, nothing needs to wait
         time_consumed(begin, end);
@@ -47,23 +56,23 @@ void run_future()
     // time difference == 2, std::~future will block
     time_consumed(begin, end);
 
-    cout << "f1, f2" << endl;
+    std::cout << "f1, f2" << std::endl;
     begin = std::chrono::steady_clock::now();
     // std::async will block if std::future is in temporary object, saying, no explict std::future declared
     {
         //
-        //auto f1 = std::async(std::launch::async, sleep, 2 );
-        std::async(std::launch::async, sleep, 2 );
-        
-        end= std::chrono::steady_clock::now();
+        // auto f1 = std::async(std::launch::async, sleep, 2 );
+        std::ignore = std::async(std::launch::async, sleep, 2);
+
+        end = std::chrono::steady_clock::now();
         // time difference == 2; if using auto f1 = std::async(...), time difference == 0
         time_consumed(begin, end);
         begin = std::chrono::steady_clock::now();
-        
+
         //
-        //auto f2 = std::async( std::launch::async, sleep, 2 );
-        std::async(std::launch::async, sleep, 2 );
-        
+        // auto f2 = std::async( std::launch::async, sleep, 2 );
+        std::ignore = std::async(std::launch::async, sleep, 2);
+
         // time difference == 2; if using auto f2 = std::async(...), time difference == 0
         end = std::chrono::steady_clock::now();
         time_consumed(begin, end);
@@ -72,48 +81,48 @@ void run_future()
     end = std::chrono::steady_clock::now();
     // time difference == 0; if using f1 and f2 declared variable, time difference == 0
     time_consumed(begin, end);
-    cout << endl;
+    std::cout << std::endl;
 
-    cout << "----------std::packaged_task----------" << endl;
-    
+    std::cout << "----------std::packaged_task----------" << std::endl;
+
     // std::packaged_task by itself has nothing to do with threads: it is just a functor and a related future
-    { 
-        std::packaged_task<void(int)> package{ sleep };
-        begin = std::chrono::steady_clock::now();
+    {
+        std::packaged_task<void(int)> package{sleep};
+        begin               = std::chrono::steady_clock::now();
         std::future<void> f = package.get_future();
 
-        cout << "directly call with packaged_task" << endl;
+        std::cout << "directly call with packaged_task" << std::endl;
         // invoke the underlying function which runs in the major thread synchronically
         // has to be called before f.get(), otherwise, f(future)'s state will never be ready
         package(3);
-    
+
         end = std::chrono::steady_clock::now();
         // time difference == 3
         time_consumed(begin, end);
-        
+
         // f.get() won't be blocked
         f.get();
     }
 
-    {    
-        std::packaged_task<void(int)> package{ sleep };
-        begin = std::chrono::steady_clock::now();
+    {
+        std::packaged_task<void(int)> package{sleep};
+        begin               = std::chrono::steady_clock::now();
         std::future<void> f = package.get_future();
-    
-        cout << "running in std::thread" << endl;
+
+        std::cout << "running in std::thread" << std::endl;
         // create a thread with std::packaged_task which is callable (operator())
-        std::thread t { std::move(package), 3 };
+        std::thread t{std::move(package), 3};
         // block here until the task/future finishes in the new thread asynchronously
         f.get();
 
         end = std::chrono::steady_clock::now();
         // time difference == 3
         time_consumed(begin, end);
-    
+
         t.join();
     }
 
-    cout << "----------std::promise----------" << endl;
+    std::cout << "----------std::promise----------" << std::endl;
 
     auto task = [](std::future<int> fu) {
         // hold until std::promise fulfill promise, we can use fu.wait() as well
@@ -122,7 +131,7 @@ void run_future()
 
     std::promise<int> pr;
     // create a thread and pass future as parameter
-    std::thread th {task, pr.get_future()};
+    std::thread th{task, pr.get_future()};
 
     // fulfill promise
     // Effective Modern C++ - Item 39: std::promise::set_value works pretty much as
@@ -132,6 +141,4 @@ void run_future()
 
     th.join();
 }
-
-#endif
 

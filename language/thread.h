@@ -1,21 +1,20 @@
-#ifndef THREAD_H
-#define THREAD_H
+#pragma once
 
 #include "../main/header.h"
 
-static int             g_num = 0;
-static mutex           g_num_mutex;
-static recursive_mutex g_num_recursive_mutex;
+static int                  g_num = 0;
+static std::mutex           g_num_mutex;
+static std::recursive_mutex g_num_recursive_mutex;
 
 class Recurisve_Mutex
 {
 public:
-    static void print(int id, int num) { cout << id << " => " << num << endl; }
+    static void print(int id, int num) { std::cout << id << " => " << num << std::endl; }
 
     static void print_recursive(int id, int num)
     {
         g_num_recursive_mutex.lock();
-        cout << id << " => " << num << endl;
+        std::cout << id << " => " << num << std::endl;
         g_num_recursive_mutex.unlock();
     }
 
@@ -28,7 +27,7 @@ public:
 
             g_num_mutex.unlock();
 
-            this_thread::sleep_for(chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
@@ -41,17 +40,17 @@ public:
 
             g_num_recursive_mutex.unlock();
 
-            this_thread::sleep_for(chrono::seconds(1));
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
     }
 
     void run()
     {
-        thread t0(increment, 0);
-        thread t1(increment, 1);
+        std::thread t0(increment, 0);
+        std::thread t1(increment, 1);
 
-        thread t2(increment_recursive, 2);
-        thread t3(increment_recursive, 3);
+        std::thread t2(increment_recursive, 2);
+        std::thread t3(increment_recursive, 3);
 
         t0.join();
         t1.join();
@@ -60,4 +59,3 @@ public:
     }
 };
 
-#endif

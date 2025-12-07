@@ -2,6 +2,7 @@
 #define STOCK_MAX_PROFIT_H
 
 #include "../main/header.h"
+#include "../main/utility.h"
 
 //
 // https://www.hackerrank.com/challenges/stockmax/problem
@@ -45,5 +46,20 @@ int stock_max_profit_v2(vector<int> prices)
     return std::max({profit_has_position, profit_no_position});
 }
 */
+
+void run_stock_max_profit()
+{
+    using use_case_t = std::pair<std::vector<int>, int>;
+    for (auto& [arr, exp_v] : {
+             use_case_t({7, 1, 5, 3, 6, 4}, 9),
+             use_case_t({7, 1, 5, 3, 6, 4}, 7),
+             use_case_t({1, 2, 3, 4, 5}, 4),
+
+         }) {
+        const auto v = stock_max_profit(arr);
+        std::cout << "prices=" << dump_array(arr) << ", stock_max_profit=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
 
 #endif

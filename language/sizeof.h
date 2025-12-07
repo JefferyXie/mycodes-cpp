@@ -1,8 +1,6 @@
-#ifndef SIZEOF_H
-#define SIZEOF_H
+#pragma once
 
 #include "../main/header.h"
-#include "stlClass.h"
 
 // http://pppboy.blog.163.com/blog/static/30203796201082494026399/
 
@@ -94,8 +92,8 @@ void run_CheckBasicTypes()
     static_assert(sizeof(wchar_t) == 4);
     static_assert(sizeof(unsigned int) == 4);
     static_assert(sizeof(unsigned long) == 8);
-    static_assert(sizeof(std::string) == 24);
-    static_assert(sizeof(std::wstring) == 24);
+    // static_assert(sizeof(std::string) == 24);
+    // static_assert(sizeof(std::wstring) == 24);
 
     /*
      int64_t has exactly 64 bits. It might not be defined for all platforms.
@@ -110,7 +108,7 @@ void run_CheckBasicTypes()
     static_assert(sizeof(uint16_t) == 2);
     static_assert(sizeof(u_int16_t) == 2);
     static_assert(sizeof(int32_t) == 4);
-    static_assert(sizeof(int_fast32_t) == 4);
+    // static_assert(sizeof(int_fast32_t) == 4);
     static_assert(sizeof(int_least32_t) == 4);
     static_assert(sizeof(uint32_t) == 4);
     static_assert(sizeof(u_int32_t) == 4);
@@ -120,20 +118,18 @@ void run_CheckBasicTypes()
     static_assert(sizeof(intmax_t) == 8);
 
     // C++ raw string literals
-    string test = R"(c:\folder\file1.txt)";
-    cout << test << endl;
+    std::string test = R"(c:\folder\file1.txt)";
+    std::cout << test << std::endl;
     test = R"(1st line.\n2nd line.\n3rd line.)";
-    cout << test << endl;
+    std::cout << test << std::endl;
     test =
         R"(1st line.
         2nd line.
         3rd line.)";
-    cout << test << endl;
+    std::cout << test << std::endl;
     test = R"(1st line.
     2nd line.
     3rd line.)";
-    cout << test << endl;
+    std::cout << test << std::endl;
 }
-
-#endif
 

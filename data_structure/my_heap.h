@@ -68,45 +68,38 @@ void run_min_heap_to_max_heap()
     // output: [2 1]
     {
         int arr[] = {1, 2};
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
     }
 
     // input: A[] = [1 3 2]
     // output: [3 1 2]
     {
         int arr[] = {1, 3, 2};
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
     }
 
     // input: A[] = [3 5 9 6 8 20 10 12 18 9]
     // output: A[] = [20 18 10 12 9 9 3 5 6 8]
     {
         int arr[] = {3, 5, 9, 6, 8, 20, 10, 12, 18, 9};
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
         min_heap_to_max_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
 
         build_min_heap(arr, ARRAY_SIZE(arr));
-        std::cout << "\n";
-        print_array(arr);
+        std::cout << "\n" << dump_array(arr);
     }
+
+    std::cout << std::endl;
 }
 

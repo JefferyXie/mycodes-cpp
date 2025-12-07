@@ -29,16 +29,20 @@ int main(int argc, char** argv)
 #include "../algorithm/2024.h"
 #include "../algorithm/2025.h"
 #include "../algorithm/2026.h"
-#include "../algorithm/bitwise_operation.h"
-#include "../algorithm/stock_max_profit.h"
-#include "../algorithm/str_palindrome.h"
 
 #include "../data_structure/my_tuple.h"
 
-#include "../interview/headlands/headlands.h"
-#include "../interview/worldquant/orderbook.h"
-
 #include "../language/c++11.h"
+#include "../language/meta.h"
+#include "../language/movement.h"
+#include "../language/template_concept.h"
+#include "../language/template_constraints.h"
+#include "../language/template_crtp_mixin.h"
+#include "../language/template_fold.h"
+#include "../language/template_generic_factory.h"
+#include "../language/template_SFINAE.h"
+#include "../language/template_special.h"
+#include "../language/template_special2.h"
 
 #include "../misc/builtin_expect.h"
 #include "../misc/atomic_is_lock_free.h"
@@ -56,139 +60,99 @@ int main(int argc, char** argv)
 
 int main(int argc, char** argv)
 {
-    run_longest_valid_parentheses();
-
-    run_is_palindrome();
-
-    run_binary_tree_burn_down_time();
-
-    run_validate_binary_search_tree();
-
-    run_find_all_possible_ips();
-
-    run_reverse_every_k_list();
-
-    run_largest_area_histogram();
-
-    run_remove_more_than_2_dup();
-
-    run_gas_station();
-
-    run_generate_spiral_matrix();
-
-    run_pow_x();
-
-    run_find_first_missing_integer();
-
-    run_count_and_say();
-
-    run_max_profile_job_sequence();
-
-    run_switch_neighbors_list();
-
-    run_largest_number_by_one_swap();
-
-    run_min_candy_distributed();
-
-    run_max_thieves_caught();
-
-    run_min_platforms_required();
-
-    run_min_oper_mod_for_permutation();
-
-    run_queue_removal_find_positions();
-
-    run_get_billion_users_day();
-
-    run_min_length_substring_cover_all();
-
-    run_matching_pairs_after_one_swap();
-
-    run_rotational_cipher();
-
-    run_reverse_signed_int();
-
-    run_transform_str_zigzag();
-
-    run_find_longest_palindrome();
-
-    run_find_max_non_dupe_substring();
-
-    run_reverse_list();
-
-    run_thread_atom_perf_test();
-
-    run_perf_test();
-
-    run_repo_recovery();
-
-    run_validity_pyramid_dominoes();
-
-    run_good_or_bad();
-
-    run_task_parser();
-
-    run_number_sum_k();
-
-    run_contiguous_sub_array();
-
-    run_graph_biparties_check();
-
-    run_binary_tree_2_double_list();
-
-    run_merge_arrays();
-
-    run_simplify_dir_path();
-
-    run_possible_words();
-
-    run_max_sub_array();
-
-    run_tree_to_list();
-
-    run_find_pascal_triangle_row();
-
-    run_find_min_steps_to_1_dp();
-
-    run_decode_num_to_letters();
-
-    run_factorization_divisor_prime();
-
-    run_matrix_traverse();
-
-    run_max_profit_2_transactions();
-
-    run_atomic_is_lock_free();
-
-    run_stream_test();
-
-    run_verify_job_chain();
-
-    run_enhanced_job_complte_time();
-
-    run_graph_directed_cycle();
-
-    run_job_complte_time();
-
-    run_max_square_sub_matrix();
-
-    run_max_rectangle_sub_matrix();
-
-    run_max_rectangle();
-
-    run_my_pow();
-
-    run_find_next_greater_with_same_set_digits();
-
-    run_tree_all_paths();
-
-    run_find_min_steps_to_1_bitwise();
-
-    run_find_min_steps_to_N_multi();
-
-    run_find_min_steps_to_x_y();
-
-    run_find_min_steps_to_1();
+    run_meta();
+    run_move();
+    run_template_concept();
+    run_template_constraints_1();
+    run_template_constraints_2();
+    run_template_fold();
+    run_template_generic_factory();
+    run_template_SFINAE_1();
+    run_template_SFINAE_2();
+    run_template_SFINAE_3();
+    run_template_specialization();
+    run_template_specialization_2();
+    return 0;
+
+    struct AA {
+        AA(int a) { std::cout << "AA(int): " << a << std::endl; }
+
+        AA(const AA&) { std::cout << "AA(const AA&)" << std::endl; }
+        AA& operator=(const AA&)
+        {
+            std::cout << "operator=(const AA&)" << std::endl;
+            return *this;
+        }
+
+        AA(AA&& o)
+        {
+            a   = o.a;
+            b   = o.b;
+            c   = std::move(o.c);
+            o.a = 0;
+            o.b = 0;
+            o.c = "";
+            std::cout << "AA(AA&&)" << std::endl;
+        }
+        AA& operator=(AA&& o)
+        {
+            a   = o.a;
+            b   = o.b;
+            c   = std::move(o.c);
+            o.a = 0;
+            o.b = 0;
+            o.c = "";
+            std::cout << "operator=(AA&&)" << std::endl;
+            return *this;
+        }
+
+        ~AA() { std::cout << "~AA()" << std::endl; }
+
+        int         a;
+        double      b;
+        std::string c;
+    };
+    struct BB {
+        AA aa;
+        BB() : aa{10} { std::cout << "BB()" << std::endl; }
+        ~BB() { std::cout << "~BB()" << std::endl; }
+    };
+
+    int a = 10;
+    /*
+        int b = 20;
+
+        int& ar    = a;
+        int& br    = b;
+
+        auto test2 = std::forward_as_tuple(ar, br);
+        static_assert(std::is_same_v<decltype(test2), std::tuple<int&, int&>>);
+
+        [[maybe_unused]] auto test3 = std::make_tuple(ar, br);
+        static_assert(std::is_same_v<decltype(test3), std::tuple<int, int>>);
+
+        // auto test3 = std::make_tuple(ar,br); // this cannot make tuple of int& reference
+        std::get<0>(test2) = -1;
+        std::get<1>(test2) = -2;
+        std::cout << a << ":" << b << std::endl;
+    */
+
+    AA   ss(10);
+    auto test1 = std::forward_as_tuple(a, std::move(ss));
+    static_assert(std::is_same_v<decltype(test1), std::tuple<int&, AA&&>>);
+    std::cout << ss.c << ", " << std::get<1>(test1).c << std::endl;
+
+    std::get<1>(test1).c = "fff";
+    std::cout << ss.c << ", " << std::get<1>(test1).c << std::endl;
+
+    // auto yy = BB();
+
+    // AA a = 10;
+
+    // AA b(100);
+    // AA c = AA(20);
+
+    return 0;
 
     std::tuple<int, long, std::string> tp(10, 20, "abc");
     std::apply(
@@ -201,351 +165,6 @@ int main(int argc, char** argv)
                 ...);
         },
         tp);
-
-    run_max_profit_1_transaction();
-
-    run_knight_move();
-
-    run_graph_find_max_depth();
-
-    run_graph_find_max_difference();
-
-    run_graph_find_dominator();
-
-    run_max_nodes_exclu_neighbors();
-
-    run_min_path_sum_matrix();
-
-    {
-        std::shared_ptr<tree_node_int_t> root(new tree_node_int_t(100));
-        std::shared_ptr<tree_node_int_t> n1(new tree_node_int_t(1));
-        std::shared_ptr<tree_node_int_t> n2(new tree_node_int_t(2));
-        std::shared_ptr<tree_node_int_t> n3(new tree_node_int_t(3));
-        std::shared_ptr<tree_node_int_t> n4(new tree_node_int_t(4));
-        std::shared_ptr<tree_node_int_t> n5(new tree_node_int_t(5));
-        std::shared_ptr<tree_node_int_t> n6(new tree_node_int_t(6));
-        std::shared_ptr<tree_node_int_t> n7(new tree_node_int_t(7));
-        std::shared_ptr<tree_node_int_t> n8(new tree_node_int_t(8));
-        std::shared_ptr<tree_node_int_t> n9(new tree_node_int_t(9));
-        std::shared_ptr<tree_node_int_t> n0(new tree_node_int_t(0));
-
-        root->left  = n1.get();
-        root->right = n2.get();
-        n1->left    = n3.get();
-        n1->right   = n4.get();
-        n2->left    = n5.get();
-        n2->right   = n6.get();
-        n3->left    = n7.get();
-        n3->right   = n8.get();
-        n4->left    = n9.get();
-        n4->right   = n0.get();
-
-        std::cout << "n0: 1 == " << tree_count_complete_tree_nodes(n0.get()) << std::endl;
-        std::cout << "n4: 3 == " << tree_count_complete_tree_nodes(n4.get()) << std::endl;
-        std::cout << "n1: 7 == " << tree_count_complete_tree_nodes(n1.get()) << std::endl;
-        std::cout << "root: 11 == " << tree_count_complete_tree_nodes(root.get()) << std::endl;
-
-        std::cout << "n0: 1 == " << tree_count_complete_tree_leaves(n0.get()) << std::endl;
-        std::cout << "n4: 2 == " << tree_count_complete_tree_leaves(n4.get()) << std::endl;
-        std::cout << "n1: 4 == " << tree_count_complete_tree_leaves(n1.get()) << std::endl;
-        std::cout << "root: 6 == " << tree_count_complete_tree_leaves(root.get()) << std::endl;
-
-        int depth = 0;
-        std::cout << "check_if_balanced_tree: root=" << check_if_balanced_tree(root.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n0=" << check_if_balanced_tree(n0.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n1=" << check_if_balanced_tree(n1.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n2=" << check_if_balanced_tree(n2.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n3=" << check_if_balanced_tree(n3.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n4=" << check_if_balanced_tree(n4.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n5=" << check_if_balanced_tree(n5.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n6=" << check_if_balanced_tree(n6.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n7=" << check_if_balanced_tree(n7.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n8=" << check_if_balanced_tree(n8.get(), depth) << ", depth=" << depth
-                  << std::endl;
-        std::cout << "check_if_balanced_tree: n9=" << check_if_balanced_tree(n9.get(), depth) << ", depth=" << depth
-                  << std::endl;
-    }
-
-    {
-        // integer to binary
-        auto integer_to_binary = [](uint64_t x) {
-            if (x == 0) {
-                return std::string{"0"};
-            }
-            const auto max_size             = 64u;
-            char       binary[max_size + 1] = {'0'};
-            binary[max_size]                = '\0';
-            auto idx                        = max_size;
-            while (x) {
-                binary[--idx] = ((x & 0x01) ? '1' : '0');
-                x             = x >> 1;
-            }
-            return std::string{binary + idx};
-        };
-        std::cout << "integer_to_binary(0): " << integer_to_binary(0) << std::endl;
-        std::cout << "integer_to_binary(1): " << integer_to_binary(1) << std::endl;
-        std::cout << "integer_to_binary(5): " << integer_to_binary(5) << std::endl;
-        std::cout << "integer_to_binary(10): " << integer_to_binary(10) << std::endl;
-        std::cout << "integer_to_binary(1024): " << integer_to_binary(1024) << std::endl;
-        std::cout << "integer_to_binary(1024*1024): " << integer_to_binary(1024 * 1024) << std::endl;
-    }
-
-    {
-        // log(x)
-        auto find_log_n = [](uint64_t x) {
-            if (x == 0) {
-                throw std::invalid_argument("invalid argument");
-            }
-
-            uint32_t count = 0;
-            while (x) {
-                ++count;
-                x = x >> 1;
-            }
-            return count - 1;
-        };
-        std::cout << "log(1): " << find_log_n(1) << std::endl;
-        std::cout << "log(8): " << find_log_n(8) << std::endl;
-        std::cout << "log(32): " << find_log_n(32) << std::endl;
-        std::cout << "log(1024): " << find_log_n(1024) << std::endl;
-        std::cout << "log(1024*1024): " << find_log_n(1024 * 1024) << std::endl;
-    }
-
-    {
-        run_matching_engine_FIFO();
-    }
-
-    {
-        int arr[] = {8, 1, 5, 2, 6};    // 11
-        print_array(arr);
-        std::cout << "\n array_max_pair_score: " << array_max_pair_score(arr, ARRAY_SIZE(arr));
-        std::cout << "\n array_max_pair_score_v2: " << array_max_pair_score_v2(arr, ARRAY_SIZE(arr)) << std::endl;
-
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-    {
-        int arr[] = {-5, -3, 2, 2, 9, 1};    // 10
-        print_array(arr);
-        std::cout << "\n array_max_pair_score: " << array_max_pair_score(arr, ARRAY_SIZE(arr));
-        std::cout << "\n array_max_pair_score_v2: " << array_max_pair_score_v2(arr, ARRAY_SIZE(arr)) << std::endl;
-
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-    {
-        int arr[] = {7, 1, 5, 3, 6, 4};    // 10
-        print_array(arr);
-        std::cout << "\n array_max_pair_score: " << array_max_pair_score(arr, ARRAY_SIZE(arr));
-        std::cout << "\n array_max_pair_score_v2: " << array_max_pair_score_v2(arr, ARRAY_SIZE(arr)) << std::endl;
-
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-    {
-        int arr[] = {1, 2, 3, 4, 5};    // 8
-        print_array(arr);
-        std::cout << "\n array_max_pair_score: " << array_max_pair_score(arr, ARRAY_SIZE(arr));
-        std::cout << "\n array_max_pair_score_v2: " << array_max_pair_score_v2(arr, ARRAY_SIZE(arr)) << std::endl;
-
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-
-    {
-        int arr[] = {2, 3, -2, 4};    // 6
-        print_array(arr);
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-
-    {
-        int arr[] = {-2, 0, -1};    // 0
-        print_array(arr);
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-    {
-        int arr[] = {-2, 3, -4};    // 24
-        print_array(arr);
-        std::cout << "\n array_max_product_subarray: " << array_max_product_subarray(arr, ARRAY_SIZE(arr)) << std::endl;
-    }
-
-    {
-        std::vector<int> arr = {7, 1, 5, 3, 6, 4};
-        print_array(arr);
-        std::cout << stock_max_profit(arr) << std::endl;    // 9
-    }
-
-    {
-        std::vector<int> arr = {7, 1, 5, 3, 6, 4};
-        print_array(arr);
-        // cout << stock_max_profit_v2(arr) << std::endl; // 7
-    }
-
-    {
-        std::vector<int> arr = {1, 2, 3, 4, 5};
-        print_array(arr);
-        // cout << stock_max_profit_v2(arr) << std::endl; // 4
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    std::cout << "ab: " << substring_longest_palindrome("ab") << std::endl;
-    std::cout << "aba: " << substring_longest_palindrome("aba") << std::endl;
-    std::cout << "babad: " << substring_longest_palindrome("babad") << std::endl;
-    std::cout << "cbbd: " << substring_longest_palindrome("cbbd") << std::endl;
-    std::cout << "aabcdcbaa: " << substring_longest_palindrome("aabcdcbaa") << std::endl;
-    std::cout << "aabcdcbab: " << substring_longest_palindrome("aabcdcbab") << std::endl;
-
-    ////////////////////////////////////////////////////////////////////////////
-    // Input:  A[] = [1, 3], B[] = [2]
-    // Output: 2
-    //
-    // Input:  A[] = [2, 4], B[] = [1, 3, 5]
-    // Output: 3
-    //
-    /// Input:  A[] = [1, 3, 6], B[] = [2, 8, 12]
-    // Output: 4.5
-    //
-    // Input:  A[] = [1, 3, 4, 6, 9], B[] = [2, 5, 7, 8, 10]
-    // Output: 5.5
-    {
-        int A[] = {1, 3};
-        int B[] = {2};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    {
-        int A[] = {2, 4};
-        int B[] = {1, 3, 5};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    {
-        int A[] = {2};
-        int B[] = {0};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    {
-        int A[] = {1, 3};
-        int B[] = {0};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    {
-        int A[] = {1, 3, 6};
-        int B[] = {2, 8, 12};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    {
-        int A[] = {1, 3, 4, 6, 9};
-        int B[] = {2, 5, 7, 8, 10};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    std::cout << "1*2=" << bitwise_multiplication(1, 2) << std::endl;
-    std::cout << "0*2=" << bitwise_multiplication(0, 2) << std::endl;
-    std::cout << "10*2=" << bitwise_multiplication(10, 2) << std::endl;
-    std::cout << "10*118=" << bitwise_multiplication(10, 118) << std::endl;
-    std::cout << "-10*118=" << bitwise_multiplication(-10, 118) << std::endl;
-
-    std::cout << "1+2=" << bitwise_addition(1, 2) << std::endl;
-    std::cout << "0+2=" << bitwise_addition(0, 2) << std::endl;
-    std::cout << "10+2=" << bitwise_addition(10, 2) << std::endl;
-    std::cout << "10+118=" << bitwise_addition(10, 118) << std::endl;
-    std::cout << "-10+118=" << bitwise_addition(-10, 118) << std::endl;
-
-    std::cout << "1-2=" << bitwise_subtraction(1, 2) << std::endl;
-    std::cout << "0-2=" << bitwise_subtraction(0, 2) << std::endl;
-    std::cout << "10-2=" << bitwise_subtraction(10, 2) << std::endl;
-    std::cout << "10-118=" << bitwise_subtraction(10, 118) << std::endl;
-    std::cout << "-10-118=" << bitwise_subtraction(-10, 118) << std::endl;
-
-    ////////////////////////////////////////////////////////////////////////////
-    sum_binary("1", 1, "0", 1);    // 1
-    sum_binary("0", 1, "0", 1);    // 0
-    sum_binary("1", 1, "1", 1);    // 10
-    sum_binary("0", 1, "1", 1);    // 1
-
-    sum_binary("101", 3, "110", 3);          // 1011
-    sum_binary("1101", 4, "110", 3);         // 10011
-    sum_binary("110", 3, "100101011", 9);    // 100110001
-
-    ////////////////////////////////////////////////////////////////////////////
-    {
-        int arr[] = {1, 2};
-        print_all_subsets(arr, sizeof(arr) / sizeof(arr[0]));
-    }
-
-    {
-        int arr[] = {1, 2, 3};
-        print_all_subsets(arr, sizeof(arr) / sizeof(arr[0]));
-    }
-
-    {
-        int arr[] = {1, 2, 3, 4};
-        print_all_subsets(arr, sizeof(arr) / sizeof(arr[0]));
-    }
-
-    ////////////////////////////////////////////////////////////////////////////
-    {
-        int arr[] = {2, 1, 0, 1};
-        int len   = sizeof(arr) / sizeof(arr[0]);
-        print_array(arr);
-        std::cout << "\n--- v1 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper(arr, len) << std::noboolalpha << std::endl;
-        std::cout << "--- v2 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper_v2(arr, len) << std::noboolalpha << std::endl;
-    }
-
-    {
-        int arr[] = {1, 2, 0, 0};
-        int len   = sizeof(arr) / sizeof(arr[0]);
-        print_array(arr);
-        std::cout << "\n--- v1 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper(arr, len) << std::noboolalpha << std::endl;
-        std::cout << "--- v2 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper_v2(arr, len) << std::noboolalpha << std::endl;
-    }
-
-    {
-        int arr[] = {4, 2, 0, 0, 2, 0};
-        int len   = sizeof(arr) / sizeof(arr[0]);
-        print_array(arr);
-        std::cout << "\n--- v1 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper(arr, len) << std::noboolalpha << std::endl;
-        std::cout << "--- v2 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper_v2(arr, len) << std::noboolalpha << std::endl;
-    }
-
-    {
-        int arr[] = {4, 2, 0, 0, 1, 0};
-        int len   = sizeof(arr) / sizeof(arr[0]);
-        print_array(arr);
-        std::cout << "\n--- v1 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper(arr, len) << std::noboolalpha << std::endl;
-        std::cout << "--- v2 ---" << std::endl;
-        std::cout << std::boolalpha << tower_hopper_v2(arr, len) << std::noboolalpha << std::endl;
-    }
-
-    run_atomic_is_lock_free();
-    run_builtin_expect();
-    run_for_each();
-    run_macro_variadic();
-
-    run_gauge_time();
-    run_hybrid_range();
-    run_make_enum();
-    run_maybe();
-    run_realtime();
-    run_speed_dynamic_cast();
-    run_json();
 
     return 0;
 }

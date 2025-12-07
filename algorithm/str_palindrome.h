@@ -1,5 +1,4 @@
-#ifndef STR_PALINDROME_H
-#define STR_PALINDROME_H
+#pragma once
 
 #include "../main/header.h"
 
@@ -57,4 +56,3 @@ std::string substring_longest_palindrome(const std::string& str)
     return longest;
 }
 
-#endif

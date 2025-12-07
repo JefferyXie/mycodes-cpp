@@ -66,36 +66,57 @@ int good_or_bad(const std::vector<int>& statementCounts, const std::vector<std::
 }
 void run_good_or_bad()
 {
-    {
-        std::vector<int>              statementCounts = {1, 1};
-        std::vector<std::vector<int>> statements      = {
-            {2, 0},
-            {1, 0},
-        };    // 1
-        std::cout << good_or_bad(statementCounts, statements) << std::endl;
-    }
-    {
-        std::vector<int>              statementCounts = {1, 1, 1};
-        std::vector<std::vector<int>> statements      = {
-            {2, 1},
-            {1, 1},
-            {2, 0},
-        };    // 2
-        std::cout << good_or_bad(statementCounts, statements) << std::endl;
-    }
-    {
-        std::vector<int>              statementCounts = {2, 3, 4, 1, 2};
-        std::vector<std::vector<int>> statements      = {
-            {3, 1}, {2, 1}, {1, 0}, {3, 0}, {5, 1}, {5, 1}, {1, 0}, {2, 1}, {4, 1}, {3, 1}, {3, 0}, {1, 0},
-        };    // 2
-        std::cout << good_or_bad(statementCounts, statements) << std::endl;
-    }
-    {
-        std::vector<int>              statementCounts = {2, 2, 2};
-        std::vector<std::vector<int>> statements      = {
-            {2, 1}, {3, 0}, {3, 1}, {1, 0}, {1, 1}, {2, 0},
-        };    // 0
-        std::cout << good_or_bad(statementCounts, statements) << std::endl;
+    using matrix_t   = std::vector<std::vector<int>>;
+    using use_case_t = std::tuple<std::vector<int>, matrix_t, int>;
+    for (auto& [statement_counts, statements, exp_v] : {
+             use_case_t(
+                 {1, 1},
+                 {
+                     {2, 0},
+                     {1, 0},
+                 },
+                 1),
+             use_case_t(
+                 {1, 1, 1},
+                 {
+                     {2, 1},
+                     {1, 1},
+                     {2, 0},
+                 },
+                 2),
+             use_case_t(
+                 {2, 3, 4, 1, 2},
+                 {
+                     {3, 1},
+                     {2, 1},
+                     {1, 0},
+                     {3, 0},
+                     {5, 1},
+                     {5, 1},
+                     {1, 0},
+                     {2, 1},
+                     {4, 1},
+                     {3, 1},
+                     {3, 0},
+                     {1, 0},
+                 },
+                 2),
+             use_case_t(
+                 {2, 2, 2},
+                 {
+                     {2, 1},
+                     {3, 0},
+                     {3, 1},
+                     {1, 0},
+                     {1, 1},
+                     {2, 0},
+                 },
+                 0),
+         }) {
+        const auto v = good_or_bad(statement_counts, statements);
+        std::cout << "statement_counts=" << dump_array(statement_counts) << ", statements=" << dump_matrix(statements)
+                  << ", good_or_bad=" << std::boolalpha << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -202,7 +223,6 @@ bool validity_pyramid_dominoes(const std::vector<std::array<int, 2>>& dominoes)
     }
     return false;
 }
-
 void run_validity_pyramid_dominoes()
 {
     using dominoes_t = std::vector<std::array<int, 2>>;
@@ -243,446 +263,31 @@ void run_validity_pyramid_dominoes()
     }
 }
 
-void addToken(std::string token, std::vector<std::string>& tokens)
-{
-    // Trim leading whitespace
-    if (!token.empty()) {
-        size_t start = token.find_first_not_of(" ");
-        token        = start != std::string::npos ? token.substr(start) : "";
-    }
-
-    // Do not add empty tokens
-    if (token.empty()) {
-        return;
-    }
-    tokens.push_back(token);
-}
-
-void tokenize(const std::string& spec, const std::string& sep, std::vector<std::string>& tokens)
-{
-    // Split specification into tokens
-
-    // Loop over every char in specification.
-    size_t start = 0;
-    for (size_t end = 0; end < spec.size(); ++end) {
-        // If current char is a separator, then add the
-        // current token and separator to the tokens list
-        if (sep.find(spec[end]) != std::string::npos) {
-            addToken(spec.substr(start, end - start), tokens);
-            addToken(spec.substr(end, 1), tokens);
-            start = end + 1;
-        }
-    }
-    // Add the last token to tokens list
-    addToken(spec.substr(start), tokens);
-}
-
-struct FuncArgs {
-    std::string func;
-    std::string args;
-};
-typedef std::vector<FuncArgs> Frame;
-
-void parse(const std::vector<std::string>& tokens, std::vector<Frame>& stack)
-{
-    // Parse tokens into a useful stack structure.
-    // All parallel tasks should live in the same stack Frame
-
-    // TODO: I am not sure what the issue is, but I know
-    // that this stack is not being populated entirely as intended
-
-    // Initial stack frame
-    stack.push_back(Frame());
-
-    for (size_t i = 0; i < tokens.size(); ++i) {
-        const std::string& tok = tokens[i];
-        // New stack frame
-        // if (tok == "," || tok == ";") { // Jeffery: don't add new Frame for ";"
-        if (tok == ",") {
-            stack.push_back(Frame());
-        }
-        // Jeffery: case 2.b
-        else if (tok == "}") {
-            const auto& prevTok = tokens[i - 1];
-            if (prevTok == ";") {
-                // add empty function to the frame
-                Frame&   frame = stack.back();
-                FuncArgs fa;
-                frame.push_back(fa);
-            }
-        }
-        // Tokens within (...) are args that should be kept together
-        else if (tok == "(") {
-            std::string args;
-            while (tokens[++i] != ")") {
-                args += tokens[i];
-            }
-            Frame&    frame = stack.back();
-            FuncArgs& fa    = frame.back();
-            fa.args         = args;
-        }
-        // Every other non separator token is a func
-        // else if (tok != "{" && tok != "}" && tok != ")") {
-        else if (tok != "{" && tok != "}" && tok != ")" && tok != ";") {    // Jeffery: ignore ";"
-            Frame&   frame = stack.back();
-            FuncArgs fa;
-            fa.func = tok;
-            frame.push_back(fa);
-        }
-    }
-}
-
-void eval(const std::vector<Frame>& stack, const std::string& partial, size_t index, std::vector<std::string>& expanded)
-{
-    // Evaluate the stack to expand all function compositions
-
-    // Base case: done building expansion, save result and return
-    if (index == stack.size()) {
-        expanded.push_back(partial);
-        return;
-    }
-
-    // Recursive case: build each current FuncArgs around partial
-    // and recurse
-    const Frame& frame = stack[index];
-    for (const FuncArgs& fa : frame) {
-        // TODO: Hmmm, I am not sure how to handle args here
-        std::string newPartial = fa.func + "(" + partial + ")";
-
-        // Jeffery: case 2.b
-        if (fa.func.empty()) {
-            newPartial = partial;
-        } else {
-            // regular args case
-            newPartial = fa.func + "(" + partial;
-            if (!fa.args.empty()) {
-                newPartial += ",";
-                newPartial += fa.args;
-            }
-            newPartial += ")";
-        }
-
-        eval(stack, newPartial, index + 1, expanded);
-    }
-}
-
-std::string solution(std::string& spec)
-{
-    // Split specification into tokens
-    std::vector<std::string> tokens;
-    tokenize(spec, ",;(){}", tokens);
-
-    // Parse tokens into a useful stack structure.
-    std::vector<Frame> stack;
-    parse(tokens, stack);
-
-    // Evaluate the stack to expand all function compositions
-    std::vector<std::string> expanded;
-    eval(stack, "input", 0, expanded);
-
-    // Combine results into single new line delimited string
-    std::string result;
-    for (const auto& e : expanded)
-        result += "\n" + e;
-
-    return result;
-}
-
-struct repo_recovery_t {
-
-    using commit_id_t       = int;
-    using timestamp_t       = int;
-    using file_path_t       = std::string;
-    using opaque_id_t       = std::string;
-    using unique_file_key_t = std::string;    // globally unique, file path + " " + opaque id
-
-    struct repo_t {
-        std::map<timestamp_t, std::set<commit_id_t>> ts_to_commit_map;
-        std::unordered_map<file_path_t, opaque_id_t> file_to_opaque_map;
-        std::unordered_map<opaque_id_t, file_path_t> opaque_to_file_map;
-    };
-    std::unordered_map<unique_file_key_t, std::shared_ptr<repo_t>> global_file_to_repo_map_;
-
-    unique_file_key_t make_unique_file_key(const file_path_t& file_path, const opaque_id_t& opaque_id)
-    {
-        return file_path + " " + opaque_id;
-    }
-
-    bool push_commit(const std::vector<std::string>& commit_tokens)
-    {
-        const auto num_tokens = commit_tokens.size();
-        if (num_tokens < 5 || num_tokens % 2 != 0) {
-            return false;
-        }
-
-        commit_id_t commit_id = std::stoi(commit_tokens[1]);
-        timestamp_t timestamp = std::stoi(commit_tokens[3]);
-
-        std::shared_ptr<repo_t>                          repo;
-        std::vector<std::pair<file_path_t, opaque_id_t>> unknown_repo_files;
-
-        auto add_commit_to_repo = [](auto& repo, const auto& ts, const auto& id) {
-            repo->ts_to_commit_map[ts].emplace(id);
-        };
-
-        auto add_file_to_repo = [commit_id, timestamp](auto& repo, const auto& file_path, const auto& opaque_id) {
-            auto report_ambiguous = [&]() {
-                std::cout << "Ambiguous: commit=" << commit_id << ", timestamp=" << timestamp << ", file=" << file_path
-                          << ", opaque=" << opaque_id << std::endl;
-            };
-
-            if (auto [it_file, added] = repo->file_to_opaque_map.emplace(file_path, opaque_id);
-                !added && it_file->second != opaque_id) {
-                report_ambiguous();
-                return false;
-            }
-            if (auto [it_opaque, added] = repo->opaque_to_file_map.emplace(opaque_id, file_path);
-                !added && it_opaque->second != file_path) {
-                report_ambiguous();
-                return false;
-            }
-            return true;
-        };
-
-        auto add_file_to_global = [this, &add_commit_to_repo,
-                                   &add_file_to_repo](auto& repo, const auto& file_path, const auto& opaque_id) {
-            const auto file_key = make_unique_file_key(file_path, opaque_id);
-
-            // the file along with opaque_id must be unique globally, and we need this check to ensure this file belongs
-            // to 'repo' only
-            //
-            // it is possible when we are adding a file but the file has already been in some different repo, in this
-            // case, we should consolidate it into 'repo' - commit 1: f1.h ab12 f2.h cd12    -> repo1 is created after
-            // this step commit 2: f3.h xx12 f4.h yy12    -> repo2 is created after this step commit 3: f1.h ab12 f3.h
-            // xx12    -> with 'f1.h ab12', we find repo1; when handling 'f3.h xx12', we find repo2; obviously we should
-            // consolidate repo2 into repo1.
-
-            if (auto [it_global, added] = global_file_to_repo_map_.emplace(file_key, repo);
-                !added && repo != it_global->second) {
-                int  other_repo_commits = 0;
-                auto other_repo         = it_global->second;
-                for (auto& [ts, ids] : other_repo->ts_to_commit_map) {
-                    for (auto id : ids) {
-                        add_commit_to_repo(repo, ts, id);
-                        ++other_repo_commits;
-                    }
-                }
-
-                std::cout << "Trying to consolidate repos (#commits=" << other_repo_commits
-                          << ", #files=" << other_repo->file_to_opaque_map.size() << ") for file=" << file_key
-                          << ", other_repo=" << other_repo.get() << std::endl;
-
-                for (auto& [f_path, o_id] : other_repo->file_to_opaque_map) {
-                    add_file_to_repo(repo, f_path, o_id);
-
-                    const auto f_key = make_unique_file_key(f_path, o_id);
-                    if (auto it = global_file_to_repo_map_.find(f_key); it != global_file_to_repo_map_.end()) {
-                        if (it->second != other_repo) {
-                            std::cout << "Impossible, file belongs to different repo, file key=" << f_key << std::endl;
-                        }
-
-                        // switch to desired 'repo', 'other_repo' will destroy by itself since none reference after this
-                        // loop
-                        it->second = repo;
-                    } else {
-                        // this is impossible, this file must have existed in the map for a while
-                        std::cout << "Impossible, file must have existed in the global map for a while, file key="
-                                  << f_key << std::endl;
-                        return false;
-                    }
-
-                    // NOTICE: do we need to recursively check if 'f_key' is owned by another repo? i don't think so.
-                }
-            }
-            return true;
-        };
-
-        auto add_file = [&](auto& file_path, auto& opaque_id) {
-            if (!repo)
-                return false;
-            return add_file_to_repo(repo, file_path, opaque_id) && add_file_to_global(repo, file_path, opaque_id);
-        };
-
-        for (size_t i = 4; i < num_tokens; i += 2) {
-            const file_path_t file_path = commit_tokens[i];
-            const opaque_id_t opaque_id = commit_tokens[i + 1];
-
-            if (!repo) {
-                const auto file_key = make_unique_file_key(file_path, opaque_id);
-                auto       iter     = global_file_to_repo_map_.find(file_key);
-                if (iter == global_file_to_repo_map_.end()) {
-                    unknown_repo_files.emplace_back(file_path, opaque_id);
-                    continue;
-                }
-                repo = iter->second;
-
-                add_commit_to_repo(repo, timestamp, commit_id);
-            }
-
-            if (!add_file(file_path, opaque_id)) {
-                return false;
-            }
-        }
-
-        // two cases if unknown_repo_files is not empty:
-        // 1) the beginning file entries in the commit are new even though repo exists;
-        // 2) none of the entries in the commit match any existing repo, we shall create a repo and reconcile later:
-        //    a) this commit belongs to a new repo; or,
-        //    b) this commit belongs to one of existing repo but we are in lack of information to find it;
-        if (unknown_repo_files.empty())
-            return true;
-
-        if (!repo) {
-            repo = std::make_shared<repo_t>();
-
-            add_commit_to_repo(repo, timestamp, commit_id);
-        }
-
-        for (auto& [f_path, o_id] : unknown_repo_files) {
-            if (!add_file(f_path, o_id)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool query(const std::vector<std::string>& query_tokens)
-    {
-        const auto num_tokens = query_tokens.size();
-        if (num_tokens != 4) {
-            return false;
-        }
-
-        const timestamp_t ts_start  = std::stoi(query_tokens[0]);
-        const timestamp_t ts_end    = std::stoi(query_tokens[1]);
-        const file_path_t file_path = query_tokens[2];
-        const opaque_id_t opaque_id = query_tokens[3];
-        const auto        file_key  = make_unique_file_key(file_path, opaque_id);
-
-        auto iter = global_file_to_repo_map_.find(file_key);
-        if (iter == global_file_to_repo_map_.end()) {
-            std::cout << std::endl;
-            return false;
-        }
-
-        auto repo           = iter->second;
-        auto it_commits     = repo->ts_to_commit_map.lower_bound(ts_start);
-        auto it_commits_end = repo->ts_to_commit_map.upper_bound(ts_end);
-        while (it_commits != it_commits_end) {
-            for (auto commit : it_commits->second) {
-                std::cout << commit << " ";
-            }
-            ++it_commits;
-        }
-        std::cout << std::endl;
-        return true;
-    }
-};
-void run_repo_recovery()
-{
-    {
-        repo_recovery_t recovery;
-        for (const auto& commit : {
-                 "id 8 timestamp 200 quicksort.cpp 839ad0 mergesort.cpp 0cdde1 bubblesort.cpp 248dd1",
-                 "id 0 timestamp 500 array.h 163111 sequence.h 294d3f",
-                 "id 6 timestamp 200 mergesort.cpp 0cdde1 bogosort.cpp 4213ff",
-                 "id 4 timestamp 1000 array.h 163111 vector.h fcc2af",
-                 "id 2 timestamp 300 bubblesort.cpp 248dd1 bogosort.cpp 4213ff",
-                 "id 3 timestamp 300 bubblesort.cpp eaf88a bogosort.cpp 4f11aa",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(commit, " ", tokens);
-
-            std::cout << commit << std::endl;
-            if (!recovery.push_commit(tokens)) {
-                std::cout << "Failed to push commit: " << commit << std::endl;
-            }
-        }
-
-        for (const auto& query : {
-                 "0 10000 quicksort.cpp 839ad0",
-                 "0 500 vector.h fcc2af",
-                 "0 100000 no_found.h empty_response",
-                 "100 200 bogosort.cpp 4213ff",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(query, " ", tokens);
-
-            recovery.query(tokens);
-        }
-    }
-
-    {
-        repo_recovery_t recovery;
-        for (const auto& commit : {
-                 "id 38024 timestamp 74820 foo.py ac819f bar.py 0d82b9",
-                 "id 49283 timestamp 19837 bar.py 0d82b9 baz.py f28dc2",
-                 "id 20391 timestamp 23488 baz.py f28dc2 foo.py f918ca",
-                 "id 2938 timestamp 101 qux.h d139af qux.cpp 718bc3",
-                 "id 2939 timestamp 102 qux.h d139af",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(commit, " ", tokens);
-
-            std::cout << commit << std::endl;
-            if (!recovery.push_commit(tokens)) {
-                std::cout << "Failed to push commit: " << commit << std::endl;
-            }
-        }
-
-        for (const auto& query : {
-                 "0 1000000 bar.py 0d82b9",
-                 "0 1000000 qux.h d139af",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(query, " ", tokens);
-
-            recovery.query(tokens);
-        }
-    }
-}
-
-void run_task_parser()
-{
-    for (std::string spec : {
-             "task1,task2,task3",                      // task3(task2(task1(input)))
-             "task1,{task2;task3}",                    // task2(task1(input)), task3(task1(input))
-             "task1,task2,{task3;}",                   // task3(task2(task1(input))), task2(task1(input))
-             "task1('b',kw=1),task2(1,2,var1='a')",    // task2(task1(input,'b',kw=1),1,2,var1='a')
-             "{func1;func2},{func3;func4}"             // func3(func1(input)), func4(func1(input)), func3(func2(input)),
-                                                       // func4(func2(input))
-         }) {
-        std::cout << "\n--------------------------" << std::endl;
-        std::cout << "Spec: " << spec;
-        std::cout << solution(spec) << std::endl;
-    }
-}
-
 // https://www.youtube.com/watch?v=kPh8pod0-gk
 // 0) sometimes this is called 'sticky counter' - it gets stuck at zero
 // 1) required by std::weak_ptr<T>::lock;
 // 2) also useful for atomic memory management / concurrent data structures, i.e. atomic<shared_ptr>
-class Counter
+class counter_t
 {
 private:
-    static constexpr uint64_t is_zero = 1ull << 63;
-    static constexpr uint64_t helped  = 1ull << 62;
+    static constexpr uint64_t IS_ZERO   = 1ull << 63;
+    static constexpr uint64_t BE_HELPED = 1ull << 62;
     // precondition: counter is not zero
     std::atomic<uint64_t> counter_ = 1;
 
 public:
     // increase counter and return true if counter is greater than zero, otherwise do nothing and return false
-    bool increment_if_not_zero() { return (counter_.fetch_add(1) & is_zero) == 0; }
+    bool increment_if_not_zero() { return (counter_.fetch_add(1) & IS_ZERO) == 0; }
 
     // always decrease counter, return true if counter after decrease is zero, otherwise return false
     bool decrement()
     {
         if (counter_.fetch_sub(1) == 1) {
             uint64_t e = 0;
-            if (counter_.compare_exchange_strong(e, is_zero)) {
+            if (counter_.compare_exchange_strong(e, IS_ZERO)) {
                 return true;
             }
-            if ((e & helped) && (counter_.exchange(is_zero) & helped)) {
+            if ((e & BE_HELPED) && (counter_.exchange(IS_ZERO) & BE_HELPED)) {
                 return true;
             }
         }
@@ -693,117 +298,123 @@ public:
     uint64_t read()
     {
         auto val = counter_.load();
-        if (val == 0 && counter_.compare_exchange_strong(val, is_zero | helped)) {
+        if (val == 0 && counter_.compare_exchange_strong(val, IS_ZERO | BE_HELPED)) {
             return 0;    // in helping
         }
-        return (val & is_zero) ? 0 : val;
+        return (val & IS_ZERO) ? 0 : val;
     }
 };
 
 void run_perf_test()
 {
-    const int     length             = 512 * 1024 * 1024;
-    constexpr int cache_line_size    = 64;
-    const int     num_per_cache_line = cache_line_size / sizeof(int);
-    const int     num_items          = length / num_per_cache_line;
+    constexpr int CACHE_LINE         = 64;
+    constexpr int LENGTH             = 512 * 1024 * 1024;
+    constexpr int NUM_PER_CACHE_LINE = CACHE_LINE / sizeof(int);
+    constexpr int NUM_ITEMS          = LENGTH / NUM_PER_CACHE_LINE;
 
-    std::vector<int> arr(length);
-    auto             start = std::chrono::high_resolution_clock::now();
+    std::vector<int> arr(LENGTH);
+    const auto       start = std::chrono::high_resolution_clock::now();
 
-    // access num_items/16 cache lines
+    // access NUM_ITEMS/16 cache lines
     /*
-        for (int i = 0; i < num_items; i++)
+        for (int i = 0; i < NUM_ITEMS; i++)
             arr[i]++;
     */
     /*
-        // access num_items cache lines: much higher cost than above
-        for (int i = 0; i < num_items*num_per_cache_line; i+=num_per_cache_line)
+        // access NUM_ITEMS cache lines: much higher cost than above
+        for (int i = 0; i < NUM_ITEMS*NUM_PER_CACHE_LINE; i+=NUM_PER_CACHE_LINE)
             arr[i]++;
     */
-    // access num_items cache lines, twice of index access: similar cost as above
-    for (int i = 0; i < num_items * num_per_cache_line; i += num_per_cache_line) {
+    // access NUM_ITEMS cache lines, twice of index access: similar cost as above
+    for (int i = 0; i < NUM_ITEMS * NUM_PER_CACHE_LINE; i += NUM_PER_CACHE_LINE) {
         arr[i]++;
-        arr[i + num_per_cache_line - 1]++;
+        arr[i + NUM_PER_CACHE_LINE - 1]++;
     }
 
-    auto stop = std::chrono::high_resolution_clock::now();
+    const auto stop = std::chrono::high_resolution_clock::now();
+    const auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
 
-    auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    std::cout << (float)duration.count() << std::endl;
+    std::cout << (float)dura.count() << std::endl;
 }
 
 void run_thread_atom_perf_test()
 {
-    using int_t = int32_t;
+    using int_t               = int32_t;
+    using atom_int_t          = std::atomic<int_t>;
+    constexpr auto CAPPED_NUM = std::numeric_limits<int_t>::max();
+    constexpr auto NUM_THREAD = 10;
 
     auto do_test = []() {
-        const auto Int_Max = std::numeric_limits<int_t>::max();
-
         int_t                    cnt = 0;
-        std::vector<std::thread> threadVec;
-        for (int i = 0; i < 100; i++) {
-            threadVec.emplace_back(std::move(std::thread([&cnt]() {
+        std::vector<std::thread> threads;
+        for (int i = 0; i < NUM_THREAD; i++) {
+            threads.emplace_back([&cnt]() {
                 int_t prev = 0, tmp = 0;
-                while (prev < Int_Max) {
+                while (prev < CAPPED_NUM) {
                     tmp = cnt;
+
                     // If it is not safe, tmp will not increase all the time.
-                    if (tmp < prev)
+                    if (tmp < prev) {
                         std::cout << "Error cnt declined" << std::endl;
+                    }
+
                     // if (tmp % 1000000 == 0) cout << tmp << endl;
                     prev = tmp;
                 }
-            })));
+            });
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         auto start = std::chrono::high_resolution_clock::now();
 
-        while (cnt < Int_Max)
-            cnt++;
-        for (auto& t : threadVec)
+        while (cnt < CAPPED_NUM) {
+            ++cnt;
+        }
+        for (auto& t : threads) {
             t.join();
+        }
 
-        auto stop     = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << (float)duration.count() / 1000 << std::endl;
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << (float)dura.count() / 1000 << std::endl;
     };
 
     do_test();
 
     auto do_atom = []() {
-        using atom_int_t   = std::atomic<int_t>;
-        const auto Int_Max = std::numeric_limits<int_t>::max();
-
         atom_int_t               cnt = 0;
-        std::vector<std::thread> threadVec;
-        for (int i = 0; i < 100; i++) {
-            threadVec.emplace_back(std::move(std::thread([&cnt]() {
+        std::vector<std::thread> threads;
+        for (int i = 0; i < NUM_THREAD; i++) {
+            threads.emplace_back([&cnt]() {
                 int_t prev = 0, tmp = 0;
-                while (prev < Int_Max) {
+                while (prev < CAPPED_NUM) {
                     tmp = cnt.load(std::memory_order_relaxed);
+
                     // If it is not safe, tmp will not increase all the time.
-                    if (tmp < prev)
+                    if (tmp < prev) {
                         std::cout << "Error cnt declined" << std::endl;
+                    }
+
                     // if (tmp % 1000000 == 0) cout << tmp << endl;
                     prev = tmp;
                 }
-            })));
+            });
         }
         std::this_thread::sleep_for(std::chrono::seconds(1));
 
         auto start = std::chrono::high_resolution_clock::now();
 
         int_t v = 0;
-        while (v < Int_Max) {
+        while (v < CAPPED_NUM) {
             cnt.store(++v, std::memory_order_relaxed);
         }
-        for (auto& t : threadVec)
+        for (auto& t : threads) {
             t.join();
+        }
 
-        auto stop     = std::chrono::high_resolution_clock::now();
-        auto duration = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << (float)duration.count() / 1000 << std::endl;
+        auto stop = std::chrono::high_resolution_clock::now();
+        auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
+        std::cout << (float)dura.count() / 1000 << std::endl;
     };
     do_atom();
 }
@@ -833,20 +444,7 @@ void run_reverse_list()
             .next = tmp,
         };
     }
-
-    auto dump = [](list_node_int_t* nd) {
-        while (nd) {
-            std::cout << nd->data << " ";
-            nd = nd->next;
-        }
-        std::cout << std::endl;
-    };
-
-    dump(head);
-
-    auto rhead = reverse_list(head);
-
-    dump(rhead);
+    std::cout << "list=" << dump_list(head) << ", reverse_list=" << dump_list(reverse_list(head)) << std::endl;
 }
 
 std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& str)
@@ -858,7 +456,7 @@ std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& st
     size_t     right     = 0;
     size_t     freq[256] = {0};
     while (right < length) {
-        if (++freq[str[right]] == 1) {
+        if (++freq[static_cast<int>(str[right])] == 1) {
             ++right;
             continue;
         }
@@ -870,7 +468,7 @@ std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& st
             result_r = right;
         }
 
-        while (--freq[str[left]] == 0) {
+        while (--freq[static_cast<int>(str[left])] == 0) {
             ++left;
         }
         ++left;
@@ -880,13 +478,15 @@ std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& st
 }
 void run_find_max_non_dupe_substring()
 {
-    for (auto str : {
-             "abcabcbb",    // 3
-             "bbbbb",       // 1
-             "pwwkew",      // 3
+    using use_case_t = std::pair<std::string, size_t>;
+    for (auto& [str, exp_v] : {
+             use_case_t("abcabcbb", 3),
+             use_case_t("bbbbb", 1),
+             use_case_t("pwwkew", 3),
          }) {
         const auto [len, s] = find_max_non_dupe_substring(str);
-        std::cout << "Input=" << str << ", max_non_dupe_substring=[" << len << ", " << s << "]" << std::endl;
+        std::cout << "Input=" << str << ", max_non_dupe_substring=[" << len << ", " << s << "], "
+                  << (exp_v == len ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -897,37 +497,41 @@ std::string find_longest_palindrome(const std::string& str)
     // given index l & r as starting positions, find the longest palindrome by decreasing l (to the left) and increasing
     // r (to the right), <--- l, r --->
     auto impl = [&](int l, int r) {
-        while (l <= r && l >= 0 && r < len) {
+        while (l >= 0 && r < len) {
             if (str[l] != str[r]) {
                 break;
             }
             --l;
             ++r;
         }
-        return std::make_pair(l + 1, r - l - 1);
+        // (length, start_idx), keep length at first for comparison
+        return std::make_pair(r - l - 1, l + 1);
     };
 
     int max_len   = 0;
     int max_start = 0;
     for (int i = 0; i < len; ++i) {
-        const auto v = std::max(impl(i, i), impl(i, i + 1));
-        if (v.second > max_len) {
-            max_start = v.first;
-            max_len   = v.second;
+        const auto [length, start] = std::max(impl(i, i), impl(i, i + 1));
+        if (length > max_len) {
+            max_start = start;
+            max_len   = length;
         }
     }
     return str.substr(max_start, max_len);
 }
 void run_find_longest_palindrome()
 {
-    for (auto str : {
-             "abcabcbb",    // 3
-             "bbbbb",       // 1
-             "pwwkew",      // 3
-             "babad",       // "bab", "bab"
-             "cbbd",        // "bb"
+    using use_case_t = std::pair<std::string, std::string>;
+    for (auto& [str, exp_v] : {
+             use_case_t("abcabcbb", "bcb"),
+             use_case_t("bbbbb", "bbbbb"),
+             use_case_t("pwwkew", "ww"),
+             use_case_t("babad", "bab"),
+             use_case_t("cbbd", "bb"),
          }) {
-        std::cout << "Input=" << str << ", longest_palindrome=" << find_longest_palindrome(str) << std::endl;
+        const auto v = find_longest_palindrome(str);
+        std::cout << "Input=" << str << ", longest_palindrome=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -989,14 +593,18 @@ std::string transform_str_zigzag_2(const std::string& str, int rows)
 }
 void run_transform_str_zigzag()
 {
-    using pair_t = std::pair<std::string, int>;
-    for (auto [str, rows] : {
-             pair_t("PAYPALISHIRING", 3),    // "PAHNAPLSIIGYIR"
-             pair_t("PAYPALISHIRING", 4),    // "PINALSIGYAHRPI"
-             pair_t("A", 1),                 // "A"
+    using use_case_t = std::tuple<std::string, int, std::string>;
+    for (auto& [str, rows, exp_v] : {
+             use_case_t("PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"),
+             use_case_t("PAYPALISHIRING", 4, "PINALSIGYAHRPI"),
+             use_case_t("A", 1, "A"),
          }) {
-        std::cout << "Input=[" << str << ", " << rows << "], zigzag=" << transform_str_zigzag(str, rows) << std::endl;
-        std::cout << "Input=[" << str << ", " << rows << "], zigzag=" << transform_str_zigzag_2(str, rows) << std::endl;
+        const auto v1 = transform_str_zigzag(str, rows);
+        const auto v2 = transform_str_zigzag_2(str, rows);
+        std::cout << "Input=[" << str << ", " << rows << "], transform_str_zigzag=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "Input=[" << str << ", " << rows << "], transform_str_zigzag_2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1085,13 +693,14 @@ std::string rotational_cipher(std::string input, int factor)
 void run_rotational_cipher()
 {
     using use_case_t = std::tuple<std::string, int, std::string>;
-    for (const auto [str, factor, exp] : {
+    for (const auto& [str, factor, exp_v] : {
              use_case_t{"Zebra-493?", 3, "Cheud-726?"},
              use_case_t("All-convoYs-9-be:Alert1.", 4, "Epp-gsrzsCw-3-fi:Epivx5."),
              use_case_t("abcdZXYzxy-999.@", 200, "stuvRPQrpq-999.@"),
          }) {
-        std::cout << "String=\"" << str << "\", factor=" << factor << ", expected=\"" << exp << "\", result=\""
-                  << rotational_cipher(str, factor) << "\"" << std::endl;
+        const auto v = rotational_cipher(str, factor);
+        std::cout << "String=\"" << str << "\", factor=" << factor << ", rotational_cipher=\"" << v << "\", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1124,7 +733,7 @@ int matching_pairs_after_one_swap(const std::string& s1, const std::string& s2)
     // assume no duplicate characters in s1 and s2, otherwise should change this container
     std::unordered_map<char, int> locations_1;
     std::unordered_map<char, int> locations_2;
-    for (int i = 0; i < s1.size(); ++i) {
+    for (int i = 0; i < (int)s1.size(); ++i) {
         if (s1[i] != s2[i]) {
             locations_1[s1[i]] = i;
             locations_2[s2[i]] = i;
@@ -1193,14 +802,14 @@ std::string min_length_substring_cover_all(const std::string& s, const std::stri
     int                  right = 0;
     std::string          result;
     std::array<int, 256> freq_u = {0};
-    for (; right < s.size(); ++right) {
+    for (; right < (int)s.size(); ++right) {
         const auto u = s[right];
         // continue if u is not in t, or u has happened more that that needed in t
         if (freq_t[u] == 0 || ++freq_u[u] > freq_t[u]) {
             continue;
         }
         // count current u as needed character by t
-        if (++found != t.size()) {
+        if (++found != (int)t.size()) {
             continue;
         }
 
@@ -1210,11 +819,11 @@ std::string min_length_substring_cover_all(const std::string& s, const std::stri
             const auto v = s[left];
             if (freq_t[v] > 0 && freq_u[v] == freq_t[v]) {
                 // should not delete more than 1 necessary character, stop here and start forward right index
-                if (found == t.size() - 1) {
+                if (found == (int)t.size() - 1) {
                     break;
                 }
 
-                if (result.empty() || result.size() > right - left + 1) {
+                if (result.empty() || (int)result.size() > right - left + 1) {
                     result = s.substr(left, right - left + 1);
                 }
                 --found;
@@ -1255,12 +864,12 @@ void run_min_length_substring_cover_all()
 // After how many full days will we have 1 billion total users across the N apps?
 int get_billion_users_day(const std::vector<float>& growth_rates)
 {
-    constexpr auto one_billion = 1'000'000'000;
+    constexpr auto ONE_BILLION = 1'000'000'000;
     auto           iter        = std::max_element(growth_rates.begin(), growth_rates.end());
     if (iter == growth_rates.end()) {
         return -1;
     }
-    const int max_days = std::ceil(std::log(one_billion) / std::log(*iter));
+    const int max_days = std::ceil(std::log(ONE_BILLION) / std::log(*iter));
 
     int left  = 0;
     int right = max_days;
@@ -1270,12 +879,12 @@ int get_billion_users_day(const std::vector<float>& growth_rates)
         int cumu_value = 0;
         for (auto rate : growth_rates) {
             cumu_value += std::pow(rate, mid);
-            if (cumu_value > one_billion) {
+            if (cumu_value > ONE_BILLION) {
                 break;
             }
         }
 
-        if (cumu_value > one_billion) {
+        if (cumu_value > ONE_BILLION) {
             right = mid - 1;
         } else {
             left = mid + 1;
@@ -1314,7 +923,7 @@ void run_get_billion_users_day()
 std::vector<int> queue_removal_find_positions(std::vector<int> arr, int x)
 {
     std::vector<int> result(x, -1);
-    const auto       len              = arr.size();
+    const auto       len              = (int)arr.size();
     int              times            = 0;
     int              idx_global_count = 0;
     while (times < x) {
@@ -1357,7 +966,7 @@ std::vector<int> queue_removal_find_positions(std::vector<int> arr, int x)
 std::vector<int> queue_removal_find_positions_2(std::vector<int> arr, int x)
 {
     std::queue<std::pair<int, int>> q;
-    for (int i = 0; i < arr.size(); ++i) {
+    for (int i = 0; i < (int)arr.size(); ++i) {
         q.push({arr[i], i + 1});
     }
 
@@ -1390,47 +999,34 @@ std::vector<int> queue_removal_find_positions_2(std::vector<int> arr, int x)
 }
 void run_queue_removal_find_positions()
 {
-    auto dump_arr = [](const auto& vs) {
-        std::ostringstream oss;
-        oss << "[";
-        for (size_t i = 0; i < vs.size(); ++i) {
-            oss << vs[i];
-            if (i != vs.size() - 1) {
-                oss << ",";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
-
     using use_case_t = std::tuple<std::vector<int>, int, std::vector<int>>;
-    for (const auto [arr, k, exp_arr] : {
+    for (const auto& [arr, k, exp_arr] : {
              use_case_t({1, 2, 2, 3, 4, 5}, 5, {5, 6, 4, 1, 2}),
              use_case_t({2, 4, 2, 4, 3, 1, 2, 2, 3, 4, 3, 4, 4}, 4, {2, 5, 10, 13}),
          }) {
         const auto ans_1 = queue_removal_find_positions(arr, k);
-        std::cout << "queue_removal_find_positions=" << dump_arr(ans_1) << ", "
+        std::cout << "queue_removal_find_positions=" << dump_array(ans_1) << ", "
                   << (ans_1 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
 
         const auto ans_2 = queue_removal_find_positions_2(arr, k);
-        std::cout << "queue_removal_find_positions_2=" << dump_arr(ans_2) << ", "
+        std::cout << "queue_removal_find_positions_2=" << dump_array(ans_2) << ", "
                   << (ans_2 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
 // https://www.geeksforgeeks.org/dsa/minimize-operations-to-make-array-a-permutation/
 //
-// Given an array arr of n integers. You want to make this array a permutation of integers 1 to n. In one operation you
+// Given an array of n integers. You want to make this array a permutation of integers 1 to n. In one operation you
 // can choose two integers i (0 ≤ i < n) and x (x > 0), then replace arr[i] with arr[i] mod x, the task is to determine
 // the minimum number of operations to achieve this goal otherwise return -1.
 int min_oper_mod_for_permutation(std::vector<int> arr)
 {
     std::sort(arr.begin(), arr.end(), std::less<>());
 
-    const auto        len = arr.size();
+    const auto        len = (int)arr.size();
     std::vector<bool> exists(len + 1, false);
     std::vector<int>  leftovers;
-    for (size_t i = 0; i < len; ++i) {
+    for (int i = 0; i < len; ++i) {
         if (arr[i] <= len && !exists[arr[i]]) {
             exists[arr[i]] = true;
             continue;
@@ -1470,7 +1066,8 @@ void run_min_oper_mod_for_permutation()
              use_case_t({1, 5, 4}, -1),
          }) {
         const auto v = min_oper_mod_for_permutation(arr);
-        std::cout << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "array=" << dump_array(arr) << ", min_oper_mod_for_permutation=" << v << ", "
+                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1595,18 +1192,18 @@ int max_thieves_caught(const std::vector<char>& arr, int k)
 // two pointers alike way
 int max_thieves_caught_2(const std::vector<char>& arr, int k)
 {
-    int    result        = 0;
-    size_t idx_thief     = 0;    // track the last unchecked thief
-    size_t idx_policeman = 0;    // track the last unchecked policeman
+    int result        = 0;
+    int idx_thief     = 0;    // track the last unchecked thief
+    int idx_policeman = 0;    // track the last unchecked policeman
     while (true) {
-        while (idx_thief < arr.size() && arr[idx_thief] != 'T') {
+        while (idx_thief < (int)arr.size() && arr[idx_thief] != 'T') {
             ++idx_thief;
         }
-        while (idx_policeman < arr.size() && arr[idx_policeman] != 'P') {
+        while (idx_policeman < (int)arr.size() && arr[idx_policeman] != 'P') {
             ++idx_policeman;
         }
 
-        if (idx_thief == arr.size() || idx_policeman == arr.size()) {
+        if (idx_thief == (int)arr.size() || idx_policeman == (int)arr.size()) {
             break;
         }
 
@@ -1649,7 +1246,7 @@ void run_max_thieves_caught()
 // 2) A child with a higher rating than their immediate neighbor(s) must receive more candies than that neighbor.
 int min_candy_distributed(const std::vector<int>& ratings)
 {
-    const auto len = ratings.size();
+    const auto len = (int)ratings.size();
     if (len == 0) {
         return 0;
     }
@@ -1741,7 +1338,7 @@ void run_min_candy_distributed()
 // 2) The total maximum profit earned by completing those jobs.
 std::pair<int, int> max_profile_job_sequence(const std::vector<int>& deadlines, const std::vector<int>& profits)
 {
-    const int len = (int)deadlines.size();
+    const auto len = (int)deadlines.size();
     if (len != (int)profits.size()) {
         return {};
     }
@@ -1760,7 +1357,7 @@ std::pair<int, int> max_profile_job_sequence(const std::vector<int>& deadlines, 
         const auto [deadline, profit] = jobs.top();
         // scheduler.size() is the ending time of all jobs in the scheduler finish at, since each job takes 1 unit time
         // so if ending time is earlier than new job's deadline, just add this job
-        if (scheduler.size() < deadline) {
+        if ((int)scheduler.size() < deadline) {
             scheduler.push(profit);
         } else if (scheduler.top() < profit) {
             // if ending time is later, seek the way for best profit
@@ -1798,7 +1395,7 @@ void run_max_profile_job_sequence()
 // Given a numeric string s, find the lexicographically largest string by swapping at most one pair of characters.
 std::string largest_number_by_one_swap(std::string str)
 {
-    int idx_max             = -1;
+    int idx_max             = (int)str.size() - 1;
     int idx_candidate_small = -1;
     int idx_candidate_big   = -1;
     for (int i = (int)str.size() - 1; i >= 0; --i) {
@@ -1881,6 +1478,28 @@ int gas_station_2(const std::vector<int>& refills, const std::vector<int>& costs
     }
     return tot_left_gas >= 0 ? idx_start : -1;
 }
+// This is also a great solution: use two pointers, one for ending point and the other is for starting point, move
+// idx_end to the right until left_gas is negative meaning current idx_start is not working, so move idx_start to
+// left until left_gas is positive
+int gas_station_3(const std::vector<int>& refills, const std::vector<int>& costs)
+{
+    const int len       = refills.size();
+    int       stops     = 0;
+    int       idx_start = len - 1;
+    int       idx_end   = len - 1;
+    int       left_gas  = 0;
+    while (stops < len) {
+        left_gas += refills[idx_end] - costs[idx_end];
+        ++stops;
+        idx_end = (idx_end + 1) % len;
+        while (left_gas < 0 && stops < len) {
+            --idx_start;
+            left_gas += refills[idx_start] - costs[idx_start];
+            ++stops;
+        }
+    }
+    return left_gas >= 0 ? idx_start : -1;
+}
 void run_gas_station()
 {
     using use_case_t = std::tuple<std::vector<int>, std::vector<int>, int>;
@@ -1891,8 +1510,10 @@ void run_gas_station()
          }) {
         const auto v1 = gas_station(refills, costs);
         const auto v2 = gas_station_2(refills, costs);
+        const auto v3 = gas_station_3(refills, costs);
         std::cout << "gas_station=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
         std::cout << "gas_station_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "gas_station_3=" << v3 << ", " << (v3 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1961,19 +1582,6 @@ void run_switch_neighbors_list()
         }
         return dummy.next;
     };
-    auto dump_list = [](list_node_int_t* node) {
-        std::ostringstream oss;
-        oss << "[";
-        while (node) {
-            oss << node->data;
-            node = node->next;
-            if (node) {
-                oss << "->";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
     for (auto [head, exp_v] : {
              use_case_t(create_list(1), "[0]"),
              use_case_t(create_list(2), "[0->1]"),
@@ -1986,7 +1594,6 @@ void run_switch_neighbors_list()
 
         // auto new_head = switch_neighbors_list(head);
         auto new_head = switch_neighbors_list_2(head);
-
         std::cout << ", switch_neighbors_list=" << dump_list(new_head) << ", "
                   << (dump_list(new_head) == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -2055,19 +1662,6 @@ void run_reverse_every_k_list()
         }
         return dummy.next;
     };
-    auto dump_list = [](list_node_int_t* node) {
-        std::ostringstream oss;
-        oss << "[";
-        while (node) {
-            oss << node->data;
-            node = node->next;
-            if (node) {
-                oss << "->";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
     for (auto [head, k, exp_v] : {
              use_case_t(create_list(1), 1, "[0]"),
              use_case_t(create_list(2), 1, "[1->0]"),
@@ -2094,14 +1688,19 @@ void run_reverse_every_k_list()
 int longest_valid_parentheses(std::string str)
 {
     int                             result = 0;
+    int                             start  = INT_MAX;
     std::stack<std::pair<int, int>> st;
     for (int i = 0; i < (int)str.size(); ++i) {
         if (str[i] == '(') {
             st.push({str[i], i});
         } else if (!st.empty() && st.top().first == '(') {
+            // start should be the leftmost index and won't change until mismatch happens
+            start  = std::min(start, st.top().second);
+            result = std::max(result, i - start + 1);
             st.pop();
-            // NOTICE: if st.empty(), use -1
-            result = std::max(result, i - (st.empty() ? -1 : st.top().second));
+        } else {
+            // reset since mismatch happens here
+            start = INT_MAX;
         }
     }
     return result;
@@ -2149,12 +1748,10 @@ void run_longest_valid_parentheses()
              use_case_t("((()())))", 8),
              use_case_t("((((())()))))", 12),
          }) {
-        /*
-       const auto v1 = longest_valid_parentheses(str);
-       std::cout << "Input=\"" << str << "\", longest_valid_parentheses=" << v1 << ", "
-                 << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
-                 */
+        const auto v1 = longest_valid_parentheses(str);
         const auto v2 = longest_valid_parentheses_2(str);
+        std::cout << "Input=\"" << str << "\", longest_valid_parentheses=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
         std::cout << "Input=\"" << str << "\", longest_valid_parentheses_2=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -2238,10 +1835,10 @@ void run_find_first_missing_integer()
              use_case_t({1, 2, 0}, 3),
              use_case_t({3, 4, -1, 1}, 2),
              use_case_t({7, 8, 9, 11, 12}, 1),
-
          }) {
         const auto v = find_first_missing_integer(arr);
-        std::cout << "find_first_missing_integer=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "array=" << dump_array(arr) << ", find_first_missing_integer=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2338,32 +1935,13 @@ std::vector<std::vector<int>> generate_spiral_matrix(int n)
 void run_generate_spiral_matrix()
 {
     using use_case_t = std::tuple<int, std::string>;
-    auto dump_arr    = [](const auto& vs) {
-        std::ostringstream oss;
-        oss << "[";
-        for (size_t i = 0; i < vs.size(); ++i) {
-            oss << "[";
-            for (size_t j = 0; j < vs[i].size(); ++j) {
-                oss << vs[i][j];
-                if (j != vs[i].size() - 1) {
-                    oss << ",";
-                }
-            }
-            oss << "]";
-            if (i != vs.size() - 1) {
-                oss << ",";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
     for (auto [n, exp_v] : {
              use_case_t(1, "[[1]]"),
              use_case_t(2, "[[1,2],[4,3]]"),
              use_case_t(3, "[[1,2,3],[8,9,4],[7,6,5]]"),
              use_case_t(4, "[[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]]"),
          }) {
-        const auto v = dump_arr(generate_spiral_matrix(n));
+        const auto v = dump_matrix(generate_spiral_matrix(n));
         std::cout << "n=" << n << ", generate_spiral_matrix=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
                   << std::endl;
     }
@@ -2373,9 +1951,9 @@ void run_generate_spiral_matrix()
 int remove_more_than_2_dup(std::vector<int> arr)
 {
     constexpr int MAX_DUPS = 2;
-    int           k        = std::min((int)arr.size(), 2);
-    int           idx      = 2;
-    while (idx < arr.size()) {
+    int           k        = std::min((int)arr.size(), MAX_DUPS);
+    int           idx      = MAX_DUPS;
+    while (idx < (int)arr.size()) {
         if (arr[idx] != arr[k - MAX_DUPS]) {
             arr[k] = arr[idx];
             ++k;
@@ -2395,7 +1973,8 @@ void run_remove_more_than_2_dup()
              use_case_t({0, 0, 1, 1, 1, 1, 2, 3, 3}, 7),       // [0,0,1,1,2,3,3]
          }) {
         const auto v = remove_more_than_2_dup(arr);
-        std::cout << "remove_more_than_2_dup=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "array=" << dump_array(arr) << ", remove_more_than_2_dup=" << v << ", "
+                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2403,19 +1982,6 @@ void run_remove_more_than_2_dup()
 // https://www.geeksforgeeks.org/dsa/largest-rectangular-area-in-a-histogram-using-stack/
 int largest_area_histogram(const std::vector<int>& heights)
 {
-    auto dump_arr = [](const auto& vs) {
-        std::ostringstream oss;
-        oss << "[";
-        for (size_t i = 0; i < vs.size(); ++i) {
-            oss << vs[i];
-            if (i != vs.size() - 1) {
-                oss << ",";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
-
     const int len = heights.size();
 
     // find the closest idx where heights[idx] is less than current heights[i] from left side
@@ -2471,7 +2037,8 @@ void run_largest_area_histogram()
              use_case_t({60, 20, 50, 40, 10, 50, 60}, 100),
          }) {
         const auto v = largest_area_histogram(heights);
-        std::cout << "largest_area_histogram=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "heights=" << dump_array(heights) << ", largest_area_histogram=" << v << ", "
+                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2529,35 +2096,6 @@ std::vector<std::string> find_all_possible_ips(const std::string& s)
 }
 void run_find_all_possible_ips()
 {
-    auto comp_arr = [](auto& a, auto& b) {
-        if (a.size() != b.size()) {
-            return false;
-        }
-        for (auto& v : a) {
-            if (auto iter = std::find_if(
-                    b.begin(), b.end(),
-                    [&v](auto& u) {
-                        return u == v;
-                    });
-                iter == b.end()) {
-                return false;
-            }
-        }
-        return true;
-    };
-    auto dump_arr = [](const auto& vs) {
-        std::ostringstream oss;
-        oss << "[";
-        for (size_t i = 0; i < vs.size(); ++i) {
-            oss << vs[i];
-            if (i != vs.size() - 1) {
-                oss << ",";
-            }
-        }
-        oss << "]";
-        return oss.str();
-    };
-
     using use_case_t = std::tuple<std::string, std::vector<std::string>>;
     for (auto& [s, exp_v] : {
              use_case_t("0000", {"0.0.0.0"}),
@@ -2565,8 +2103,8 @@ void run_find_all_possible_ips()
              use_case_t("25525511135", {"255.255.11.135", "255.255.111.35"}),
          }) {
         const auto ss = find_all_possible_ips(s);
-        std::cout << "s=" << s << ", find_all_possible_ips=" << dump_arr(ss) << ", "
-                  << (comp_arr(exp_v, ss) ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "s=" << s << ", find_all_possible_ips=" << dump_array(ss) << ", "
+                  << (equal_container_unordered(exp_v, ss) ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2725,6 +2263,661 @@ void run_validate_binary_search_tree()
         const auto v2 = validate_binary_search_tree(root);
         std::cout << std::boolalpha << "root=" << root->data << ", validate_binary_search_tree_2=" << v2 << ", "
                   << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+// leetcode 101
+bool symmetric_tree(tree_node_int_t* root)
+{
+    if (!root) {
+        return false;
+    }
+
+    std::function<bool(tree_node_int_t*, tree_node_int_t*)> impl = [&](tree_node_int_t* n1, tree_node_int_t* n2) {
+        if (n1 == n2) {
+            return true;
+        }
+        if (!n1 || !n2 || n1->data != n2->data) {
+            return false;
+        }
+        return impl(n1->left, n2->right) && impl(n1->right, n2->left);
+    };
+
+    return impl(root->left, root->right);
+}
+void run_symmetric_tree()
+{
+    auto gen_r1 = []() {    // true
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto l_4    = new tree_node_int_t{.data = 4};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->left   = l_3;
+        l_2->right  = l_4;
+        r_2->left   = r_4;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r2 = []() {    // false
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->right  = l_3;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r3 = []() {    // false
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        root->left  = l_2;
+        root->right = r_3;
+        return root;
+    }();
+    auto gen_r4 = []() {    // false
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        root->left  = l_2;
+        root->right = r_2;
+        r_2->right  = r_3;
+        return root;
+    }();
+
+    using use_case_t = std::pair<tree_node_int_t*, bool>;
+    for (auto [root, exp_v] : {
+             use_case_t(gen_r1, true),
+             use_case_t(gen_r2, false),
+             use_case_t(gen_r3, false),
+             use_case_t(gen_r4, false),
+         }) {
+        const auto v = symmetric_tree(root);
+        std::cout << std::boolalpha << "symmetric_tree=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
+}
+
+// leetcode 114
+tree_node_int_t* binary_tree_to_inorder_list(tree_node_int_t* root)
+{
+    // inorder: root-left-right
+    auto node = root;
+    while (node) {
+        if (node->left) {
+            auto cur = node->left;
+            // this is desired, make sure the right-most node of cur is connected to node->right
+            // the next round of outer loop will keep updating the list until all fit
+            while (cur->right) {
+                cur = cur->right;
+            }
+
+            cur->right  = node->right;
+            node->right = node->left;
+            node->left  = nullptr;
+        }
+        node = node->right;
+    }
+    return root;
+}
+// https://www.geeksforgeeks.org/dsa/flatten-a-binary-tree-into-linked-list/
+tree_node_int_t* binary_tree_to_inorder_list_2(tree_node_int_t* root)
+{
+    // do nothing if root is null or it is a leaf node
+    if (!root || (!root->left && !root->right)) {
+        return nullptr;
+    }
+
+    if (root->left) {
+        binary_tree_to_inorder_list_2(root->left);
+
+        // at this point root is a non-leaf node
+        auto tmpRight = root->right;
+        root->right   = root->left;
+        root->left    = nullptr;
+
+        // since we do recusively, bottom-up, this must hold: cur->left == nullptr
+        auto cur = root->right;
+        while (cur->right) {
+            cur = cur->right;
+        }
+        cur->right = tmpRight;
+    }
+
+    return binary_tree_to_inorder_list_2(root->right);
+}
+
+// leetcode 120
+int triangle_min_sum_path(const std::vector<std::vector<int>>& triangle)
+{
+    if (triangle.empty()) {
+        return 0;
+    }
+    const auto       max_size = triangle.back().size();
+    std::vector<int> pre_row_results(max_size, std::numeric_limits<int>::min());
+    std::vector<int> cur_row_results(max_size, std::numeric_limits<int>::min());
+    pre_row_results[0] = triangle.front().front();
+    for (size_t row = 1; row < triangle.size(); ++row) {
+        for (size_t col = 0; col < triangle[row].size(); ++col) {
+            const auto v = triangle[row][col];
+            if (col == 0) {
+                cur_row_results[col] = v + pre_row_results[col];
+            } else if (col == row) {
+                cur_row_results[col] = v + pre_row_results[col - 1];
+            } else {
+                cur_row_results[col] = std::min(v + pre_row_results[col], v + pre_row_results[col - 1]);
+            }
+        }
+        std::swap(pre_row_results, cur_row_results);
+    }
+
+    return *std::min_element(pre_row_results.begin(), pre_row_results.end());
+}
+void run_triangle_min_sum_path()
+{
+    using row_t      = std::vector<int>;
+    using use_case_t = std::pair<std::vector<row_t>, int>;
+    for (auto& [triangle, exp_v] :
+         {use_case_t(
+              {
+                  row_t{2},
+                  row_t{3, 4},
+                  row_t{6, 5, 7},
+                  row_t{4, 1, 8, 3},
+              },
+              11),
+          use_case_t(
+              {
+                  row_t{-10},
+              },
+              -10)}) {
+        const auto v = triangle_min_sum_path(triangle);
+        std::cout << "triangle=" << dump_matrix(triangle) << ", triangle_min_sum_path=" << v << ", "
+                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+// leetcode 124
+int binary_tree_max_path(tree_node_int_t* root)
+{
+    int                                  result = 0;
+    std::function<int(tree_node_int_t*)> impl   = [&](tree_node_int_t* node) {
+        if (!node) {
+            return 0;
+        }
+
+        // the returned max_left & max_right is the path that contains node->left & node->right respectively but also
+        // they can be used for formed another path
+        const auto max_left  = std::max(0, impl(node->left));
+        const auto max_right = std::max(0, impl(node->right));
+
+        // calc the final result at each iteration, at this point we can form a path that must contain current root node
+        // and its left & right as long as possible
+        result = std::max(result, node->data + max_left + max_right);
+
+        // this return step is the key: we return a path that contains current root node, though this doesn't have to be
+        // the final max path, while we must guarantee the returned path can be used to form another path contains
+        // node's parent, this is the reason why we use std::max(max_left, max_right) rather than (max_left + max_right)
+        return node->data + std::max(max_left, max_right);
+    };
+    impl(root);
+    return result;
+}
+void run_binary_tree_max_path()
+{
+    auto gen_r1 = []() {    // 13
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto l_4    = new tree_node_int_t{.data = 4};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->left   = l_3;
+        l_2->right  = l_4;
+        r_2->left   = r_4;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r2 = []() {    // 9
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = -3};
+        auto l_4    = new tree_node_int_t{.data = -4};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->left   = l_3;
+        l_2->right  = l_4;
+        r_2->left   = r_4;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r3 = []() {    // 3
+        auto root   = new tree_node_int_t{.data = -1};
+        auto l_2    = new tree_node_int_t{.data = -2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        root->left  = l_2;
+        root->right = r_3;
+        return root;
+    }();
+    auto gen_r4 = []() {    // 42
+        auto root   = new tree_node_int_t{.data = -10};
+        auto l_9    = new tree_node_int_t{.data = 9};
+        auto r_20   = new tree_node_int_t{.data = 20};
+        auto r_15   = new tree_node_int_t{.data = 15};
+        auto r_7    = new tree_node_int_t{.data = 7};
+        root->left  = l_9;
+        root->right = r_20;
+        r_20->left  = r_15;
+        r_20->right = r_7;
+        return root;
+    }();
+
+    using use_case_t = std::pair<tree_node_int_t*, int>;
+    for (auto [root, exp_v] : {
+             use_case_t(gen_r1, 13),
+             use_case_t(gen_r2, 9),
+             use_case_t(gen_r3, 3),
+             use_case_t(gen_r4, 42),
+         }) {
+        const auto v = binary_tree_max_path(root);
+        std::cout << "binary_tree_max_path=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+// leetcode 129
+int binary_tree_sum_paths(tree_node_int_t* root)
+{
+    std::function<int(tree_node_int_t*, int)> impl = [&](tree_node_int_t* node, int sum_so_far) {
+        if (!node) {
+            return 0;
+        }
+        sum_so_far = sum_so_far * 10 + node->data;
+        // if no child, simply return this single path sum
+        if (!node->left && !node->right) {
+            return sum_so_far;
+        }
+
+        // try each child
+        return impl(node->left, sum_so_far) + impl(node->right, sum_so_far);
+    };
+    return impl(root, 0);
+}
+void run_binary_tree_sum_paths()
+{
+    auto gen_r1 = []() {    // 494
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto l_4    = new tree_node_int_t{.data = 4};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->left   = l_3;
+        l_2->right  = l_4;
+        r_2->left   = r_4;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r2 = []() {    // 268
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        auto r_5    = new tree_node_int_t{.data = 5};
+        root->left  = l_2;
+        root->right = r_4;
+        l_2->right  = l_3;
+        r_4->right  = r_5;
+        return root;
+    }();
+    auto gen_r3 = []() {    // 25
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        root->left  = l_2;
+        root->right = r_3;
+        return root;
+    }();
+
+    using use_case_t = std::pair<tree_node_int_t*, int>;
+    for (auto [root, exp_v] : {
+             use_case_t(gen_r1, 494),
+             use_case_t(gen_r2, 268),
+             use_case_t(gen_r3, 25),
+         }) {
+        const auto v = binary_tree_sum_paths(root);
+        std::cout << "binary_tree_sum_paths=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+// leetcode 662
+int binary_tree_max_width(tree_node_int_t* root)
+{
+    int                          result          = 0;
+    int                          num_valid_nodes = 1;
+    std::queue<tree_node_int_t*> q;
+    q.push(root);
+    while (!q.empty() && num_valid_nodes > 0) {
+        const auto len  = (int)q.size();
+        num_valid_nodes = 0;
+
+        int idx_first = len;
+        for (int i = 0; i < len; ++i) {
+            auto node = q.front();
+            q.pop();
+
+            if (node) {
+                ++num_valid_nodes;
+
+                idx_first = std::min(idx_first, i);
+                result    = std::max(result, i - idx_first + 1);
+
+                q.push(node->left);
+                q.push(node->right);
+            } else {
+                q.push(nullptr);
+                q.push(nullptr);
+            }
+        }
+    }
+    return result;
+}
+int binary_tree_max_width_2(tree_node_int_t* root)
+{
+    if (!root) {
+        return 0;
+    }
+
+    int result = 1;
+    // <tree_node_int_t*, node tag repesents the index>
+    std::queue<std::pair<tree_node_int_t*, int>> q;
+    q.push({root, 1});
+    while (!q.empty()) {
+        result         = std::max(result, q.back().second - q.front().second + 1);
+        const auto len = (int)q.size();
+        for (int i = 0; i < len; ++i) {
+            auto [node, idx] = q.front();
+            q.pop();
+
+            if (node->left) {
+                q.push({node->left, idx * 2});
+            }
+            if (node->right) {
+                q.push({node->right, idx * 2 + 1});
+            }
+        }
+    }
+    return result;
+}
+void run_binary_tree_max_width()
+{
+    auto gen_r1 = []() {    // 4
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto l_4    = new tree_node_int_t{.data = 4};
+        auto r_2    = new tree_node_int_t{.data = 2};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        root->left  = l_2;
+        root->right = r_2;
+        l_2->left   = l_3;
+        l_2->right  = l_4;
+        r_2->left   = r_4;
+        r_2->right  = r_3;
+        return root;
+    }();
+    auto gen_r2 = []() {    // 3
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_3    = new tree_node_int_t{.data = 3};
+        auto r_4    = new tree_node_int_t{.data = 4};
+        auto r_5    = new tree_node_int_t{.data = 5};
+        root->left  = l_2;
+        root->right = r_4;
+        l_2->right  = l_3;
+        r_4->right  = r_5;
+        return root;
+    }();
+    auto gen_r3 = []() {    // 6
+        auto root   = new tree_node_int_t{.data = 1};
+        auto l_2    = new tree_node_int_t{.data = 2};
+        auto l_4    = new tree_node_int_t{.data = 4};
+        auto l_7    = new tree_node_int_t{.data = 7};
+        auto r_3    = new tree_node_int_t{.data = 3};
+        auto r_5    = new tree_node_int_t{.data = 5};
+        auto r_6    = new tree_node_int_t{.data = 6};
+        auto r_8    = new tree_node_int_t{.data = 8};
+        root->left  = l_2;
+        root->right = r_3;
+        l_2->right  = l_4;
+        l_4->left   = l_7;
+        r_3->left   = r_5;
+        r_3->right  = r_6;
+        r_6->right  = r_8;
+        return root;
+    }();
+
+    using use_case_t = std::pair<tree_node_int_t*, int>;
+    for (auto [root, exp_v] : {
+             use_case_t(gen_r1, 4),
+             use_case_t(gen_r2, 3),
+             use_case_t(gen_r3, 6),
+         }) {
+        const auto v1 = binary_tree_max_width(root);
+        const auto v2 = binary_tree_max_width_2(root);
+        std::cout << "binary_tree_max_path=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "binary_tree_max_path_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+// leetcode 133
+// this solution doesn't use DFS, it's buggy!
+graph_node_int_t* graph_undirected_clone(graph_node_int_t* node)
+{
+    if (!node) {
+        return nullptr;
+    }
+
+    auto raw_node   = node;
+    auto clone_node = new graph_node_int_t{.data = raw_node->data};
+    auto result     = clone_node;
+
+    // raw nodes that have been fully procssed already
+    std::unordered_set<graph_node_int_t*> processed_raw_nodes;
+
+    // raw<>cloned node map
+    std::unordered_map<graph_node_int_t*, graph_node_int_t*> cloned_node_map;
+    cloned_node_map.emplace(raw_node, clone_node);
+
+    while (raw_node) {
+        processed_raw_nodes.emplace(raw_node);
+
+        auto raw_tmp = raw_node;
+        raw_node     = nullptr;
+
+        auto clone_tmp = clone_node;
+        clone_node     = nullptr;
+
+        for (auto raw_neighbor : raw_tmp->neighbors) {
+            graph_node_int_t* clone_neighbor = nullptr;
+            if (auto iter = cloned_node_map.find(raw_neighbor); iter != cloned_node_map.end()) {
+                clone_neighbor = iter->second;
+            } else {
+                clone_neighbor = new graph_node_int_t{.data = raw_neighbor->data};
+                cloned_node_map.emplace(raw_neighbor, clone_neighbor);
+                clone_tmp->neighbors.emplace_back(clone_neighbor);
+                clone_neighbor->neighbors.emplace_back(clone_tmp);
+            }
+
+            if (!raw_node && !processed_raw_nodes.contains(raw_neighbor)) {
+                raw_node   = raw_neighbor;
+                clone_node = clone_neighbor;
+            }
+        }
+    }
+    return result;
+}
+// obviously this DFS approach is much more efficient & cleaner
+graph_node_int_t* graph_undirected_clone_2(graph_node_int_t* node)
+{
+    std::unordered_map<graph_node_int_t*, graph_node_int_t*> cloned_node_map;
+    std::function<graph_node_int_t*(graph_node_int_t*)>      impl = [&](graph_node_int_t* raw_node) {
+        if (!raw_node) {
+            return (graph_node_int_t*)nullptr;
+        }
+        if (auto iter = cloned_node_map.find(raw_node); iter != cloned_node_map.end()) {
+            return iter->second;
+        }
+        auto clone_node = new graph_node_int_t{.data = raw_node->data};
+        cloned_node_map.emplace(raw_node, clone_node);
+        for (auto raw_neighbor : raw_node->neighbors) {
+            clone_node->neighbors.emplace_back(impl(raw_neighbor));
+        }
+        return clone_node;
+    };
+    return impl(node);
+}
+void run_graph_undirected_clone()
+{
+    auto gen_g1 = []() {
+        auto n1       = new graph_node_int_t{.data = 1};
+        auto n2       = new graph_node_int_t{.data = 2};
+        n1->neighbors = {n2};
+        n2->neighbors = {n1};
+        return n1;
+    }();
+    auto gen_g2 = []() {
+        auto n1       = new graph_node_int_t{.data = 1};
+        auto n2       = new graph_node_int_t{.data = 2};
+        auto n3       = new graph_node_int_t{.data = 3};
+        auto n4       = new graph_node_int_t{.data = 4};
+        n1->neighbors = {n2, n4};
+        n2->neighbors = {n1, n3};
+        n3->neighbors = {n2, n4};
+        n4->neighbors = {n1, n3};
+        return n1;
+    }();
+    auto gen_g3 = []() {
+        auto n1       = new graph_node_int_t{.data = 1};
+        auto n2       = new graph_node_int_t{.data = 2};
+        auto n3       = new graph_node_int_t{.data = 3};
+        auto n4       = new graph_node_int_t{.data = 4};
+        n1->neighbors = {n2, n4};
+        n2->neighbors = {n1, n3, n4};
+        n3->neighbors = {n2};
+        n4->neighbors = {n1, n2};
+        return n1;
+    }();
+
+    auto dump_graph = [](graph_node_int_t* node) {
+        std::unordered_set<graph_node_int_t*> visited;
+        std::ostringstream                    oss;
+        oss << "[";
+        while (node) {
+            visited.emplace(node);
+
+            auto tmp = node;
+            node     = nullptr;
+
+            oss << "[";
+            for (auto neighbor : tmp->neighbors) {
+                oss << neighbor->data;
+                if (neighbor != tmp->neighbors.back()) {
+                    oss << ",";
+                }
+
+                if (!node && !visited.contains(neighbor)) {
+                    node = neighbor;
+                }
+            }
+            oss << "]";
+        }
+        oss << "]";
+        return oss.str();
+    };
+    for (auto node : {gen_g1, gen_g2, gen_g3}) {
+        const auto clone_node   = graph_undirected_clone(node);
+        const auto clone_node_2 = graph_undirected_clone_2(node);
+        std::cout << "graph=" << dump_graph(node) << ", graph_undirected_clone=" << dump_graph(clone_node) << std::endl;
+        std::cout << "graph=" << dump_graph(node) << ", graph_undirected_clone_2=" << dump_graph(clone_node_2)
+                  << std::endl;
+    }
+}
+
+// leetcode 139: word break
+bool work_break_with_dict(const std::string& s, const std::unordered_set<std::string>& dict)
+{
+    // TODO:...
+    return true;
+}
+
+// leetcode 150
+int evaluate_reverse_polish_notation(const std::vector<std::string>& tokens)
+{
+    std::stack<int> st;
+    auto            calc = [&](auto&& oper) {
+        if (st.size() < 2) {
+            throw std::invalid_argument("stack size is less than 2");
+        }
+        const auto v1 = st.top();
+        st.pop();
+        const auto v2 = st.top();
+        st.pop();
+        st.push(oper(v1, v2));
+    };
+
+    for (const auto& token : tokens) {
+        if (token == "+") {
+            calc([](auto v1, auto v2) {
+                return v1 + v2;
+            });
+        } else if (token == "-") {
+            calc([](auto v1, auto v2) {
+                return v2 - v1;
+            });
+        } else if (token == "*") {
+            calc([](auto v1, auto v2) {
+                return v1 * v2;
+            });
+        } else if (token == "/") {
+            calc([](auto v1, auto v2) {
+                return v2 / v1;
+            });
+        } else {
+            st.push(std::stoi(token));
+        }
+    }
+    return st.top();
+}
+void run_evaluate_reverse_polish_notation()
+{
+    using use_case_t = std::pair<std::vector<std::string>, int>;
+    for (auto& [tokens, exp_v] : {
+             use_case_t({"2", "1", "+", "3", "*"}, 9),
+             use_case_t({"4", "13", "5", "/", "+"}, 6),
+             use_case_t({"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"}, 22),
+         }) {
+        const auto v = evaluate_reverse_polish_notation(tokens);
+        std::cout << "tokens=" << dump_array(tokens) << ", evaluate_reverse_polish_notation=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2939,15 +3132,13 @@ void run_binary_tree_burn_down_time()
 
 bool is_palindrome(const std::string& s)
 {
-    const int len = s.size();
+    const int len = (int)s.size();
     if (len < 2) {
         return true;
     }
 
-    int mid          = len / 2;
     int left_ending  = len / 2;
     int right_ending = (len % 2 == 0 ? (len - 1) / 2 : len / 2);
-    int not_matched  = 0;
     int left         = 0;
     int right        = len - 1;
     while (left < left_ending && right > right_ending) {
@@ -2994,5 +3185,98 @@ void run_is_palindrome()
         const auto v = is_palindrome(s);
         std::cout << "s=" << s << ", is_palindrome=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
+}
+
+// integer to binary
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>, void>>
+std::string integer_to_binary(T x)
+{
+    if (x == 0) {
+        return std::string{"0"};
+    }
+
+    // TODO: another way to handle negative value is using 2's complement representation
+    // unsigned int un = static_cast<unsigned int>(x); // need a way to get exact unsigned type
+    // .... get binary with un which is the result
+
+    const auto        len = sizeof(T) * 8;    // 8 bits per byte
+    std::vector<char> binary(len + 1, x < 0 ? '1' : '0');
+    binary.back() = '\0';
+    auto idx      = len;
+    while ((x < 0 && x != -1) || x > 0) {
+        binary[--idx] = ((x & 0x01) ? '1' : '0');
+        x             = x >> 1;
+    }
+    return std::string{binary.data() + (x < 0 ? 0 : idx)};
+}
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>, void>>
+std::string integer_to_binary_2(T x)
+{
+    auto        ux = static_cast<std::make_unsigned_t<T>>(x);
+    std::string result;
+    while (ux) {
+        result.push_back((ux & 0x01) ? '1' : '0');
+        ux = ux >> 1;
+    }
+    std::reverse(result.begin(), result.end());
+    return result;
+}
+void run_integer_to_binary()
+{
+    std::cout << "integer_to_binary(0): " << integer_to_binary(0) << std::endl;
+    std::cout << "integer_to_binary(1): " << integer_to_binary(1) << std::endl;
+    std::cout << "integer_to_binary(5): " << integer_to_binary(5) << std::endl;
+    std::cout << "integer_to_binary(10): " << integer_to_binary(10) << std::endl;
+    std::cout << "integer_to_binary(1024): " << integer_to_binary(1024) << std::endl;
+    std::cout << "integer_to_binary(1024*1024): " << integer_to_binary(1024 * 1024) << std::endl;
+
+    std::cout << "integer_to_binary_2(0): " << integer_to_binary_2(0) << std::endl;
+    std::cout << "integer_to_binary_2(1): " << integer_to_binary_2(1) << std::endl;
+    std::cout << "integer_to_binary_2(5): " << integer_to_binary_2(5) << std::endl;
+    std::cout << "integer_to_binary_2(10): " << integer_to_binary_2(10) << std::endl;
+    std::cout << "integer_to_binary_2(1024): " << integer_to_binary_2(1024) << std::endl;
+    std::cout << "integer_to_binary_2(1024*1024): " << integer_to_binary_2(1024 * 1024) << std::endl;
+
+    std::cout << "integer_to_binary(0b1010011): " << integer_to_binary(0b1010011) << std::endl;
+    std::cout << "integer_to_binary(0xFFFF): " << integer_to_binary(0xFFFF) << std::endl;
+    std::cout << "integer_to_binary_2(0b1010011): " << integer_to_binary_2(0b1010011) << std::endl;
+    std::cout << "integer_to_binary_2(0xFFFF): " << integer_to_binary_2(0xFFFF) << std::endl;
+
+    std::cout << "integer_to_binary(-1): " << integer_to_binary(int8_t(-1)) << std::endl;
+    std::cout << "integer_to_binary(-4): " << integer_to_binary(int8_t(-4)) << std::endl;
+    std::cout << "integer_to_binary(-16): " << integer_to_binary(int8_t(-16)) << std::endl;
+    std::cout << "integer_to_binary_2(-1): " << integer_to_binary_2(int8_t(-1)) << std::endl;
+    std::cout << "integer_to_binary_2(-4): " << integer_to_binary_2(int8_t(-4)) << std::endl;
+    std::cout << "integer_to_binary_2(-16): " << integer_to_binary_2(int8_t(-16)) << std::endl;
+
+    std::cout << "integer_to_binary(-1): " << integer_to_binary(int16_t(-1)) << std::endl;
+    std::cout << "integer_to_binary(-4): " << integer_to_binary(int16_t(-4)) << std::endl;
+    std::cout << "integer_to_binary(-16): " << integer_to_binary(int16_t(-16)) << std::endl;
+    std::cout << "integer_to_binary_2(-1): " << integer_to_binary_2(int16_t(-1)) << std::endl;
+    std::cout << "integer_to_binary_2(-4): " << integer_to_binary_2(int16_t(-4)) << std::endl;
+    std::cout << "integer_to_binary_2(-16): " << integer_to_binary_2(int16_t(-16)) << std::endl;
+}
+
+// log(x)
+int find_log_n(uint64_t x)
+{
+    if (x == 0) {
+        throw std::invalid_argument("invalid argument");
+    }
+
+    uint32_t count = 0;
+    while (x) {
+        ++count;
+        x = x >> 1;
+    }
+    return count - 1;
+}
+void run_find_log_n()
+{
+    std::cout << "log(1): " << find_log_n(1) << std::endl;
+    std::cout << "log(8): " << find_log_n(8) << std::endl;
+    std::cout << "log(32): " << find_log_n(32) << std::endl;
+    std::cout << "log(1024): " << find_log_n(1024) << std::endl;
+    std::cout << "log(1024*1024): " << find_log_n(1024 * 1024) << std::endl;
 }
 

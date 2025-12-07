@@ -1,10 +1,12 @@
 #include <gtest/gtest.h>
+#include <utility>
 #include "../main/header.h"
 
 #include "../algorithm/array_bus_station.h"
 #include "../algorithm/array_kth_biggest.h"
 #include "../algorithm/array_largest_perm.h"
 #include "../algorithm/bike_racer.h"
+#include "../algorithm/bitwise_operation.h"
 #include "../algorithm/connected_cell_in_grid.h"
 #include "../algorithm/count_luck.h"
 #include "../algorithm/cuttree.h"
@@ -24,7 +26,10 @@
 #include "../algorithm/sort_k_diff_pairs.h"
 #include "../algorithm/subarray_max_mod.h"
 #include "../algorithm/remove_duplicates.h"
+#include "../algorithm/str_palindrome.h"
 #include "../algorithm/traversetree.h"
+
+#include "../algorithm/2023.h"
 
 #include "../interview/optiver/judgebitree.h"
 #include "../interview/worldquant/orderbook.h"
@@ -916,3 +921,133 @@ TEST(algorithm, find_min_packet_length)
         EXPECT_EQ(find_min_packet_length(messages, 8), 6);
     }
 }
+
+TEST(algorithm, str_palindrome)
+{
+    // TODO
+}
+
+TEST(algorithm, substring_longest_palindrome)
+{
+    using use_case_t = std::pair<std::string, std::string>;
+    for (auto [str, exp_v] : {
+             use_case_t("ab", "a"),
+             use_case_t("aba", "aba"),
+             use_case_t("babad", "bab"),
+             use_case_t("cbbd", "bb"),
+             use_case_t("aabcdcbaa", "aabcdcbaa"),
+             use_case_t("aabcdcbab", "abcdcba"),
+         }) {
+        EXPECT_EQ(exp_v, substring_longest_palindrome(str));
+    }
+}
+
+TEST(DISABLED_algorithm, find_median_two_sorted_arrays)
+{
+    ////////////////////////////////////////////////////////////////////////////
+    // Input:  A[] = [1, 3], B[] = [2]
+    // Output: 2
+    //
+    // Input:  A[] = [2, 4], B[] = [1, 3, 5]
+    // Output: 3
+    //
+    /// Input:  A[] = [1, 3, 6], B[] = [2, 8, 12]
+    // Output: 4.5
+    //
+    // Input:  A[] = [1, 3, 4, 6, 9], B[] = [2, 5, 7, 8, 10]
+    // Output: 5.5
+    {
+        int A[] = {1, 3};
+        int B[] = {2};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+
+    {
+        int A[] = {2, 4};
+        int B[] = {1, 3, 5};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+
+    {
+        int A[] = {2};
+        int B[] = {0};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+
+    {
+        int A[] = {1, 3};
+        int B[] = {0};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+
+    {
+        int A[] = {1, 3, 6};
+        int B[] = {2, 8, 12};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+
+    {
+        int A[] = {1, 3, 4, 6, 9};
+        int B[] = {2, 5, 7, 8, 10};
+        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
+    }
+}
+
+TEST(algorithm, bitwise_multiplication)
+{
+    using use_case_t = std::tuple<int, int, int>;
+    for (auto [a, b, exp_v] : {
+             use_case_t(1, 2, 2),
+             use_case_t(0, 2, 0),
+             use_case_t(10, 2, 20),
+             use_case_t(10, 118, 1180),
+             use_case_t(-10, 118, -1180),
+         }) {
+        EXPECT_EQ(exp_v, bitwise_multiplication(a, b));
+    }
+}
+
+TEST(algorithm, bitwise_addition)
+{
+    using use_case_t = std::tuple<int, int, int>;
+    for (auto [a, b, exp_v] : {
+             use_case_t(1, 2, 3),
+             use_case_t(0, 2, 2),
+             use_case_t(10, 2, 12),
+             use_case_t(10, 118, 128),
+             use_case_t(-10, 118, 108),
+         }) {
+        EXPECT_EQ(exp_v, bitwise_addition(a, b));
+    }
+}
+
+TEST(algorithm, bitwise_subtraction)
+{
+    using use_case_t = std::tuple<int, int, int>;
+    for (auto [a, b, exp_v] : {
+             use_case_t(1, 2, -1),
+             use_case_t(0, 2, -2),
+             use_case_t(10, 2, 8),
+             use_case_t(10, 118, -108),
+             use_case_t(-10, 118, -128),
+         }) {
+        EXPECT_EQ(exp_v, bitwise_subtraction(a, b));
+    }
+}
+
+TEST(algorithm, sum_binary)
+{
+    using use_case_t = std::tuple<std::string, std::string, std::string>;
+    for (auto [a, b, exp_v] : {
+             use_case_t("1", "0", "1"),
+             use_case_t("0", "0", "0"),
+             use_case_t("1", "1", "10"),
+             use_case_t("0", "1", "1"),
+             use_case_t("101", "110", "1011"),
+             use_case_t("1101", "110", "10011"),
+             use_case_t("110", "100101011", "100110001"),
+         }) {
+        EXPECT_EQ(exp_v, sum_binary(a, b));
+    }
+}
+

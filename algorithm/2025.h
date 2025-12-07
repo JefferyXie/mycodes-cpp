@@ -2,6 +2,10 @@
 
 #include "../main/node.h"
 #include "../main/utility.h"
+#include <queue>
+#include <tuple>
+#include <utility>
+#include <vector>
 
 // Worst Trade Reporter
 // https://leetcode.com/discuss/interview-question/3812812/Optiver-or-OA-or-Worst-Trade-Reporter
@@ -27,8 +31,7 @@ int find_min_steps_to_1(int N)
     std::queue<record_t> q;
     q.push({N, 0});
     while (!q.empty()) {
-        const auto curr_N     = q.front().first;
-        const auto curr_steps = q.front().second;
+        const auto [curr_N, curr_steps] = q.front();
         q.pop();
         if (curr_N == 1) {
             return curr_steps;
@@ -52,25 +55,23 @@ int find_min_steps_to_1(int N)
     }
     return -1;
 }
-
 void run_find_min_steps_to_1()
 {
-    for (auto N : {
-             5,      // 3, 5 > 4 > 2 > 1
-             6,      // 3, 6 > 3 > 2 > 1
-             19,     // 5, 19 > 18 > 6 > 3 > 2 > 1
-             17,     // 4, 17 > 16 > 4 > 2 > 1
-             50,     // 5, 50 > 10 > 5 > 4 > 2 > 1
-             100,    // 5, 100 > 10 > 9 > 3 > 2 > 1
+    using use_case_t = std::pair<int, int>;
+    for (auto [N, exp_v] : {
+             use_case_t(5, 3),      // 5 > 4 > 2 > 1
+             use_case_t(6, 3),      // 6 > 3 > 2 > 1
+             use_case_t(19, 5),     // 19 > 18 > 6 > 3 > 2 > 1
+             use_case_t(17, 4),     // 17 > 16 > 4 > 2 > 1
+             use_case_t(50, 5),     // 50 > 10 > 5 > 4 > 2 > 1
+             use_case_t(100, 5),    // 100 > 10 > 9 > 3 > 2 > 1
          }) {
-        std::cout << "N=" << N << ", steps=" << find_min_steps_to_1(N) << std::endl;
+        const auto v = find_min_steps_to_1(N);
+        std::cout << "N=" << N << ", steps=" << v << ", find_min_steps_to_1=" << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
-// TODO: this works but not optimal since same position on the route maybe calculated multi times. Either -
-// 1) still use this recursive, but provide cache[visited_position] to avoid duplicate calc; or,
-// 2) BFS, same as knight_move(..) does.
-//
 // Given position (a, b), find the min number of steps it will take to reach (x, y) where a, b, x, y are all positive.
 // At any position (a, b), next step can be either (a + b, b) or (a, b + a).
 int find_min_steps_to_x_y(int x, int y, int a, int b)
@@ -90,31 +91,53 @@ int find_min_steps_to_x_y(int x, int y, int a, int b)
         return move_a + 1;
     return std::min(move_a, move_b) + 1;
 }
+int find_min_steps_to_x_y_2(int x, int y, int a, int b)
+{
+    // in case there is deadloop, and avoid duplicate steps
+    std::unordered_set<std::pair<int, int>, decltype([](auto& p) {
+                           return p.first ^ (p.second << 1);
+                       })>
+        visited;
 
+    // <a, b, steps_so_far>
+    std::queue<std::tuple<int, int, int>> q;
+    q.push({a, b, 0});
+    while (!q.empty()) {
+        const auto [p1, p2, steps] = q.front();
+        q.pop();
+
+        if (p1 == x && p2 == y) {
+            return steps;
+        }
+
+        if (p1 > x && p2 > y) {
+            break;
+        }
+
+        if (visited.emplace(p1 + p2, p2).second) {
+            q.push({p1 + p2, p2, steps + 1});
+        }
+        if (visited.emplace(p1, p1 + p2).second) {
+            q.push({p1, p1 + p2, steps + 1});
+        }
+    }
+    return -1;
+}
 void run_find_min_steps_to_x_y()
 {
-    {
-        // 2
-        std::array<int, 2> target = {3, 2};
-        std::array<int, 2> start  = {1, 1};
-        std::cout << "target={" << target[0] << ", " << target[1] << "}, start={" << start[0] << ", " << start[1]
-                  << "}, steps=" << find_min_steps_to_x_y(target[0], target[1], start[0], start[1]) << std::endl;
-    }
+    using use_case_t = std::tuple<std::array<int, 2>, std::array<int, 2>, int>;
+    for (auto [target, start, exp_v] : {
+             use_case_t({3, 2}, {1, 1}, 2),
+             use_case_t({4, 4}, {1, 1}, -1),
+             use_case_t({10, 12}, {4, 4}, -1),
+         }) {
+        const auto v1 = find_min_steps_to_x_y(target[0], target[1], start[0], start[1]);
+        std::cout << "target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", " << start[1]
+                  << "), find_min_steps_to_x_y=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
 
-    {
-        // -1
-        std::array<int, 2> target = {4, 4};
-        std::array<int, 2> start  = {1, 1};
-        std::cout << "target={" << target[0] << ", " << target[1] << "}, start={" << start[0] << ", " << start[1]
-                  << "}, steps=" << find_min_steps_to_x_y(target[0], target[1], start[0], start[1]) << std::endl;
-    }
-
-    {
-        // -1
-        std::array<int, 2> target = {10, 12};
-        std::array<int, 2> start  = {4, 4};
-        std::cout << "target={" << target[0] << ", " << target[1] << "}, start={" << start[0] << ", " << start[1]
-                  << "}, steps=" << find_min_steps_to_x_y(target[0], target[1], start[0], start[1]) << std::endl;
+        const auto v2 = find_min_steps_to_x_y_2(target[0], target[1], start[0], start[1]);
+        std::cout << "target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", " << start[1]
+                  << "), find_min_steps_to_x_y_2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -144,17 +167,18 @@ int find_min_steps_to_N_multi(int start, int target)
     }
     return steps + start - target;
 }
-
 void run_find_min_steps_to_N_multi()
 {
-    for (auto [start, target] : {
-             std::pair{1, 5},     // 5
-             std::pair{4, 6},     // 2
-             std::pair{1, 10},    // 6
-             std::pair{10, 1},    // 9
+    using use_case_t = std::tuple<int, int, int>;
+    for (auto [start, target, exp_v] : {
+             use_case_t(1, 5, 5),
+             use_case_t(4, 6, 2),
+             use_case_t(1, 10, 6),
+             use_case_t(10, 1, 9),
          }) {
-        std::cout << "start=" << start << ", target=" << target
-                  << ", steps=" << find_min_steps_to_N_multi(start, target) << std::endl;
+        const auto v = find_min_steps_to_N_multi(start, target);
+        std::cout << "start=" << start << ", target=" << target << ", find_min_steps_to_N_multi=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -183,8 +207,9 @@ int find_min_steps_to_1_dp(int N)
 }
 int find_min_steps_to_1_recursive(int N)
 {
-    if (N == 1)
+    if (N == 1) {
         return 0;
+    }
 
     auto steps_1 = find_min_steps_to_1_recursive(N - 1);
     auto steps_2 = steps_1;
@@ -201,10 +226,12 @@ int find_min_steps_to_1_recursive_2(int N)
 {
     std::vector<int>        dp(N + 1, -1);
     std::function<int(int)> run = [&](int n) {
-        if (n == 1)
+        if (n == 1) {
             return 0;
-        if (dp[n] >= 0)
+        }
+        if (dp[n] >= 0) {
             return dp[n];
+        }
 
         auto steps_1 = run(n - 1);
         auto steps_2 = steps_1;
@@ -220,22 +247,30 @@ int find_min_steps_to_1_recursive_2(int N)
     };
     return run(N);
 }
-
 void run_find_min_steps_to_1_dp()
 {
-    for (auto N : {
-             4,      // 2, 4 > 2 > 1
-             7,      // 3, 7 > 6 > 2 > 1
-             5,      // 3, 5 > 4 > 2 > 1
-             6,      // 2, 6 > 2 > 1
-             19,     // 4, 19 > 18 > 6 > 2 > 1
-             17,     // 5, 17 > 16 > 8 > 4 > 2 > 1
-             50,     // 6, 50 > 25 > 24 > 8 > 4 > 2 > 1
-             100,    // 7, 100 > 50 > 25 > 24 > 8 > 4 > 2 > 1
+    using use_case_t = std::pair<int, int>;
+    for (auto [N, exp_v] : {
+             use_case_t(4, 2),      // 4 > 2 > 1
+             use_case_t(6, 2),      // 6 > 2 > 1
+             use_case_t(7, 3),      // 7 > 6 > 2 > 1
+             use_case_t(5, 3),      // 5 > 4 > 2 > 1
+             use_case_t(19, 4),     // 19 > 18 > 6 > 2 > 1
+             use_case_t(17, 5),     // 17 > 16 > 8 > 4 > 2 > 1
+             use_case_t(50, 6),     // 50 > 25 > 24 > 8 > 4 > 2 > 1
+             use_case_t(100, 7),    // 100 > 50 > 25 > 24 > 8 > 4 > 2 > 1
          }) {
-        std::cout << "N=" << N << ", steps=" << find_min_steps_to_1_dp(N) << " (DP), ";
-        std::cout << find_min_steps_to_1_recursive(N) << " (recursive), ";
-        std::cout << find_min_steps_to_1_recursive_2(N) << " (recursive with DP)" << std::endl;
+        const auto v1 = find_min_steps_to_1_dp(N);
+        std::cout << "N=" << N << ", find_min_steps_to_1_dp=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << std::endl;
+
+        const auto v2 = find_min_steps_to_1_recursive(N);
+        std::cout << "N=" << N << ", find_min_steps_to_1_recursive=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+
+        const auto v3 = find_min_steps_to_1_recursive_2(N);
+        std::cout << "N=" << N << ", find_min_steps_to_1_recursive_2=" << v3 << ", "
+                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -279,28 +314,31 @@ int find_min_steps_to_1_bitwise(int N)
     //}
     return steps;
 }
-
 void run_find_min_steps_to_1_bitwise()
 {
-    for (auto N : {
-             15,    // 5, 15 > 16 > 8 > 4 > 2 > 1
-             4,     // 2, 4 > 2 > 1
-             7,     // 4, 7 > 6 > 3 > 2 > 1
-             5,     // 3, 5 > 4 > 2 > 1
-             6,     // 3, 6 > 3 > 2 > 1
-             19,    // 6, 19 > 18 > 9 > 8 > 4 > 2 > 1
-             17,    // 5, 17 > 16 > 8 > 4 > 2 > 1
-             62,    // 7, 62 > 31 > 32 > 16 > 8 > 4 > 2 > 1
+    using use_case_t = std::pair<int, int>;
+    for (auto [N, exp_v] : {
+             use_case_t(4, 2),     // 4 > 2 > 1
+             use_case_t(5, 3),     // 5 > 4 > 2 > 1
+             use_case_t(6, 3),     // 6 > 3 > 2 > 1
+             use_case_t(7, 4),     // 7 > 6 > 3 > 2 > 1
+             use_case_t(15, 5),    // 15 > 16 > 8 > 4 > 2 > 1
+             use_case_t(17, 5),    // 17 > 16 > 8 > 4 > 2 > 1
+             use_case_t(19, 6),    // 19 > 18 > 9 > 8 > 4 > 2 > 1
+             use_case_t(62, 7),    // 62 > 31 > 32 > 16 > 8 > 4 > 2 > 1
          }) {
-        std::cout << "N=" << N << ", steps=" << find_min_steps_to_1_bitwise(N) << std::endl;
+        const auto v = find_min_steps_to_1_bitwise(N);
+        std::cout << "N=" << N << ", find_min_steps_to_1_bitwise=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
 // find all paths from root to each individual leaf nodes
 void tree_all_paths(tree_node_int_t* root)
 {
-    if (!root)
+    if (!root) {
         return;
+    }
 
     std::vector<tree_node_int_t*> path;
     path.push_back(root);
@@ -317,8 +355,7 @@ void tree_all_paths(tree_node_int_t* root)
         std::cout << " ]" << std::endl;
     };
 
-    using impl_t    = std::function<void(tree_node_int_t*)>;
-    impl_t traverse = [&](tree_node_int_t* node) {
+    std::function<void(tree_node_int_t*)> traverse = [&](tree_node_int_t* node) {
         if (!node->left && !node->right) {
             // dump path
             print();
@@ -357,8 +394,7 @@ void tree_all_paths_v2(tree_node_int_t* root)
         std::cout << " ]" << std::endl;
     };
 
-    using impl_t    = std::function<void(tree_node_int_t*)>;
-    impl_t traverse = [&](tree_node_int_t* node) {
+    std::function<void(tree_node_int_t*)> traverse = [&](tree_node_int_t* node) {
         if (!node) {
             return;
         }
@@ -379,39 +415,39 @@ void tree_all_paths_v2(tree_node_int_t* root)
 
 void run_tree_all_paths()
 {
-    std::shared_ptr<tree_node_int_t> root(new tree_node_int_t(100));
-    std::shared_ptr<tree_node_int_t> n1(new tree_node_int_t(1));
-    std::shared_ptr<tree_node_int_t> n2(new tree_node_int_t(2));
-    std::shared_ptr<tree_node_int_t> n3(new tree_node_int_t(3));
-    std::shared_ptr<tree_node_int_t> n4(new tree_node_int_t(4));
-    std::shared_ptr<tree_node_int_t> n5(new tree_node_int_t(5));
-    std::shared_ptr<tree_node_int_t> n6(new tree_node_int_t(6));
-    std::shared_ptr<tree_node_int_t> n7(new tree_node_int_t(7));
-    std::shared_ptr<tree_node_int_t> n8(new tree_node_int_t(8));
-    std::shared_ptr<tree_node_int_t> n9(new tree_node_int_t(9));
-    std::shared_ptr<tree_node_int_t> n0(new tree_node_int_t(0));
+    tree_node_int_t root(100);
+    tree_node_int_t n1(1);
+    tree_node_int_t n2(2);
+    tree_node_int_t n3(3);
+    tree_node_int_t n4(4);
+    tree_node_int_t n5(5);
+    tree_node_int_t n6(6);
+    tree_node_int_t n7(7);
+    tree_node_int_t n8(8);
+    tree_node_int_t n9(9);
+    tree_node_int_t n0(0);
 
-    root->left  = n1.get();
-    root->right = n2.get();
-    n1->left    = n3.get();
-    n1->right   = n4.get();
-    n2->left    = n5.get();
-    n2->right   = n6.get();
-    n3->left    = n7.get();
-    n3->right   = n8.get();
-    n4->left    = n9.get();
-    n4->right   = n0.get();
-
-    std::cout << "---------------------------" << std::endl;
-    tree_all_paths(root.get());
+    root.left  = &n1;
+    root.right = &n2;
+    n1.left    = &n3;
+    n1.right   = &n4;
+    n2.left    = &n5;
+    n2.right   = &n6;
+    n3.left    = &n7;
+    n3.right   = &n8;
+    n4.left    = &n9;
+    n4.right   = &n0;
 
     std::cout << "---------------------------" << std::endl;
-    tree_all_paths_v2(root.get());
+    tree_all_paths(&root);
+
+    std::cout << "---------------------------" << std::endl;
+    tree_all_paths_v2(&root);
 }
 
 // leetcode 114: given a binary tree, change it to list
 // - left child is null, right child is 'next'
-// - follow pre-order traversal
+// - follow pre-order traversal, left-root-right
 tree_node_int_t* tree_to_list(tree_node_int_t* root)
 {
     std::cout << root->data << ",";
@@ -428,7 +464,7 @@ tree_node_int_t* tree_to_list(tree_node_int_t* root)
         tail->right = r;
         tail        = tree_to_list(r);
     }
-    return tail;    // TODO: tail or root???
+    return tail;
 }
 
 // this is kind of BFS, each cycle put the right child to right-bottom from left branch, and put left child on right
@@ -477,27 +513,12 @@ void run_tree_to_list()
         return root;
     };
 
-    auto verify_list = [](auto root) {
-        std::cout << std::endl;
-        while (root) {
-            assert(root->left == nullptr);
-            std::cout << root->data << ",";
-            root = root->right;
-        }
-        std::cout << std::endl;
-    };
-
-    {
-        // 100,1,3,7,8,4,9,0,2,5,6
-        auto root = create_tree();
-        tree_to_list(root);
-        verify_list(root);
-    }
-
-    {
-        auto root = create_tree();
-        tree_to_list_2(root);
-        verify_list(root);
+    using use_case_t = std::tuple<tree_node_int_t*, tree_node_int_t*, std::string>;
+    for (auto [root1, root2, exp_v] : {
+             use_case_t(create_tree(), create_tree(), "[100->1->3->7->8->4->9->0->2->5->6]"),
+         }) {
+        tree_to_list(root1);
+        tree_to_list_2(root2);
     }
 }
 
@@ -514,8 +535,9 @@ void run_tree_to_list()
 std::string find_next_greater_with_same_set_digits(std::string str)
 {
     const auto length = str.size();
-    if (length < 2)
+    if (length < 2) {
         return "Not Possible";
+    }
 
     auto idx = length;
     while (--idx) {
@@ -540,28 +562,30 @@ std::string find_next_greater_with_same_set_digits(std::string str)
         }
         return str;
     }
-
     return "Not Possible";
 }
 void run_find_next_greater_with_same_set_digits()
 {
-    for (auto input : {
-             "2",         // Not Possible
-             "21",        // Not Possible
-             "4321",      // Not Possible
-             "23",        // 32
-             "1234",      // 1243
-             "218765",    // 251678
-             "21321",     // 22113
-             "21310",     // 23011
-             "534976",    // 536479
+    using use_case_t = std::pair<std::string, std::string>;
+    for (auto [input, exp_v] : {
+             use_case_t("2", "Not Possible"),
+             use_case_t("21", "Not Possible"),
+             use_case_t("4321", "Not Possible"),
+             use_case_t("23", "32"),
+             use_case_t("1234", "1243"),
+             use_case_t("218765", "251678"),
+             use_case_t("21321", "22113"),
+             use_case_t("21310", "23011"),
+             use_case_t("534976", "536479"),
          }) {
-        std::cout << "Input: " << input << ", Output: " << find_next_greater_with_same_set_digits(input) << std::endl;
+        const auto v = find_next_greater_with_same_set_digits(input);
+        std::cout << "Input=" << input << ", find_next_greater_with_same_set_digits=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
 template <int EXP>
-double my_pow(int x)
+constexpr double my_pow(int x)
 {
     if constexpr (EXP < 0) {
         return 1 / my_pow<-EXP>(x);
@@ -577,7 +601,7 @@ double my_pow(int x)
     }
 }
 
-double my_pow_bitwise(int x, int y)
+constexpr double my_pow_bitwise(int x, int y)
 {
     if (y < 0) {
         return 1 / my_pow_bitwise(x, -y);
@@ -596,39 +620,33 @@ double my_pow_bitwise(int x, int y)
 
 void run_my_pow()
 {
-    const int base = 2;
-    for (auto y : {0, 1, 2, 3, 4, 5, 6, -1, -2, -3}) {
-        std::cout << "pow(" << base << ", " << y << ")=" << my_pow_bitwise(base, y) << " (";
-        if (y == 0) {
-            std::cout << my_pow<0>(base);
-        } else if (y == 1) {
-            std::cout << my_pow<1>(base);
-        } else if (y == 2) {
-            std::cout << my_pow<2>(base);
-        } else if (y == 3) {
-            std::cout << my_pow<3>(base);
-        } else if (y == 4) {
-            std::cout << my_pow<4>(base);
-        } else if (y == 5) {
-            std::cout << my_pow<5>(base);
-        } else if (y == 6) {
-            std::cout << my_pow<6>(base);
-        } else if (y == -1) {
-            std::cout << my_pow<-1>(base);
-        } else if (y == -2) {
-            std::cout << my_pow<-2>(base);
-        } else if (y == -3) {
-            std::cout << my_pow<-3>(base);
-        }
-        std::cout << ")" << std::endl;
-    }
+    constexpr int BASE = 2;
+    static_assert(my_pow<0>(BASE) == 1);
+    static_assert(my_pow<1>(BASE) == 2);
+    static_assert(my_pow<2>(BASE) == 4);
+    static_assert(my_pow<3>(BASE) == 8);
+    static_assert(my_pow<4>(BASE) == 16);
+    static_assert(my_pow<5>(BASE) == 32);
+    static_assert(my_pow<-1>(BASE) == 0.5);
+    static_assert(my_pow<-2>(BASE) == 0.25);
+    static_assert(my_pow<-3>(BASE) == 0.125);
+
+    static_assert(my_pow_bitwise(BASE, 0) == 1);
+    static_assert(my_pow_bitwise(BASE, 1) == 2);
+    static_assert(my_pow_bitwise(BASE, 2) == 4);
+    static_assert(my_pow_bitwise(BASE, 3) == 8);
+    static_assert(my_pow_bitwise(BASE, 4) == 16);
+    static_assert(my_pow_bitwise(BASE, 5) == 32);
+    static_assert(my_pow_bitwise(BASE, -1) == 0.5);
+    static_assert(my_pow_bitwise(BASE, -2) == 0.25);
+    static_assert(my_pow_bitwise(BASE, -3) == 0.125);
 }
 
 // Minimum time taken by each job to be completed given by a directed graph
 // https://www.geeksforgeeks.org/minimum-time-taken-by-each-job-to-be-completed-given-by-a-directed-acyclic-graph/
 //
-// Assume vertices tagged by [0, N)
-std::vector<int> job_complte_time(int N, const std::vector<std::array<int, 2>>& edges)
+// Assume jobs tagged by [0, N)
+std::vector<int> job_compelte_time(int N, const std::vector<std::array<int, 2>>& edges)
 {
     std::vector<int> result(N, 0);
 
@@ -668,54 +686,52 @@ std::vector<int> job_complte_time(int N, const std::vector<std::array<int, 2>>& 
             }
         }
     }
-
     return result;
 }
-void run_job_complte_time()
+void run_job_compelte_time()
 {
-    using Array  = std::array<int, 2>;
-    using Vector = std::vector<Array>;
-    using Pair   = std::pair<int, Vector>;
-
-    for (const auto& [vertices, edges] : {
-             Pair{
+    using use_case_t = std::tuple<int, std::vector<std::array<int, 2>>, std::string>;
+    for (const auto& [jobs, edges, exp_v] : {
+             use_case_t(
                  10,
-                 Vector{
-                     Array{0, 2},
-                     Array{0, 3},
-                     Array{0, 4},
-                     Array{1, 2},
-                     Array{1, 7},
-                     Array{1, 8},
-                     Array{2, 5},
-                     Array{3, 5},
-                     Array{3, 7},
-                     Array{4, 7},
-                     Array{5, 6},
-                     Array{6, 7},
-                     Array{7, 9},
-                 }},    // 1 1 2 2 2 3 4 5 2 6
-             Pair{
+                 {
+                     {0, 2},
+                     {0, 3},
+                     {0, 4},
+                     {1, 2},
+                     {1, 7},
+                     {1, 8},
+                     {2, 5},
+                     {3, 5},
+                     {3, 7},
+                     {4, 7},
+                     {5, 6},
+                     {6, 7},
+                     {7, 9},
+                 },
+                 "[1,1,2,2,2,3,4,5,2,6]"),
+             use_case_t(
                  7,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{1, 3},
-                     Array{1, 4},
-                     Array{2, 5},
-                     Array{3, 5},
-                     Array{4, 6},
-                 }},    // 1 2 3 3 3 4 4
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {1, 3},
+                     {1, 4},
+                     {2, 5},
+                     {3, 5},
+                     {4, 6},
+                 },
+                 "[1,2,3,3,3,4,4]"),
          }) {
-        std::cout << "vertices=" << vertices << ", result=";
-        print_array(job_complte_time(vertices, edges));
-        std::cout << std::endl;
+        const auto v = dump_array(job_compelte_time(jobs, edges));
+        std::cout << "jobs=" << jobs << ", job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
 // Enhanced version: each jobs finish at different time cost
 std::vector<int>
-enhanced_job_complte_time(int N, const std::vector<int>& jobs_time_cost, const std::vector<std::array<int, 2>>& edges)
+enhanced_job_compelte_time(int N, const std::vector<int>& jobs_time_cost, const std::vector<std::array<int, 2>>& edges)
 {
     if (N != static_cast<int>(jobs_time_cost.size()))
         return {};
@@ -753,9 +769,7 @@ enhanced_job_complte_time(int N, const std::vector<int>& jobs_time_cost, const s
     std::multimap<int, int> jobs_ordered_by_cost;
     while (!q.empty()) {
 
-        std::cout << "top job=" << q.front() << ", size=" << q.size() << ", result=";
-        print_array(result);
-        std::cout << std::endl;
+        std::cout << "top job=" << q.front() << ", size=" << q.size() << ", result=" << dump_array(result) << std::endl;
 
         const auto job = q.front();
         q.pop();
@@ -781,13 +795,13 @@ enhanced_job_complte_time(int N, const std::vector<int>& jobs_time_cost, const s
 
     return result;
 }
-void run_enhanced_job_complte_time()
+void run_enhanced_job_compelte_time()
 {
     // [N, jobs_time_cost, jobs_deps]
-    using Tuple = std::tuple<int, std::vector<int>, std::vector<std::array<int, 2>>>;
+    using use_case_t = std::tuple<int, std::vector<int>, std::vector<std::array<int, 2>>, std::string>;
 
-    for (const auto& [N, jobs_time_cost, jobs_deps] : {
-             Tuple{
+    for (const auto& [N, jobs_time_cost, jobs_deps, exp_v] : {
+             use_case_t{
                  10,
                  {1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
                  {
@@ -804,8 +818,9 @@ void run_enhanced_job_complte_time()
                      {5, 6},
                      {6, 7},
                      {7, 9},
-                 }},    // 1 1 2 2 2 3 4 5 2 6
-             Tuple{
+                 },
+                 "[1,1,2,2,2,3,4,5,2,6]"},
+             use_case_t{
                  7,
                  {1, 1, 1, 1, 1, 1, 1},
                  {
@@ -816,8 +831,9 @@ void run_enhanced_job_complte_time()
                      {2, 5},
                      {3, 5},
                      {4, 6},
-                 }},    // 1 2 3 3 3 4 4
-             Tuple{
+                 },
+                 "[1,2,3,3,3,4,4]"},
+             use_case_t{
                  7,
                  {2, 1, 3, 2, 2, 5, 1},
                  {
@@ -828,8 +844,9 @@ void run_enhanced_job_complte_time()
                      {2, 5},
                      {3, 5},
                      {4, 6},
-                 }},    // 2 3 6 5 5 11 6
-             Tuple{
+                 },
+                 "[2,3,6,5,5,11,6]"},
+             use_case_t{
                  5,
                  {1, 1, 3, 3, 2},
                  {
@@ -838,11 +855,12 @@ void run_enhanced_job_complte_time()
                      {1, 3},
                      {3, 4},
                      {2, 4},
-                 }},    // 1 2 4 5 7
+                 },
+                 "[1,2,4,5,7]"},
          }) {
-        std::cout << "N=" << N << ", result=";
-        print_array(enhanced_job_complte_time(N, jobs_time_cost, jobs_deps));
-        std::cout << std::endl;
+        const auto v = dump_array(enhanced_job_compelte_time(N, jobs_time_cost, jobs_deps));
+        std::cout << "N=" << N << ", enhanced_job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -890,15 +908,15 @@ int max_rectangle(const std::vector<int>& heights)
 }
 void run_max_rectangle()
 {
-    using Vector = std::vector<int>;
-    for (auto& heights : {
-             Vector{60, 20, 50, 40, 10, 50, 60},    // 100
-             Vector{3, 5, 1, 7, 5, 9},              // 15
-             Vector{2, 3, 3, 2},                    // 8
+    using use_case_t = std::pair<std::vector<int>, int>;
+    for (auto& [heights, exp_v] : {
+             use_case_t({60, 20, 50, 40, 10, 50, 60}, 100),
+             use_case_t({3, 5, 1, 7, 5, 9}, 15),
+             use_case_t({2, 3, 3, 2}, 8),
          }) {
-        std::cout << "Heights: ";
-        print_array(heights);
-        std::cout << ", Max-rect-area=" << max_rectangle(heights) << std::endl;
+        const auto v = max_rectangle(heights);
+        std::cout << "Heights: " << dump_array(heights) << ", max_rectangle=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -930,22 +948,28 @@ int max_rectangle_sub_matrix(const std::vector<std::vector<int>>& matrix)
 }
 void run_max_rectangle_sub_matrix()
 {
-    using Matrix = std::vector<std::vector<int>>;
-    for (auto& matrix : {
-             Matrix{
-                 {0, 1, 1, 0},
-                 {1, 1, 1, 1},
-                 {1, 1, 1, 1},
-                 {1, 1, 0, 0},
-             },
+    using use_case_t = std::pair<std::vector<std::vector<int>>, int>;
+    for (auto& [matrix, exp_v] : {
+             use_case_t(
+                 {
+                     {0, 1, 1, 0},
+                     {1, 1, 1, 1},
+                     {1, 1, 1, 1},
+                     {1, 1, 0, 0},
+                 },
+                 8),
 
-             Matrix{
-                 {0, 1, 1},
-                 {1, 1, 1},
-                 {0, 1, 1},
-             },
+             use_case_t(
+                 {
+                     {0, 1, 1},
+                     {1, 1, 1},
+                     {0, 1, 1},
+                 },
+                 6),
          }) {
-        std::cout << "Max-rect-sub-matrix=" << max_rectangle_sub_matrix(matrix) << std::endl;
+        const auto v = max_rectangle_sub_matrix(matrix);
+        std::cout << "matrix=" << dump_matrix(matrix) << ", max_rectangle_sub_matrix=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1111,92 +1135,87 @@ bool graph_directed_cycle(int N, const std::vector<std::array<int, 2>>& edges)
 }
 void run_graph_directed_cycle()
 {
-    using Array  = std::array<int, 2>;
-    using Vector = std::vector<Array>;
-    using Pair   = std::pair<int, Vector>;
-
-    for (const auto& [vertices, edges] : {
-             Pair{
+    using use_case_t = std::tuple<int, std::vector<std::array<int, 2>>, bool>;
+    for (const auto& [vertices, edges, exp_v] : {
+             use_case_t{
                  2,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 0},
+                 {
+                     {0, 1},
+                     {1, 0},
                  },
-             },    // Yes
-
-             Pair{
+                 true},
+             use_case_t{
                  3,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{2, 0},
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {2, 0},
                  },
-             },    // Yes
-
-             Pair{
+                 true},
+             use_case_t{
                  5,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{2, 3},
-                     Array{2, 4},
-                     Array{3, 1},
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {2, 3},
+                     {2, 4},
+                     {3, 1},
                  },
-             },    // Yes
-
-             Pair{
+                 true},
+             use_case_t{
                  4,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{2, 0},
-                     Array{0, 2},
-                     Array{2, 3},
-                     Array{3, 3},
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {2, 0},
+                     {0, 2},
+                     {2, 3},
+                     {3, 3},
                  },
-             },    // Yes
-
-             Pair{
+                 true},
+             use_case_t{
                  4,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{2, 3},
-                     Array{0, 2},
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {2, 3},
+                     {0, 2},
                  },
-             },    // No cycle
-
-             Pair{
+                 false},
+             use_case_t{
                  10,
-                 Vector{
-                     Array{0, 2},
-                     Array{0, 3},
-                     Array{0, 4},
-                     Array{1, 2},
-                     Array{1, 7},
-                     Array{1, 8},
-                     Array{2, 5},
-                     Array{3, 5},
-                     Array{3, 7},
-                     Array{4, 7},
-                     Array{5, 6},
-                     Array{6, 7},
-                     Array{7, 9},
-                 }},    // No cycle
-             Pair{
+                 {
+                     {0, 2},
+                     {0, 3},
+                     {0, 4},
+                     {1, 2},
+                     {1, 7},
+                     {1, 8},
+                     {2, 5},
+                     {3, 5},
+                     {3, 7},
+                     {4, 7},
+                     {5, 6},
+                     {6, 7},
+                     {7, 9},
+                 },
+                 false},
+             use_case_t{
                  7,
-                 Vector{
-                     Array{0, 1},
-                     Array{1, 2},
-                     Array{1, 3},
-                     Array{1, 4},
-                     Array{2, 5},
-                     Array{3, 5},
-                     Array{4, 6},
-                 }},    // No cycle
+                 {
+                     {0, 1},
+                     {1, 2},
+                     {1, 3},
+                     {1, 4},
+                     {2, 5},
+                     {3, 5},
+                     {4, 6},
+                 },
+                 false},
          }) {
-        std::cout << "vertices=" << vertices << ", has-cycle=" << std::boolalpha
-                  << graph_directed_cycle(vertices, edges) << std::endl;
+        const auto v = graph_directed_cycle(vertices, edges);
+        std::cout << "vertices=" << vertices << ", graph_directed_cycle=" << std::boolalpha << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1226,11 +1245,8 @@ std::vector<int> find_pascal_triangle_row_2(int rowIdx)
 void run_find_pascal_triangle_row()
 {
     for (auto rowIdx : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}) {
-        std::cout << "rowIdx=" << rowIdx << ", row=";
-        print_array(find_pascal_triangle_row(rowIdx));
-        std::cout << ", ";
-        print_array(find_pascal_triangle_row_2(rowIdx));
-        std::cout << std::endl;
+        std::cout << "rowIdx=" << rowIdx << ", row=" << dump_array(find_pascal_triangle_row(rowIdx)) << ", "
+                  << dump_array(find_pascal_triangle_row_2(rowIdx)) << std::endl;
     }
 }
 
@@ -1357,8 +1373,9 @@ int find_longest_increasing_path_2(const std::vector<std::vector<int>>& matrix)
 
 int max_sub_array(const std::vector<int>& arr)
 {
-    if (arr.empty())
+    if (arr.empty()) {
         return 0;
+    }
 
     int max_excl = 0;
     int max_incl = arr[0];
@@ -1370,13 +1387,15 @@ int max_sub_array(const std::vector<int>& arr)
 }
 void run_max_sub_array()
 {
-    for (const auto& arr : {
-             std::vector<int>{2, 3, -8, 7, -1, 2, 3},    // 11
-             std::vector<int>{-2, -4},                   // -2
-             std::vector<int>{5, 4, 1, 7, 8},            // 25
+    using use_case_t = std::tuple<std::vector<int>, int>;
+    for (const auto& [arr, exp_v] : {
+             use_case_t{{2, 3, -8, 7, -1, 2, 3}, 11},
+             use_case_t{{-2, -4}, -2},
+             use_case_t{{5, 4, 1, 7, 8}, 25},
          }) {
-        print_array(arr);
-        std::cout << ": " << max_sub_array(arr) << std::endl;
+        const auto v = max_sub_array(arr);
+        std::cout << "array=" << dump_array(arr) << ", max_sub_array=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1385,6 +1404,8 @@ void run_max_sub_array()
 // Given an integer array arr[] containing digits from [0, 9], the task is to print all possible letter combinations
 // that the numbers could represent. A mapping of digits to letters (just like on the telephone buttons) is being
 // followed. Note that 0 and 1 do not map to any letters.
+//
+// Time O(4^n), space O(4^n)
 std::vector<std::string> possible_words(const std::vector<int>& arr)
 {
     std::vector<std::string> mapping = {
@@ -1421,10 +1442,7 @@ void run_possible_words()
              std::vector{5},
              std::vector{1, 2, 8, 9, 0},
          }) {
-        print_array(arr);
-        std::cout << ": ";
-        print_array(possible_words(arr));
-        std::cout << std::endl;
+        std::cout << "array=" << dump_array(arr) << ", possible_words=" << dump_array(possible_words(arr)) << std::endl;
     }
 }
 
@@ -1468,17 +1486,20 @@ std::string simplify_dir_path(const std::string& path)
 
 void run_simplify_dir_path()
 {
-    for (auto p : {
-             "/home/",                // /home
-             "/a/./b/../../c/",       // /c
-             "/a/..",                 // /
-             "/a/../",                // /
-             "/../../../../../a",     // /a
-             "/a/./b/./c/./d/",       // /a/b/c/d
-             "/a/../.././../../.",    // /
-             "/a//b//c//////d",       // /a/b/c/d
+    using use_case_t = std::tuple<std::string, std::string>;
+    for (auto [p, exp_v] : {
+             use_case_t("/home/", "/home"),
+             use_case_t("/a/./b/../../c/", "/c"),
+             use_case_t("/a/..", "/"),
+             use_case_t("/a/../", "/"),
+             use_case_t("/../../../../../a", "/a"),
+             use_case_t("/a/./b/./c/./d/", "/a/b/c/d"),
+             use_case_t("/a/../.././../../.", "/"),
+             use_case_t("/a//b//c//////d", "/a/b/c/d"),
          }) {
-        std::cout << p << ": " << simplify_dir_path(p) << std::endl;
+        const auto v = simplify_dir_path(p);
+        std::cout << "raw_path=" << p << ", simplify_dir_path=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -1533,16 +1554,13 @@ std::vector<int> merge_arrays_k(const std::vector<std::vector<int>>& arrs)
 }
 void run_merge_arrays()
 {
-    {
-        auto arr1 = {1, 2, 3, 3, 4};
-        auto arr2 = {-1, 2, 3, 5};
-        auto arr3 = {4, 5, 6, 7, 8, 9};
-        auto r1   = merge_arrays(arr1, arr2, arr3);
-        auto r2   = merge_arrays_k({std::vector<int>{arr1}, std::vector<int>{arr2}, std::vector<int>{arr3}});
-        print_array(r1);
-        std::cout << std::endl;
-        print_array(r2);
-    }
+    auto arr1 = std::vector<int>{1, 2, 3, 3, 4};
+    auto arr2 = std::vector<int>{-1, 2, 3, 5};
+    auto arr3 = std::vector<int>{4, 5, 6, 7, 8, 9};
+    auto r1   = merge_arrays(arr1, arr2, arr3);
+    auto r2   = merge_arrays_k({std::vector<int>{arr1}, std::vector<int>{arr2}, std::vector<int>{arr3}});
+    std::cout << "arr1=" << dump_array(arr1) << ", arr2=" << dump_array(arr2) << ", arr3=" << dump_array(arr3)
+              << ", merge_arrays=" << dump_array(r1) << ", merge_arrays_k=" << dump_array(r2) << std::endl;
 }
 
 // https://www.geeksforgeeks.org/dsa/convert-binary-tree-to-doubly-linked-list-by-keeping-track-of-visited-node/
@@ -1643,12 +1661,14 @@ bool graph_biparties_check(const std::vector<std::vector<int>>& adj_list)
 }
 void run_graph_biparties_check()
 {
-    using adj_list_t = std::vector<std::vector<int>>;
-    for (const auto& adj_list : {
-             adj_list_t{{1, 2}, {0, 2}, {0, 1}, {2}},    // false
-             adj_list_t{{1}, {0, 2}, {1, 3}, {2}},       // true
+    using use_case_t = std::tuple<std::vector<std::vector<int>>, bool>;
+    for (const auto& [adj_list, exp_v] : {
+             use_case_t({{1, 2}, {0, 2}, {0, 1}, {2}}, false),
+             use_case_t({{1}, {0, 2}, {1, 3}, {2}}, true),
          }) {
-        std::cout << std::boolalpha << graph_biparties_check(adj_list) << std::endl;
+        const auto v = graph_biparties_check(adj_list);
+        std::cout << "graph=" << dump_matrix(adj_list) << ", graph_biparties_check=" << std::boolalpha << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1705,18 +1725,16 @@ std::vector<int> contiguous_sub_array(const std::vector<int>& arr)
 }
 void run_contiguous_sub_array()
 {
-    using vector_t = std::vector<int>;
-    for (const auto& arr : {
-             vector_t{1, 2, 3, 4},          // {1, 2, 3, 4}
-             vector_t{1, 4, 2, 3},          // {1, 4, 1, 2}
-             vector_t{3, 4, 1, 6, 2},       // {1, 3, 1, 5, 1}
-             vector_t{2, 4, 7, 1, 5, 3},    // {1, 2, 6, 1, 3, 1};
+    using use_case_t = std::tuple<std::vector<int>, std::string>;
+    for (const auto& [arr, exp_v] : {
+             use_case_t({1, 2, 3, 4}, "[1,2,3,4]"),
+             use_case_t({1, 4, 2, 3}, "[1,4,1,2]"),
+             use_case_t({3, 4, 1, 6, 2}, "[1,3,1,5,1]"),
+             use_case_t({2, 4, 7, 1, 5, 3}, "[1,2,6,1,3,1]"),
          }) {
-        std::cout << "Input: ";
-        print_array(arr);
-        std::cout << ", contiguous_sub_array=";
-        print_array(contiguous_sub_array(arr));
-        std::cout << std::endl;
+        const auto v = dump_array(contiguous_sub_array(arr));
+        std::cout << "Input: " << dump_array(arr) << ", contiguous_sub_array=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1760,15 +1778,8 @@ void run_number_sum_k()
              use_case_t({1, 1, 1, 1, 1, 1}, 2, 15),
          }) {
         const auto ans = number_sum_k(arr, k);
-        std::cout << "Array=";
-        print_array(arr);
-        std::cout << ", k=" << k << ", number_sum_k=" << ans;
-        if (ans == exp_v) {
-            std::cout << " SUCCESS";
-        } else {
-            std::cout << " FAIL(expected result is " << exp_v;
-        }
-        std::cout << std::endl;
+        std::cout << "Array=" << dump_array(arr) << ", k=" << k << ", number_sum_k=" << ans << ", "
+                  << (ans == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 

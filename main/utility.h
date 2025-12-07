@@ -2,57 +2,122 @@
 #define UTILITY_H
 
 #include "header.h"
+#include "node.h"
 #include <fcntl.h>
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof(A[0]))
 
 template <class T>
-void print_array(const T* arr, int len, const T* ignore = nullptr)
+std::string dump_array(const T* arr, int len, const T* ignore = nullptr)
 {
+    std::ostringstream oss;
+    oss << "[";
     int i = 0;
-    std::cout << "[";
     while (i++ < len) {
         auto& v = *(arr + i - 1);
         if (ignore && *ignore == v)
             continue;
 
-        std::cout << v;
+        oss << v;
         if (i != len) {
-            std::cout << ",";
+            oss << ",";
         }
     }
-    std::cout << "]";
+    oss << "]";
+    return oss.str();
 }
 template <typename T, std::enable_if_t<std::is_array_v<T>>* = nullptr>
-void print_array(const T& arr)
+std::string dump_array(const T& arr)
 {
+    std::ostringstream oss;
+    oss << "[";
+
     int len = sizeof(arr) / sizeof(arr[0]);
     int i   = 0;
-    std::cout << "[";
     while (i++ < len) {
         auto& v = *(arr + i - 1);
-        std::cout << v;
+        oss << v;
         if (i != len) {
-            std::cout << ",";
+            oss << ",";
         }
     }
-    std::cout << "]";
+    oss << "]";
+    return oss.str();
 }
 template <class T>
-void print_array(const std::vector<T>& arr, const T& ignore = T{})
+std::string dump_array(const std::vector<T>& arr, const T& ignore = T{})
 {
-    std::cout << "[";
+    std::ostringstream oss;
+    oss << "[";
     for (size_t i = 0; i < arr.size(); ++i) {
         if (ignore == arr[i])
             continue;
 
-        std::cout << arr[i];
+        oss << arr[i];
         if (i != arr.size() - 1) {
-            std::cout << ",";
+            oss << ",";
         }
     }
-    std::cout << "]";
+    oss << "]";
+    return oss.str();
 }
+
+template <class T>
+std::string dump_matrix(const std::vector<std::vector<T>>& vs)
+{
+    std::ostringstream oss;
+    oss << "[";
+    for (size_t i = 0; i < vs.size(); ++i) {
+        oss << "[";
+        for (size_t j = 0; j < vs[i].size(); ++j) {
+            oss << vs[i][j];
+            if (j != vs[i].size() - 1) {
+                oss << ",";
+            }
+        }
+        oss << "]";
+        if (i != vs.size() - 1) {
+            oss << ",";
+        }
+    }
+    oss << "]";
+    return oss.str();
+}
+
+template <typename T>
+std::string dump_list(list_node_t<T>* node)
+{
+    std::ostringstream oss;
+    oss << "[";
+    while (node) {
+        oss << node->data;
+        node = node->next;
+        if (node) {
+            oss << "->";
+        }
+    }
+    oss << "]";
+    return oss.str();
+};
+
+// TODO: define some concept for container to satisfy xxx.size() and std::find_if
+bool equal_container_unordered(auto& a, auto& b)
+{
+    if (a.size() != b.size()) {
+        return false;
+    }
+    for (auto& v : a) {
+        if (auto iter = std::find_if(
+                b.begin(), b.end(),
+                [&v](auto& u) {
+                    return u == v;
+                });
+            iter == b.end()) {
+            return false;
+        }
+    }
+    return true;
+};
 
 std::vector<std::string> split(char delimiter, std::string_view str)
 {

@@ -1,16 +1,16 @@
-#ifndef ENDIANNESS_H
-#define ENDIANNESS_H
+#pragma once
 
 #include "../main/header.h"
 
-// Big endian and little endian are to handle multi-bytes words such as
-// int, short, etc. C-style string is array of char which is one byte so
-// endianness doesn't make sense for string.
+//
+// Big endian and little endian are to handle multi-bytes words such as int, short, etc. C-style string is array of char
+// which is one byte so endianness doesn't make sense for string.
 //
 // http://stackoverflow.com/questions/2247736/little-endian-vs-big-endian
+// http://stackoverflow.com/questions/21478765/endian-representation-of-64-bit-values
 // https://en.wikipedia.org/wiki/Endianness
 // https://www.cs.umd.edu/class/sum2003/cmsc311/Notes/Data/endian.html
-// http://stackoverflow.com/questions/21478765/endian-representation-of-64-bit-values
+//
 void run_endianness()
 {
     std::cout << "run_endianness--------------" << std::endl;
@@ -33,7 +33,8 @@ void run_endianness()
 };
 
 // http://www.geeksforgeeks.org/little-and-big-endian-mystery/
-/* function to show bytes in memory, from location start to start+n*/
+//
+// function to show bytes in memory, from location start to start+n
 void show_mem_rep(char* start, int n)
 {
     for (int i = 0; i < n; i++)
@@ -57,27 +58,29 @@ void Run_show_mem_rep()
     show_mem_rep((char*)&i, sizeof(i));
 }
 
+//
 // http://stackoverflow.com/questions/2182002/convert-big-endian-to-little-endian-in-c-without-using-provided-func
-//! Byte swap unsigned short
+//
+// Byte swap unsigned short
 uint16_t swap_uint16(uint16_t val)
 {
     return (val << 8) | (val >> 8);
 }
 
-//! Byte swap short
+// Byte swap short
 int16_t swap_int16(int16_t val)
 {
     return (val << 8) | ((val >> 8) & 0xFF);
 }
 
-//! Byte swap unsigned int
+// Byte swap unsigned int
 uint32_t swap_uint32(uint32_t val)
 {
     val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
     return (val << 16) | (val >> 16);
 }
 
-//! Byte swap int
+// Byte swap int
 int32_t swap_int32(int32_t val)
 {
     val = ((val << 8) & 0xFF00FF00) | ((val >> 8) & 0xFF00FF);
@@ -96,13 +99,14 @@ uint64_t swap_uint64(uint64_t val)
     val = ((val << 16) & 0xFFFF0000FFFF0000ULL) | ((val >> 16) & 0x0000FFFF0000FFFFULL);
     return (val << 32) | (val >> 32);
 }
-/**
- *   In-place swapping of bytes to match endianness of hardware
- *
- *     @param[in/out] *object : memory to swap in-place
- *     @param[in]     _size   : length in bytes
- **/
-void swapbytes(void* _object, size_t _size)
+
+//
+// In-place swapping of bytes to match endianness of hardware
+//
+// @param[in/out] *object : memory to swap in-place
+// @param[in]     _size   : length in bytes
+//
+void swap_bytes(void* _object, size_t _size)
 {
     unsigned char *start, *end;
 
@@ -113,6 +117,4 @@ void swapbytes(void* _object, size_t _size)
     }
 }
 
-#define SWAPBYTES(x) swapbytes(&x, sizeof(x));
-
-#endif
+#define SWAP_BYTES(x) swap_bytes(&x, sizeof(x));

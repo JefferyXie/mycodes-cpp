@@ -1,31 +1,33 @@
-#ifndef ALGO_2023_H
-#define ALGO_2023_H
+#pragma once
 
 #include "../main/header.h"
 #include "../main/utility.h"
 #include "../main/node.h"
+#include <functional>
 #include <utility>
 
 ///////////////////////////////////////////////////////////////////////////////
 //
 // given two binary arrays, calculate the sum in binary format
 //
-void sum_binary(const char* arr1, uint32_t len1, const char* arr2, uint32_t len2)
+std::string sum_binary(const std::string& arr1, const std::string& arr2)
 {
-    uint32_t len    = (len1 > len2 ? len1 : len2) + 1;
-    char*    result = new char[len];
-    bool     carry  = false;
+    const auto  len1 = arr1.size();
+    const auto  len2 = arr2.size();
+    uint32_t    len  = (len1 > len2 ? len1 : len2) + 1;
+    std::string result(len, '\0');
+    bool        carry = false;
     for (uint32_t n = 0; n < len; ++n) {
         char ch1 = '0';
         char ch2 = '0';
         if (n < len1) {
-            ch1 = *(arr1 + len1 - n - 1);
+            ch1 = arr1[len1 - n - 1];
         }
         if (n < len2) {
-            ch2 = *(arr2 + len2 - n - 1);
+            ch2 = arr2[len2 - n - 1];
         }
 
-        char& ch = *(result + len - n - 1);
+        char& ch = result[len - n - 1];
         if (ch1 != ch2) {
             if (carry) {
                 ch = '0';
@@ -48,10 +50,7 @@ void sum_binary(const char* arr1, uint32_t len1, const char* arr2, uint32_t len2
             }
         }
     }
-    if (*result == '0')
-        std::cout << result + 1 << std::endl;
-    else
-        std::cout << result << std::endl;
+    return result.front() == '0' ? result.substr(1) : result;
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -352,13 +351,9 @@ void print_all_subsets(int* arr, int len)
     }
 
     int ignore = 0;
-    std::cout << "print_all_subsets: ";
-    print_array(arr, len, &ignore);
-    std::cout << ", count=" << results.size() << std::endl;
+    std::cout << "print_all_subsets: " << dump_array(arr, len, &ignore) << ", count=" << results.size() << std::endl;
     for (auto& result : results) {
-        std::cout << "\t";
-        print_array(result, ignore);
-        std::cout << std::endl;
+        std::cout << "\t" << dump_array(result, ignore) << std::endl;
     }
 }
 
@@ -396,9 +391,7 @@ bool tower_hopper(int* arr, int len)
             }
         }
     }
-    std::cout << "\tmiddle result: ";
-    print_array(cache, len);
-    std::cout << "\n\t";
+    std::cout << "\tmiddle result: " << dump_array(cache, len) << "\n\t";
     return *cache;
 }
 
@@ -440,6 +433,22 @@ bool tower_hopper_v2(int* arr, int len)
         pos = next_pos;
     }
     return false;
+}
+void run_tower_hopper()
+{
+    using use_case_t = std::pair<std::vector<int>, bool>;
+    for (auto [arr, exp_v] : {
+             use_case_t({2, 1, 0, 1}, false),
+             use_case_t({1, 2, 0, 0}, true),
+             use_case_t({4, 2, 0, 0, 2, 0}, true),
+             use_case_t({4, 2, 0, 0, 1, 0}, true),
+         }) {
+        const auto v1 = tower_hopper(arr.data(), arr.size());
+        const auto v2 = tower_hopper_v2(arr.data(), arr.size());
+        std::cout << "array=" << dump_array(arr) << std::boolalpha << ", tower_hopper=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; tower_hopper_v2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::noboolalpha << std::endl;
+    }
 }
 
 //
@@ -533,16 +542,13 @@ int find_duplicate(int* arr, int len)
 // given root node of a complete binary tree, find total number of nodes
 // time complexity should be less than O(n)
 //
-int tree_count_complete_tree_nodes(tree_node_t<int>* root)
+int tree_count_complete_tree_nodes(tree_node_int_t* root)
 {
     if (!root)
         return 0;
 
-    using lambda_t     = std::function<int(tree_node_t<int>*)>;
-    lambda_t get_depth = [&](tree_node_t<int>* node) {
-        if (!node)
-            return 0;
-        return 1 + get_depth(node->left);
+    std::function<int(tree_node_int_t*)> get_depth = [&](tree_node_int_t* node) {
+        return node ? (1 + get_depth(node->left)) : 0;
     };
 
     const auto left_depth  = get_depth(root->left);
@@ -558,7 +564,7 @@ int tree_count_complete_tree_nodes(tree_node_t<int>* root)
 }
 
 // a variant question: given root, find total number of leaf nodes
-int tree_count_complete_tree_leaves(tree_node_t<int>* root)
+int tree_count_complete_tree_leaves(tree_node_int_t* root)
 {
     if (!root) {
         return 0;
@@ -571,7 +577,7 @@ int tree_count_complete_tree_leaves(tree_node_t<int>* root)
 
 // get any type of tree max depth
 // TODO: need test
-int get_any_tree_depth(tree_node_t<int>* node)
+int get_any_tree_depth(tree_node_int_t* node)
 {
     if (!node)
         return 0;
@@ -582,24 +588,95 @@ int get_any_tree_depth(tree_node_t<int>* node)
 }
 
 // check if an arbitrary tree is balanced
-// TODO: need test
-bool check_if_balanced_tree(tree_node_t<int>* node, int& depth)
+bool check_if_balanced_tree(tree_node_int_t* node)
 {
-    if (!node)
-        return true;
+    std::function<int(tree_node_int_t*)> impl = [&](tree_node_int_t* n) {
+        if (!n) {
+            return 0;
+        }
+        const auto lh = impl(n->left);
+        const auto rh = impl(n->right);
+        if (lh < 0 || rh < 0 || std::abs(lh - rh) > 1) {
+            return -1;
+        }
+        return 1 + std::max(lh, rh);
+    };
+    return impl(node) >= 0;
+}
+void run_check_if_balanced_tree()
+{
+    /*
+                        100
+                       /   \
+                     1      2
+                    / \    / \
+                  3   4   5   6
+                 / \ / \
+                7  8 9  0
+    */
+    tree_node_int_t root(100);
+    tree_node_int_t n1(1);
+    tree_node_int_t n2(2);
+    tree_node_int_t n3(3);
+    tree_node_int_t n4(4);
+    tree_node_int_t n5(5);
+    tree_node_int_t n6(6);
+    tree_node_int_t n7(7);
+    tree_node_int_t n8(8);
+    tree_node_int_t n9(9);
+    tree_node_int_t n0(0);
 
-    int  left_depth     = 0;
-    int  right_depth    = 0;
-    bool left_balanced  = check_if_balanced_tree(node->left, left_depth);
-    bool right_balanced = check_if_balanced_tree(node->right, right_depth);
+    root.left  = &n1;
+    root.right = &n2;
+    n1.left    = &n3;
+    n1.right   = &n4;
+    n2.left    = &n5;
+    n2.right   = &n6;
+    n3.left    = &n7;
+    n3.right   = &n8;
+    n4.left    = &n9;
+    n4.right   = &n0;
 
-    // TODO: not update left_depth or right_depth...
+    using use_case_t = std::pair<tree_node_int_t*, int>;
+    for (auto [node, exp_v] : {
+             use_case_t(&n0, 1),
+             use_case_t(&n4, 3),
+             use_case_t(&n1, 7),
+             use_case_t(&root, 11),
+         }) {
+        const auto v = tree_count_complete_tree_nodes(node);
+        std::cout << "node=" << node->data << ", tree_count_complete_tree_nodes=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
 
-    // always record the max depth only for log/test purpose
-    depth = std::max(left_depth, right_depth) + 1;
+    for (auto [node, exp_v] : {
+             use_case_t(&n0, 1),
+             use_case_t(&n4, 2),
+             use_case_t(&n1, 4),
+             use_case_t(&root, 6),
+         }) {
+        const auto v = tree_count_complete_tree_leaves(node);
+        std::cout << "node=" << node->data << ", tree_count_complete_tree_leaves=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
 
-    // assume left depth must not be less than right depth
-    return left_balanced && right_balanced && (left_depth >= right_depth && left_depth - right_depth <= 1);
+    for (auto [node, exp_v] : {
+             use_case_t(&root, true),
+             use_case_t(&n0, true),
+             use_case_t(&n1, true),
+             use_case_t(&n2, true),
+             use_case_t(&n3, true),
+             use_case_t(&n4, true),
+             use_case_t(&n5, true),
+             use_case_t(&n6, true),
+             use_case_t(&n7, true),
+             use_case_t(&n8, true),
+             use_case_t(&n9, true),
+         }) {
+        const auto v = check_if_balanced_tree(node);
+        std::cout << "node=" << node->data << ", check_if_balanced_tree=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -669,6 +746,25 @@ int array_max_pair_score_v3([[maybe_unused]] int* arr, [[maybe_unused]] int len)
     return 0;
 }
 
+void run_array_max_pair_score()
+{
+    using use_case_t = std::pair<std::vector<int>, int>;
+    for (auto [arr, exp_v] : {
+             use_case_t({8, 1, 5, 2, 6}, 11),
+             use_case_t({-5, -3, 2, 2, 9, 1}, 10),
+             use_case_t({7, 1, 5, 3, 6, 4}, 10),
+             use_case_t({1, 2, 3, 4, 5}, 8),
+         }) {
+
+        const auto v1 = array_max_pair_score(arr.data(), arr.size());
+        const auto v2 = array_max_pair_score_v2(arr.data(), arr.size());
+
+        std::cout << "array=" << dump_array(arr) << ", array_max_pair_score=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; array_max_pair_score_v2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
 ///////////////////////////////////////////////////////////////////////////////
 //
 // https://leetcode.com/problems/best-time-to-buy-and-sell-stock/
@@ -726,9 +822,7 @@ void run_max_profit_1_transaction()
              std::vector<int>{7, 1, 5, 3, 6, 4},      // 5
              std::vector<int>{1, 2, 3, 4, 5},         // 4
          }) {
-        std::cout << "\nprices: ";
-        print_array(prices);
-        std::cout << std::endl;
+        std::cout << "\nprices: " << dump_array(prices) << std::endl;
         std::cout << "max_profit_1_transaction: " << max_profit_1_transaction(prices) << std::endl;
         std::cout << "max_profit_1_transaction_v2: " << max_profit_1_transaction_v2(prices) << std::endl;
         std::cout << "max_profit_1_transaction_v3: " << max_profit_1_transaction_v3(prices) << std::endl;
@@ -762,6 +856,19 @@ int array_max_product_subarray(int* arr, int len)
         min_product_excl = std::min({min_product_excl, prior_min_incl});
     }
     return std::max({max_product_incl, max_product_excl});
+}
+void run_array_max_product_subarray()
+{
+    using use_case_t = std::pair<std::vector<int>, int>;
+    for (auto [arr, exp_v] : {
+             use_case_t({2, 3, -2, 4}, 6),
+             use_case_t({-2, 0, -1}, 0),
+             use_case_t({-2, 3, -4}, 24),
+         }) {
+        const auto v = array_max_product_subarray(arr.data(), arr.size());
+        std::cout << "array=" << dump_array(arr) << ", array_max_product_subarray=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
 }
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -891,4 +998,422 @@ void run_lambda_template()
     }
 }
 
-#endif
+namespace jump {
+
+void addToken(std::string token, std::vector<std::string>& tokens)
+{
+    // Trim leading whitespace
+    if (!token.empty()) {
+        size_t start = token.find_first_not_of(" ");
+        token        = start != std::string::npos ? token.substr(start) : "";
+    }
+
+    // Do not add empty tokens
+    if (token.empty()) {
+        return;
+    }
+    tokens.push_back(token);
+}
+
+void tokenize(const std::string& spec, const std::string& sep, std::vector<std::string>& tokens)
+{
+    // Split specification into tokens
+
+    // Loop over every char in specification.
+    size_t start = 0;
+    for (size_t end = 0; end < spec.size(); ++end) {
+        // If current char is a separator, then add the
+        // current token and separator to the tokens list
+        if (sep.find(spec[end]) != std::string::npos) {
+            addToken(spec.substr(start, end - start), tokens);
+            addToken(spec.substr(end, 1), tokens);
+            start = end + 1;
+        }
+    }
+    // Add the last token to tokens list
+    addToken(spec.substr(start), tokens);
+}
+
+struct FuncArgs {
+    std::string func;
+    std::string args;
+};
+typedef std::vector<FuncArgs> Frame;
+
+void parse(const std::vector<std::string>& tokens, std::vector<Frame>& stack)
+{
+    // Parse tokens into a useful stack structure.
+    // All parallel tasks should live in the same stack Frame
+
+    // TODO: I am not sure what the issue is, but I know
+    // that this stack is not being populated entirely as intended
+
+    // Initial stack frame
+    stack.push_back(Frame());
+
+    for (size_t i = 0; i < tokens.size(); ++i) {
+        const std::string& tok = tokens[i];
+        // New stack frame
+        // if (tok == "," || tok == ";") { // Jeffery: don't add new Frame for ";"
+        if (tok == ",") {
+            stack.push_back(Frame());
+        }
+        // Jeffery: case 2.b
+        else if (tok == "}") {
+            const auto& prevTok = tokens[i - 1];
+            if (prevTok == ";") {
+                // add empty function to the frame
+                Frame&   frame = stack.back();
+                FuncArgs fa;
+                frame.push_back(fa);
+            }
+        }
+        // Tokens within (...) are args that should be kept together
+        else if (tok == "(") {
+            std::string args;
+            while (tokens[++i] != ")") {
+                args += tokens[i];
+            }
+            Frame&    frame = stack.back();
+            FuncArgs& fa    = frame.back();
+            fa.args         = args;
+        }
+        // Every other non separator token is a func
+        // else if (tok != "{" && tok != "}" && tok != ")") {
+        else if (tok != "{" && tok != "}" && tok != ")" && tok != ";") {    // Jeffery: ignore ";"
+            Frame&   frame = stack.back();
+            FuncArgs fa;
+            fa.func = tok;
+            frame.push_back(fa);
+        }
+    }
+}
+
+void eval(const std::vector<Frame>& stack, const std::string& partial, size_t index, std::vector<std::string>& expanded)
+{
+    // Evaluate the stack to expand all function compositions
+
+    // Base case: done building expansion, save result and return
+    if (index == stack.size()) {
+        expanded.push_back(partial);
+        return;
+    }
+
+    // Recursive case: build each current FuncArgs around partial
+    // and recurse
+    const Frame& frame = stack[index];
+    for (const FuncArgs& fa : frame) {
+        // TODO: Hmmm, I am not sure how to handle args here
+        std::string newPartial = fa.func + "(" + partial + ")";
+
+        // Jeffery: case 2.b
+        if (fa.func.empty()) {
+            newPartial = partial;
+        } else {
+            // regular args case
+            newPartial = fa.func + "(" + partial;
+            if (!fa.args.empty()) {
+                newPartial += ",";
+                newPartial += fa.args;
+            }
+            newPartial += ")";
+        }
+
+        eval(stack, newPartial, index + 1, expanded);
+    }
+}
+
+std::string solution(std::string& spec)
+{
+    // Split specification into tokens
+    std::vector<std::string> tokens;
+    tokenize(spec, ",;(){}", tokens);
+
+    // Parse tokens into a useful stack structure.
+    std::vector<Frame> stack;
+    parse(tokens, stack);
+
+    // Evaluate the stack to expand all function compositions
+    std::vector<std::string> expanded;
+    eval(stack, "input", 0, expanded);
+
+    // Combine results into single new line delimited string
+    std::string result;
+    for (const auto& e : expanded)
+        result += "\n" + e;
+
+    return result;
+}
+
+void run_task_parser()
+{
+    for (std::string spec : {
+             "task1,task2,task3",                      // task3(task2(task1(input)))
+             "task1,{task2;task3}",                    // task2(task1(input)), task3(task1(input))
+             "task1,task2,{task3;}",                   // task3(task2(task1(input))), task2(task1(input))
+             "task1('b',kw=1),task2(1,2,var1='a')",    // task2(task1(input,'b',kw=1),1,2,var1='a')
+             "{func1;func2},{func3;func4}"             // func3(func1(input)), func4(func1(input)), func3(func2(input)),
+                                                       // func4(func2(input))
+         }) {
+        std::cout << "\n--------------------------" << std::endl;
+        std::cout << "Spec: " << spec;
+        std::cout << solution(spec) << std::endl;
+    }
+}
+
+struct repo_recovery_t {
+
+    using commit_id_t       = int;
+    using timestamp_t       = int;
+    using file_path_t       = std::string;
+    using opaque_id_t       = std::string;
+    using unique_file_key_t = std::string;    // globally unique, file path + " " + opaque id
+
+    struct repo_t {
+        std::map<timestamp_t, std::set<commit_id_t>> ts_to_commit_map;
+        std::unordered_map<file_path_t, opaque_id_t> file_to_opaque_map;
+        std::unordered_map<opaque_id_t, file_path_t> opaque_to_file_map;
+    };
+    std::unordered_map<unique_file_key_t, std::shared_ptr<repo_t>> global_file_to_repo_map_;
+
+    unique_file_key_t make_unique_file_key(const file_path_t& file_path, const opaque_id_t& opaque_id)
+    {
+        return file_path + " " + opaque_id;
+    }
+
+    bool push_commit(const std::vector<std::string>& commit_tokens)
+    {
+        const auto num_tokens = commit_tokens.size();
+        if (num_tokens < 5 || num_tokens % 2 != 0) {
+            return false;
+        }
+
+        commit_id_t commit_id = std::stoi(commit_tokens[1]);
+        timestamp_t timestamp = std::stoi(commit_tokens[3]);
+
+        std::shared_ptr<repo_t>                          repo;
+        std::vector<std::pair<file_path_t, opaque_id_t>> unknown_repo_files;
+
+        auto add_commit_to_repo = [](auto& repo, const auto& ts, const auto& id) {
+            repo->ts_to_commit_map[ts].emplace(id);
+        };
+
+        auto add_file_to_repo = [commit_id, timestamp](auto& repo, const auto& file_path, const auto& opaque_id) {
+            auto report_ambiguous = [&]() {
+                std::cout << "Ambiguous: commit=" << commit_id << ", timestamp=" << timestamp << ", file=" << file_path
+                          << ", opaque=" << opaque_id << std::endl;
+            };
+
+            if (auto [it_file, added] = repo->file_to_opaque_map.emplace(file_path, opaque_id);
+                !added && it_file->second != opaque_id) {
+                report_ambiguous();
+                return false;
+            }
+            if (auto [it_opaque, added] = repo->opaque_to_file_map.emplace(opaque_id, file_path);
+                !added && it_opaque->second != file_path) {
+                report_ambiguous();
+                return false;
+            }
+            return true;
+        };
+
+        auto add_file_to_global = [this, &add_commit_to_repo,
+                                   &add_file_to_repo](auto& repo, const auto& file_path, const auto& opaque_id) {
+            const auto file_key = make_unique_file_key(file_path, opaque_id);
+
+            // the file along with opaque_id must be unique globally, and we need this check to ensure this file belongs
+            // to 'repo' only
+            //
+            // it is possible when we are adding a file but the file has already been in some different repo, in this
+            // case, we should consolidate it into 'repo' - commit 1: f1.h ab12 f2.h cd12    -> repo1 is created after
+            // this step commit 2: f3.h xx12 f4.h yy12    -> repo2 is created after this step commit 3: f1.h ab12 f3.h
+            // xx12    -> with 'f1.h ab12', we find repo1; when handling 'f3.h xx12', we find repo2; obviously we should
+            // consolidate repo2 into repo1.
+
+            if (auto [it_global, added] = global_file_to_repo_map_.emplace(file_key, repo);
+                !added && repo != it_global->second) {
+                int  other_repo_commits = 0;
+                auto other_repo         = it_global->second;
+                for (auto& [ts, ids] : other_repo->ts_to_commit_map) {
+                    for (auto id : ids) {
+                        add_commit_to_repo(repo, ts, id);
+                        ++other_repo_commits;
+                    }
+                }
+
+                std::cout << "Trying to consolidate repos (#commits=" << other_repo_commits
+                          << ", #files=" << other_repo->file_to_opaque_map.size() << ") for file=" << file_key
+                          << ", other_repo=" << other_repo.get() << std::endl;
+
+                for (auto& [f_path, o_id] : other_repo->file_to_opaque_map) {
+                    add_file_to_repo(repo, f_path, o_id);
+
+                    const auto f_key = make_unique_file_key(f_path, o_id);
+                    if (auto it = global_file_to_repo_map_.find(f_key); it != global_file_to_repo_map_.end()) {
+                        if (it->second != other_repo) {
+                            std::cout << "Impossible, file belongs to different repo, file key=" << f_key << std::endl;
+                        }
+
+                        // switch to desired 'repo', 'other_repo' will destroy by itself since none reference after this
+                        // loop
+                        it->second = repo;
+                    } else {
+                        // this is impossible, this file must have existed in the map for a while
+                        std::cout << "Impossible, file must have existed in the global map for a while, file key="
+                                  << f_key << std::endl;
+                        return false;
+                    }
+
+                    // NOTICE: do we need to recursively check if 'f_key' is owned by another repo? i don't think so.
+                }
+            }
+            return true;
+        };
+
+        auto add_file = [&](auto& file_path, auto& opaque_id) {
+            if (!repo)
+                return false;
+            return add_file_to_repo(repo, file_path, opaque_id) && add_file_to_global(repo, file_path, opaque_id);
+        };
+
+        for (size_t i = 4; i < num_tokens; i += 2) {
+            const file_path_t file_path = commit_tokens[i];
+            const opaque_id_t opaque_id = commit_tokens[i + 1];
+
+            if (!repo) {
+                const auto file_key = make_unique_file_key(file_path, opaque_id);
+                auto       iter     = global_file_to_repo_map_.find(file_key);
+                if (iter == global_file_to_repo_map_.end()) {
+                    unknown_repo_files.emplace_back(file_path, opaque_id);
+                    continue;
+                }
+                repo = iter->second;
+
+                add_commit_to_repo(repo, timestamp, commit_id);
+            }
+
+            if (!add_file(file_path, opaque_id)) {
+                return false;
+            }
+        }
+
+        // two cases if unknown_repo_files is not empty:
+        // 1) the beginning file entries in the commit are new even though repo exists;
+        // 2) none of the entries in the commit match any existing repo, we shall create a repo and reconcile later:
+        //    a) this commit belongs to a new repo; or,
+        //    b) this commit belongs to one of existing repo but we are in lack of information to find it;
+        if (unknown_repo_files.empty())
+            return true;
+
+        if (!repo) {
+            repo = std::make_shared<repo_t>();
+
+            add_commit_to_repo(repo, timestamp, commit_id);
+        }
+
+        for (auto& [f_path, o_id] : unknown_repo_files) {
+            if (!add_file(f_path, o_id)) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    bool query(const std::vector<std::string>& query_tokens)
+    {
+        const auto num_tokens = query_tokens.size();
+        if (num_tokens != 4) {
+            return false;
+        }
+
+        const timestamp_t ts_start  = std::stoi(query_tokens[0]);
+        const timestamp_t ts_end    = std::stoi(query_tokens[1]);
+        const file_path_t file_path = query_tokens[2];
+        const opaque_id_t opaque_id = query_tokens[3];
+        const auto        file_key  = make_unique_file_key(file_path, opaque_id);
+
+        auto iter = global_file_to_repo_map_.find(file_key);
+        if (iter == global_file_to_repo_map_.end()) {
+            std::cout << std::endl;
+            return false;
+        }
+
+        auto repo           = iter->second;
+        auto it_commits     = repo->ts_to_commit_map.lower_bound(ts_start);
+        auto it_commits_end = repo->ts_to_commit_map.upper_bound(ts_end);
+        while (it_commits != it_commits_end) {
+            for (auto commit : it_commits->second) {
+                std::cout << commit << " ";
+            }
+            ++it_commits;
+        }
+        std::cout << std::endl;
+        return true;
+    }
+};
+void run_repo_recovery()
+{
+    {
+        repo_recovery_t recovery;
+        for (const auto& commit : {
+                 "id 8 timestamp 200 quicksort.cpp 839ad0 mergesort.cpp 0cdde1 bubblesort.cpp 248dd1",
+                 "id 0 timestamp 500 array.h 163111 sequence.h 294d3f",
+                 "id 6 timestamp 200 mergesort.cpp 0cdde1 bogosort.cpp 4213ff",
+                 "id 4 timestamp 1000 array.h 163111 vector.h fcc2af",
+                 "id 2 timestamp 300 bubblesort.cpp 248dd1 bogosort.cpp 4213ff",
+                 "id 3 timestamp 300 bubblesort.cpp eaf88a bogosort.cpp 4f11aa",
+             }) {
+            std::vector<std::string> tokens;
+            tokenize(commit, " ", tokens);
+
+            std::cout << commit << std::endl;
+            if (!recovery.push_commit(tokens)) {
+                std::cout << "Failed to push commit: " << commit << std::endl;
+            }
+        }
+
+        for (const auto& query : {
+                 "0 10000 quicksort.cpp 839ad0",
+                 "0 500 vector.h fcc2af",
+                 "0 100000 no_found.h empty_response",
+                 "100 200 bogosort.cpp 4213ff",
+             }) {
+            std::vector<std::string> tokens;
+            tokenize(query, " ", tokens);
+
+            recovery.query(tokens);
+        }
+    }
+
+    {
+        repo_recovery_t recovery;
+        for (const auto& commit : {
+                 "id 38024 timestamp 74820 foo.py ac819f bar.py 0d82b9",
+                 "id 49283 timestamp 19837 bar.py 0d82b9 baz.py f28dc2",
+                 "id 20391 timestamp 23488 baz.py f28dc2 foo.py f918ca",
+                 "id 2938 timestamp 101 qux.h d139af qux.cpp 718bc3",
+                 "id 2939 timestamp 102 qux.h d139af",
+             }) {
+            std::vector<std::string> tokens;
+            tokenize(commit, " ", tokens);
+
+            std::cout << commit << std::endl;
+            if (!recovery.push_commit(tokens)) {
+                std::cout << "Failed to push commit: " << commit << std::endl;
+            }
+        }
+
+        for (const auto& query : {
+                 "0 1000000 bar.py 0d82b9",
+                 "0 1000000 qux.h d139af",
+             }) {
+            std::vector<std::string> tokens;
+            tokenize(query, " ", tokens);
+
+            recovery.query(tokens);
+        }
+    }
+}
+
+}    // namespace jump
+

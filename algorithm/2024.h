@@ -360,37 +360,28 @@ void run_matrix_traverse()
         std::cout << "\n--------------------" << std::endl;
 
         for (auto& a : matrix) {
-            print_array(a);
-            std::cout << std::endl;
+            std::cout << dump_array(a) << std::endl;
         }
         {
             auto result = matrix_diagonal_order(matrix);
-            std::cout << "matrix_diagonal_order: ";
-            print_array(result);
+            std::cout << "matrix_diagonal_order: " << dump_array(result) << std::endl;
         }
         {
             auto result = matrix_diagonal_rotation_order(matrix);
-            std::cout << "matrix_diagonal_rotation_order: ";
-            print_array(result);
+            std::cout << "matrix_diagonal_rotation_order: " << dump_array(result) << std::endl;
         }
 
         {
             auto result = matrix_spiral_order(matrix);
-            std::cout << "matrix_spiral_order: ";
-            print_array(result);
-            std::cout << std::endl;
+            std::cout << "matrix_spiral_order: " << dump_array(result) << std::endl;
         }
         {
             auto result = matrix_spiral_order_v2(matrix);
-            std::cout << "matrix_spiral_order_v2: ";
-            print_array(result);
-            std::cout << std::endl;
+            std::cout << "matrix_spiral_order_v2: " << dump_array(result) << std::endl;
         }
         {
             auto result = matrix_spiral_order_v3(matrix);
-            std::cout << "matrix_spiral_order_v3: ";
-            print_array(result);
-            std::cout << std::endl;
+            std::cout << "matrix_spiral_order_v3: " << dump_array(result) << std::endl;
         }
     };
 
@@ -557,17 +548,6 @@ int num_islands_v2(const std::vector<std::vector<bool>>& matrix)
 
 void run_num_islands()
 {
-    auto print_arr = [](auto& arr) {
-        std::cout << "[";
-        for (size_t i = 0; i < arr.size(); ++i) {
-            std::cout << arr[i];
-            if (i != arr.size() - 1) {
-                std::cout << ",";
-            }
-        }
-        std::cout << "]";
-    };
-
     for (auto& matrix : {
              std::vector<std::vector<bool>>{
                  {0, 0},
@@ -603,12 +583,7 @@ void run_num_islands()
              },
          }) {
         std::cout << "--------------------" << std::endl;
-        for (auto& a : matrix) {
-            print_arr(a);
-            std::cout << std::endl;
-        }
-        std::cout << num_islands_v2(matrix) << std::endl;
-        std::cout << num_islands(matrix) << std::endl;
+        std::cout << dump_matrix(matrix) << "\n" << num_islands_v2(matrix) << num_islands(matrix) << std::endl;
     }
 }
 
@@ -1877,17 +1852,6 @@ int min_path_sum_matrix_v3(const std::vector<std::vector<int>>& matrix)
 
 void run_min_path_sum_matrix()
 {
-    auto print_arr = [](auto& arr) {
-        std::cout << "[";
-        for (size_t i = 0; i < arr.size(); ++i) {
-            std::cout << arr[i];
-            if (i != arr.size() - 1) {
-                std::cout << ",";
-            }
-        }
-        std::cout << "]";
-    };
-
     for (auto& matrix : {
              std::vector<std::vector<int>>{
                  {1, 3, 1},
@@ -1911,10 +1875,7 @@ void run_min_path_sum_matrix()
              },    //
          }) {
         std::cout << "--------------------" << std::endl;
-        for (auto& a : matrix) {
-            print_arr(a);
-            std::cout << std::endl;
-        }
+        std::cout << dump_matrix(matrix) << std::endl;
         std::cout << min_path_sum_matrix(matrix) << std::endl;
         std::cout << min_path_sum_matrix_v2(matrix) << std::endl;
         std::cout << min_path_sum_matrix_v3(matrix) << std::endl;
@@ -2166,17 +2127,6 @@ int max_profit_k_transactions_2(int k, const std::vector<int>& prices)
 
 void run_max_profit_2_transactions()
 {
-    auto print_arr = [](auto& arr) {
-        std::cout << "[";
-        for (size_t i = 0; i < arr.size(); ++i) {
-            std::cout << arr[i];
-            if (i != arr.size() - 1) {
-                std::cout << ",";
-            }
-        }
-        std::cout << "]";
-    };
-
     for (const auto& prices : {
              std::vector<int>{3, 3, 5, 0, 0, 3, 1, 4},    // k=1, max=4; k=2, max=6; k=3, max=8; k=4, max=8;
              std::vector<int>{1, 2, 3, 4, 5},             // k=any, max=4;
@@ -2185,8 +2135,7 @@ void run_max_profit_2_transactions()
              std::vector<int>{3, 2, 6, 5, 0, 3},          // k=1, max=4; k=2, max=7; k=3, max=7;
          }) {
         std::cout << "--------------------" << std::endl;
-        print_arr(prices);
-        std::cout << std::endl;
+        std::cout << dump_array(prices) << std::endl;
 
         std::cout << "1 transaction: max_profit_1_transaction=" << max_profit_1_transaction(prices) << std::endl;
         std::cout << "1 transaction: max_profit_k_transactions=" << max_profit_k_transactions(1, prices) << std::endl;
@@ -2344,11 +2293,8 @@ void run_graph_find_max_difference()
 {
     auto print = [](const auto& weights, auto max_diff) {
         std::cout << "---------------" << std::endl;
-        std::cout << "weights: ";
-
-        print_array(weights, std::numeric_limits<int>::max());
-
-        std::cout << ": " << max_diff << std::endl;
+        std::cout << "weights: " << dump_array(weights, std::numeric_limits<int>::max()) << ": " << max_diff
+                  << std::endl;
     };
 
     {
@@ -2441,9 +2387,8 @@ void run_graph_find_max_depth()
 {
     auto print = [](const auto& depths, int max_depth) {
         std::cout << "---------------" << std::endl;
-        std::cout << "depths: ";
-        print_array(depths, std::numeric_limits<int>::max());
-        std::cout << "\nmax depth: " << max_depth << std::endl;
+        std::cout << "depths: " << dump_array(depths, std::numeric_limits<int>::max()) << "\nmax depth: " << max_depth
+                  << std::endl;
     };
 
     {
@@ -2623,31 +2568,25 @@ void run_factorization_divisor_prime()
     for (auto n : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 20, 50, 80, 100}) {
         {
             auto factorization = find_prime_factorization(n);
-            std::cout << n << "(factorization): ";
-            print_array(factorization);
-            std::cout << std::endl;
+            std::cout << n << "(factorization): " << dump_array(factorization) << std::endl;
         }
 
         {
             auto divisors = find_all_divisors(n);
-            std::cout << n << "(divisors): ";
-            print_array(divisors);
+            std::cout << n << "(divisors): " << dump_array(divisors);
             auto v2 = find_all_divisors_v2(n);
             if (v2 != divisors) {
-                std::cout << "\n\terror: find_all_divisors_v2 is different: ";
-                print_array(v2);
+                std::cout << "\n\terror: find_all_divisors_v2 is different: " << dump_array(v2);
             }
             std::cout << std::endl;
         }
 
         {
             auto primes = find_all_primes(n);
-            std::cout << n << "(primes): ";
-            print_array(primes);
+            std::cout << n << "(primes): " << dump_array(primes);
             auto v2 = find_all_primes_v2(n);
             if (v2 != primes) {
-                std::cout << "\n\terror: find_all_primes_v2 is different: ";
-                print_array(v2);
+                std::cout << "\n\terror: find_all_primes_v2 is different: " << dump_array(v2);
             }
             std::cout << std::endl;
         }
