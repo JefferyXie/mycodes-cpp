@@ -1,4 +1,6 @@
-#include "../main/header.h"
+#pragma once
+
+#include "../core/header.h"
 
 /***************************************************************************
  * http://stackoverflow.com/questions/6202762/pthread-create-as-detached
@@ -143,7 +145,7 @@ void *func(void *data)
     pthread_exit(NULL);
 }
 
-void Run_detach()
+void run_detach()
 {
     pthread_t handle;
     if (!pthread_create(&handle, NULL, func, NULL))

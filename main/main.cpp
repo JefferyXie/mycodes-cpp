@@ -30,8 +30,6 @@ int main(int argc, char** argv)
 #include "../algorithm/2025.h"
 #include "../algorithm/2026.h"
 
-#include "../data_structure/my_tuple.h"
-
 #include "../language/c++11.h"
 #include "../language/meta.h"
 #include "../language/movement.h"
@@ -43,23 +41,6 @@ int main(int argc, char** argv)
 #include "../language/template_SFINAE.h"
 #include "../language/template_special.h"
 #include "../language/template_special2.h"
-
-#include "../misc/builtin_expect.h"
-#include "../misc/atomic_is_lock_free.h"
-#include "../misc/gauge_time.h"
-#include "../misc/hybrid_range.h"
-#include "../misc/macro_variadic.h"
-#include "../misc/make_enum.h"
-#include "../misc/maybe.h"
-#include "../misc/realtime.h"
-#include "../misc/speed_dynamic_cast.h"
-#include "../misc/xml.h"
-
-#include "../thread/mutex_spinlock.h"
-#include "../thread/thread_pool.h"
-#include <type_traits>
-#include <utility>
-
 
 int main(int argc, char** argv)
 {

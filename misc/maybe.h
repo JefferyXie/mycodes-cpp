@@ -1,9 +1,7 @@
-#ifndef MAYBE_H
-#define MAYBE_H
+#pragma once
 
 #include "../core/my_formatter.h"
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 
 #ifndef _VA_LIST
 typedef __builtin_va_list va_list;
@@ -200,4 +198,3 @@ void run_maybe()
     }
 }
 
-#endif

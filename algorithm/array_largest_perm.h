@@ -1,7 +1,6 @@
-#ifndef ARRAY_LARGEST_PERM_H
-#define ARRAY_LARGEST_PERM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/largest-permutation/problem
@@ -29,4 +28,3 @@ std::vector<int> array_largest_permutation(int k, std::vector<int> arr)
     return arr;
 }
 
-#endif

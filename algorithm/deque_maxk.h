@@ -1,7 +1,6 @@
-#ifndef DEQUE_MAXK_H
-#define DEQUE_MAXK_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 /*
  https://www.hackerrank.com/challenges/deque-stl
@@ -83,4 +82,3 @@ std::string print_k_max_2(int arr[], int n, int k)
     return result.erase(result.size() - 1, 1);
 }
 
-#endif

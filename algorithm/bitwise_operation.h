@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.prodevelopertutorial.com/add-and-subtract-2-numbers-using-bitwise-operators-c-solution/

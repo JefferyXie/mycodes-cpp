@@ -1,8 +1,6 @@
-#ifndef FIND_COMMON_ANCESTOR_H
-#define FIND_COMMON_ANCESTOR_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/node.h"
+#include "../core/node.h"
 
 //
 // http://stackoverflow.com/questions/1484473/how-to-find-the-lowest-common-ancestor-of-two-nodes-in-any-binary-tree
@@ -74,4 +72,3 @@ tree_node_t<T>* find_common_ancestor_v2(tree_node_t<T>* root, tree_node_t<T>* n1
 // https://www.geeksforgeeks.org/minimum-and-maximum-node-that-lies-in-the-path-connecting-two-nodes-in-a-binary-tree/#
 //
 
-#endif

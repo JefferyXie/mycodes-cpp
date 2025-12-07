@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // This tells how to specialize template class's template method.

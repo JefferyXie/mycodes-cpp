@@ -1,6 +1,5 @@
 #include <gtest/gtest.h>
 #include <utility>
-#include "../main/header.h"
 
 #include "../algorithm/array_bus_station.h"
 #include "../algorithm/array_kth_biggest.h"

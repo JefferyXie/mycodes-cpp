@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // Big endian and little endian are to handle multi-bytes words such as int, short, etc. C-style string is array of char

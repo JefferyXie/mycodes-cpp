@@ -1,8 +1,6 @@
-#ifndef MY_LIST_H
-#define MY_LIST_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/node.h"
+#include "../core/node.h"
 
 template <class T>
 class my_list
@@ -184,6 +182,4 @@ void my_list<T>::Display()
         p = p->next;
     }
 }
-
-#endif
 

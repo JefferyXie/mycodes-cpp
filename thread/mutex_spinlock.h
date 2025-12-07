@@ -66,7 +66,7 @@ mutex: can multi-process in linux share same mutex?
 //
 // http://www.alexonlinux.com/pthread-mutex-vs-pthread-spinlock
 //
-#include "../main/header.h"
+#include "../core/header.h"
 #include <unistd.h>
 #include <sys/syscall.h>
 #include <errno.h>

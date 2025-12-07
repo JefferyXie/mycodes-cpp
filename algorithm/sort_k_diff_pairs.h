@@ -1,7 +1,6 @@
-#ifndef SORT_K_DIFF_PAIRS_H
-#define SORT_K_DIFF_PAIRS_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/pairs
@@ -10,7 +9,7 @@
 int sort_k_diff_pairs(std::vector<int>& a, int k)
 {
     int ans = 0;
-    sort(a.begin(), a.end());
+    std::sort(a.begin(), a.end());
     int i = 0, j = i + 1;
     while (j < (int)a.size()) {
         if (a[j] - a[i] == k) {
@@ -28,4 +27,3 @@ int sort_k_diff_pairs(std::vector<int>& a, int k)
     return ans;
 }
 
-#endif

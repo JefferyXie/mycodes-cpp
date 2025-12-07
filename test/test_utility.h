@@ -1,7 +1,6 @@
 #include <gtest/gtest.h>
 
-#include "../main/header.h"
-#include "../main/math.h"
+#include "../core/math.h"
 
 #include "../data_structure/my_hash_map.h"
 #include "../data_structure/my_heap.h"

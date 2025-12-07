@@ -1,8 +1,7 @@
 #pragma once
 
 #include "../core/my_formatter.h"
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 #include <iterator>
 #include <type_traits>
 

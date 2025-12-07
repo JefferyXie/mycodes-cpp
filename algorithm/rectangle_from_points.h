@@ -1,18 +1,17 @@
-#ifndef RECTANGLE_FROM_POINTS_H
-#define RECTANGLE_FROM_POINTS_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
-// 
+//
 /*
  * https://www.quora.com/From-a-given-set-of-points-how-would-you-find-the-set-of-4-points-forming-a-rectangle
  * Given a set of points, find the set of 4 points forming a rectangle
- * 
+ *
  * Examples :
- * 
+ *
  * Input : arr[] = TBD
  * Output : TODO
- * 
+ *
  */
 
 // 1) Calculate the distances for each pair of points in the list, excluding repetitions (a,b) === (b,a)
@@ -27,6 +26,4 @@ int rectangle_from_points(int arr[], int n)
     // TODO...
     return 0;
 }
-
-#endif
 

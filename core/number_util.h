@@ -1,7 +1,7 @@
 #pragma once
 
 #include <cmath>
-namespace number_util {
+namespace number {
 
 constexpr inline bool greater_than(double bigger, double smaller, double precision)
 {
@@ -59,4 +59,4 @@ constexpr inline double round_down_to_nearest_factor(double x, double factor)
     return (-(x < 0) + static_cast<int64_t>((x + 1.0e-10) / factor)) * factor;
 }
 
-}    // namespace number_util
+}    // namespace number

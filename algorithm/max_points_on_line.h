@@ -1,7 +1,6 @@
-#ifndef MAX_POINTS_ON_LINE_H
-#define MAX_POINTS_ON_LINE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // Given a set of points, find line with the most number of points
@@ -95,6 +94,4 @@ int max_points_on_line(std::vector<point> points)
     }
     return max_points;
 }
-
-#endif
 

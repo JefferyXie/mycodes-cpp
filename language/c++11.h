@@ -1,7 +1,6 @@
-#ifndef C11_H
-#define C11_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 /******************************************************************************
  *
@@ -93,20 +92,19 @@ public:
         auto fun_pint = [](int* p) {
             std::cout << "fun_pInt(int*):" << *p << std::endl;
         };
-        auto fun_pshared_ptr = [](std::shared_ptr<int> p) {
+        [[maybe_unused]] auto fun_pshared_ptr = [](std::shared_ptr<int> p) {
             std::cout << "fun_pshared_ptr(shared_ptr<int>):" << *p << std::endl;
         };
-        auto fun_nullptr_t = [](nullptr_t) {
+        auto fun_nullptr_t = [](std::nullptr_t) {
             std::cout << "fun_nullptr_t(nullptr_t):nullptr as input only" << std::endl;
         };
 
         int* p1 = NULL;
-        int* p2 = nullptr;
         // shared_ptr<int> p3 = new int(10);
 
         // bool b = nullptr; // nullptr > bool but cannot nullptr > int
         // long i = static_cast<long>(nullptr); // compile error, static_cast doesn't work
-        auto l = reinterpret_cast<long>(nullptr);    // reinterpret_cast works
+        [[maybe_unused]] auto l = reinterpret_cast<long>(nullptr);    // reinterpret_cast works
         fun_pint(p1);
         // fun_pshared_ptr(p3);
         auto p4 = nullptr;
@@ -372,7 +370,7 @@ public:
             p = nullptr;
         };
         std::unique_ptr<int, decltype(fun_del)> u0(new int(10), fun_del);
-        auto                                    f_del = u0.get_deleter();
+        [[maybe_unused]] auto                   f_del = u0.get_deleter();
 
         /*
         unique_ptr<int> p1(new int(22));
@@ -559,7 +557,7 @@ public:
     }
     static void Run_static_assert()
     {
-        VV<int, 2> v1;
+        [[maybe_unused]] VV<int, 2> v1;
         // compile error from static_assert
         // VV<int, 5> v2;
 
@@ -1058,23 +1056,23 @@ public:
         constexpr int j = 3;
         std::cout << Fib(j) << std::endl;    // compile time
 
-        auto           m = Fib(3);    // run time
-        constexpr auto n = Fib(3);    // compile time
+        [[maybe_unused]] auto           m = Fib(3);    // run time
+        [[maybe_unused]] constexpr auto n = Fib(3);    // compile time
 
         std::array<int, j> arr;
         arr = {2, 1, 5};
         arr = {{4, 3, 6}};
 
-        std::array<int, Fib(3)>         arr0;    // compile time
-        std::array<int, Pow(2, Fib(3))> arr1;    // compile time
+        [[maybe_unused]] std::array<int, Fib(3)>         arr0;    // compile time
+        [[maybe_unused]] std::array<int, Pow(2, Fib(3))> arr1;    // compile time
 
         std::cout << Pow(i, j) << std::endl;    // compile time
         std::cout << Pow(2, j) << std::endl;    // compile time
 
-        constexpr Point p1(11.0, 5.2);
-        constexpr Point p2{4.2, 3.2};
-        constexpr Point p3{3, 7};
-        constexpr auto  mid = MidPoint(p1, p2);
+        constexpr Point                  p1(11.0, 5.2);
+        constexpr Point                  p2{4.2, 3.2};
+        [[maybe_unused]] constexpr Point p3{3, 7};
+        [[maybe_unused]] constexpr auto  mid = MidPoint(p1, p2);
     }
 
     // 020: variadic templates
@@ -1156,21 +1154,21 @@ public:
         v_point.emplace_back(1.2, 2.3);
 
         // stoi, stol, stoll, stoul, stoull, stof, stod, stold, to_string, to_wstring
-        size_t      sz   = 0;
-        std::string str  = "0123456789A";
-        auto        s_i0 = std::stoi(str);
-        auto        s_i1 = std::stoi(str, &sz);
+        size_t                sz   = 0;
+        std::string           str  = "0123456789A";
+        auto                  s_i0 = std::stoi(str);
+        [[maybe_unused]] auto s_i1 = std::stoi(str, &sz);
         // auto s_i2 = stoi(str, &sz, 16); out of range
-        auto s_ll0 = std::stoll(str);
-        auto s_ll1 = std::stoll(str, &sz, 16);
-        auto s_ul0 = std::stoul(str);
-        auto s_ul1 = std::stoul(str, nullptr, 16);
-        auto s_ull = std::stoull(str, &sz, 16);
-        auto s_f0  = std::stof(str);
-        auto s_f1  = std::stof(str, &sz);
-        auto s_d0  = std::stod(str);
-        auto s_d1  = std::stod(str, &sz);
-        auto s_ld  = std::stold(str, nullptr);
+        [[maybe_unused]] auto s_ll0 = std::stoll(str);
+        [[maybe_unused]] auto s_ll1 = std::stoll(str, &sz, 16);
+        [[maybe_unused]] auto s_ul0 = std::stoul(str);
+        [[maybe_unused]] auto s_ul1 = std::stoul(str, nullptr, 16);
+        [[maybe_unused]] auto s_ull = std::stoull(str, &sz, 16);
+        [[maybe_unused]] auto s_f0  = std::stof(str);
+        [[maybe_unused]] auto s_f1  = std::stof(str, &sz);
+        [[maybe_unused]] auto s_d0  = std::stod(str);
+        [[maybe_unused]] auto s_d1  = std::stod(str, &sz);
+        [[maybe_unused]] auto s_ld  = std::stold(str, nullptr);
 
         auto to_s0  = std::to_string(s_i0);
         auto to_s1  = std::to_string(s_f1);
@@ -1271,7 +1269,7 @@ public:
 
         std::copy(std::begin(arr), std::end(arr), std::begin(dest));
         std::srand(unsigned(std::time(0)));
-        auto myrandom = [](int i) {
+        [[maybe_unused]] auto myrandom = [](int i) {
             return std::rand() % i;
         };
         // std::random_shuffle(begin(dest), end(dest), myrandom);
@@ -1492,7 +1490,7 @@ public:
             std::cout << "f_add: " << test << std::endl;
             print(test);
         };
-        auto f_minus = [&]() {
+        [[maybe_unused]] auto f_minus = [&]() {
             std::this_thread::sleep_for(std::chrono::milliseconds(100));
             std::lock_guard<std::mutex> locker(mu);
             --test;
@@ -1650,9 +1648,17 @@ public:
     struct MoveTest {
         MoveTest() { std::cout << "MoveTest()" << std::endl; }
         MoveTest(const MoveTest& o) { std::cout << "MoveTest(const MoveTest&)" << std::endl; }
-        MoveTest& operator=(const MoveTest& o) { std::cout << "operator=(const MoveTest&)" << std::endl; }
+        MoveTest& operator=(const MoveTest& o)
+        {
+            std::cout << "operator=(const MoveTest&)" << std::endl;
+            return *this;
+        }
         MoveTest(MoveTest&&) { std::cout << "MoveTest(MoveTest&&)" << std::endl; }
-        MoveTest& operator=(MoveTest&&) { std::cout << "operator=(MoveTest&&)" << std::endl; }
+        MoveTest& operator=(MoveTest&&)
+        {
+            std::cout << "operator=(MoveTest&&)" << std::endl;
+            return *this;
+        }
         ~MoveTest() { std::cout << "~MoveTest()" << std::endl; }
         std::string _str;
     };
@@ -1808,4 +1814,3 @@ public:
     }
 };
 
-#endif    // C11_H

@@ -1,7 +1,6 @@
-#ifndef CIRCULAR_BUF_ASYNC_H
-#define CIRCULAR_BUF_ASYNC_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 // TODO: NOT YET FINISHED...
@@ -95,5 +94,3 @@ protected:
 
     std::mutex mutex_;
 };
-
-#endif

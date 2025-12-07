@@ -1,7 +1,6 @@
-#ifndef POSSIBLE_PATHS_TOP_BOTTOM_H
-#define POSSIBLE_PATHS_TOP_BOTTOM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // http://www.geeksforgeeks.org/count-possible-paths-top-left-bottom-right-nxm-matrix/
@@ -15,11 +14,12 @@
 int possible_paths_top_bottom_v1(int m, int n)
 {
     // If either given row number is first or given column number is first
-    if (m == 1 || n == 1) return 1;
+    if (m == 1 || n == 1)
+        return 1;
 
     // If diagonal movements are allowed then the last addition
     // is required.
-    return  possible_paths_top_bottom_v1(m-1, n) + possible_paths_top_bottom_v1(m, n-1);
+    return possible_paths_top_bottom_v1(m - 1, n) + possible_paths_top_bottom_v1(m, n - 1);
     // + numberOfPaths(m-1,n-1);
 }
 
@@ -42,9 +42,8 @@ int possible_paths_top_bottom_v2(int m, int n)
         for (int j = 1; j < n; j++)
             // By uncommenting the last part the code calculatest he total
             // possible paths if the diagonal Movements are allowed
-            count[i][j] = count[i-1][j] + count[i][j-1]; //+ count[i-1][j-1];
+            count[i][j] = count[i - 1][j] + count[i][j - 1];    //+ count[i-1][j-1];
     }
-    return count[m-1][n-1];
+    return count[m - 1][n - 1];
 }
 
-#endif

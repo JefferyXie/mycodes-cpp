@@ -1,13 +1,12 @@
-#ifndef REGEX_H
-#define REGEX_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
-// 
+//
 // https://www3.ntu.edu.sg/home/ehchua/programming/howto/Regexe.html
 // https://www.cplusplus.com/reference/regex/ECMAScript/
 // https://docs.microsoft.com/en-us/cpp/standard-library/regular-expressions-cpp
-// 
+//
 
 void PrintMatches(std::string str, std::regex reg)
 {
@@ -17,7 +16,7 @@ void PrintMatches(std::string str, std::regex reg)
     // Show true and false in output
     std::cout << std::boolalpha;
 
-    // Determines if there is a match and match 
+    // Determines if there is a match and match
     // results are returned in matches
     while (std::regex_search(str, matches, reg)) {
         std::cout << "Checked for Results : " << matches.ready() << "\n";
@@ -64,9 +63,9 @@ void run_regex()
     // Create the pattern to search for which is
     // the letters ape followed maybe by anything
     // that is not a space
-    std::regex reg ("(ape[^ ]?)");
+    std::regex reg("(ape[^ ]?)");
 
-    PrintMatches(str,reg);
+    PrintMatches(str, reg);
 
     // ----- END BEGINNING REGEX -----
 
@@ -77,9 +76,9 @@ void run_regex()
     std::string str2 = "I picked the pickle";
 
     // Match (+) 1 or more of anything not a space
-    std::regex reg2 ("(pick([^ ]+)?)");
+    std::regex reg2("(pick([^ ]+)?)");
 
-    PrintMatches2(str2,reg2);
+    PrintMatches2(str2, reg2);
 
     // ----- END ITERATOR REGEX -----
 
@@ -88,28 +87,28 @@ void run_regex()
     std::string str3 = "Cat rat mat fat pat";
 
     // Match any character in [] plus what follows
-    std::regex reg3 ("([crmfp]at)");
+    std::regex reg3("([crmfp]at)");
 
-    PrintMatches2(str3,reg3);
+    PrintMatches2(str3, reg3);
 
     // We can also match characters in a range
     std::regex reg4("[C-Fc-f]at");
-    PrintMatches2(str3,reg4);
+    PrintMatches2(str3, reg4);
 
     // Use ^ to denote any character except for
     // those in brackets
     std::regex reg5("[^Cr]at");
-    PrintMatches2(str3,reg5);
+    PrintMatches2(str3, reg5);
 
     // ----- END MATCH 1 OF SEVERAL LETTERS -----
 
     // ----- REPLACE MATCHES -----
 
     std::string str6 = "Cat rat mat fat pat";
-    std::regex reg6("[Cr]at");
+    std::regex  reg6("[Cr]at");
 
     // Replace matches with Owl in the output
-    std::string owlFood = std::regex_replace(str6,reg6,"Owl");
+    std::string owlFood = std::regex_replace(str6, reg6, "Owl");
     std::cout << owlFood << "\n";
 
     // ----- END REPLACE MATCHES -----
@@ -120,9 +119,8 @@ void run_regex()
     // search for a . we escape it with \
 
     std::string str7 = "F.B.I. I.R.S. CIA";
-    std::regex reg7("([^ ]\..\..\.)");
-    PrintMatches2(str7,reg7);
-
+    std::regex  reg7("([^ ]\..\..\.)");
+    PrintMatches2(str7, reg7);
 
     // ----- END MATCHING ANY CHARACTER -----
 
@@ -130,9 +128,9 @@ void run_regex()
 
     // We can match any whitespace character
     std::string str8 = "This is a\n multiline string\n"
-        "that has many lines";
-    std::regex reg8("\n");
-    std::string noLBStr = std::regex_replace(str8,reg8," ");
+                       "that has many lines";
+    std::regex  reg8("\n");
+    std::string noLBStr = std::regex_replace(str8, reg8, " ");
     std::cout << noLBStr << "\n";
 
     // You can also replace
@@ -149,7 +147,7 @@ void run_regex()
     // \d can be used instead of [0-9]
     // \D is the same as [^0-9]
     std::string str9 = "12345";
-    std::regex reg9("\\d");
+    std::regex  reg9("\\d");
     PrintMatches2(str9, reg9);
 
     // You can also match within a range
@@ -197,12 +195,12 @@ void run_regex()
     // ----- END MATCHING ONE OR MORE -----
 
     // ----- PROBLEM -----
-    // Create a Regex that matches email addresses 
+    // Create a Regex that matches email addresses
     // from a list
-    // 1. 1 to 20 lowercase and uppercase letters, 
+    // 1. 1 to 20 lowercase and uppercase letters,
     // numbers, plus ._%+-
     // 2. An @ symbol
-    // 3. 2 to 20 lowercase and uppercase letters, 
+    // 3. 2 to 20 lowercase and uppercase letters,
     // numbers, plus .-
     // 4. A period
     // 5. 2 to 3 lowercase and uppercase letters
@@ -212,6 +210,4 @@ void run_regex()
     std::regex reg14("[\\w._%+-]{1,20}@[\\w.-]{2,20}.[A-Za-z]{2,3}");
     PrintMatches2(str14, reg14);
 }
-
-#endif
 

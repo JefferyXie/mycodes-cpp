@@ -1,7 +1,6 @@
-#ifndef ARRAY_TO_BALANCED_BST_H
-#define ARRAY_TO_BALANCED_BST_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // clang-format off
 /*
@@ -69,6 +68,4 @@ void run_array_to_balanced_bst()
     printf("\n pre_order traversal of constructed BST ");
     pre_order(root);
 }
-
-#endif
 

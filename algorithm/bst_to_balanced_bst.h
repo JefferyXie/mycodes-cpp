@@ -1,7 +1,6 @@
-#ifndef BST_TO_BALANCED_BST_H
-#define BST_TO_BALANCED_BST_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // clang-format off
 /*
@@ -71,7 +70,7 @@ struct Node {
 };
 
 // This function traverse the skewed binary tree and stores its nodes pointers in vector nodes[]
-void storeBSTNodes(Node* root, vector<Node*>& nodes)
+void storeBSTNodes(Node* root, std::vector<Node*>& nodes)
 {
     if (!root)
         return;
@@ -83,7 +82,7 @@ void storeBSTNodes(Node* root, vector<Node*>& nodes)
 }
 
 // Recursive function to construct binary tree
-Node* buildTreeUtil(vector<Node*>& nodes, int start, int end)
+Node* buildTreeUtil(std::vector<Node*>& nodes, int start, int end)
 {
     if (start > end)
         return NULL;
@@ -103,7 +102,7 @@ Node* buildTreeUtil(vector<Node*>& nodes, int start, int end)
 Node* bst_to_balanced_bst(Node* root)
 {
     // Store nodes of given BST in sorted order
-    vector<Node*> nodes;
+    std::vector<Node*> nodes;
     storeBSTNodes(root, nodes);
 
     // Constucts BST from nodes[]
@@ -157,6 +156,4 @@ void run_bst_to_balanced_bst()
     printf("Preorder traversal of balanced BST is : \n");
     preOrder(root);
 }
-
-#endif
 

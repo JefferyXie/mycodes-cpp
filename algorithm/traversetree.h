@@ -1,8 +1,6 @@
-#ifndef TRAVERSETREE_H
-#define TRAVERSETREE_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/node.h"
+#include "../core/node.h"
 
 // http://stackoverflow.com/questions/1294701/post-order-traversal-of-binary-tree-without-recursion
 // 1), keep pushing right and left children nodes to stack
@@ -85,6 +83,4 @@ void TraversePostorder(tree_node_int_t* root)
     } /* end of while */
     std::cout << std::endl;
 };
-
-#endif
 

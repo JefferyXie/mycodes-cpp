@@ -1,7 +1,6 @@
-#ifndef SUBARRAY_MAX_NO_SKIP_H
-#define SUBARRAY_MAX_NO_SKIP_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 /*
@@ -30,5 +29,4 @@ int subarray_max_no_skip(int arr[], int n)
     return 0;
 }
 
-#endif
 

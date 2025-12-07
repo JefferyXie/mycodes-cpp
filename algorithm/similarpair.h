@@ -1,7 +1,6 @@
-#ifndef SIMILARPAIR_H
-#define SIMILARPAIR_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // [TBD] this problem has not yet been solved!
 //
@@ -68,6 +67,4 @@ int SimilarPair(int T, int arr[][2])
     }
     return count;
 }
-
-#endif
 

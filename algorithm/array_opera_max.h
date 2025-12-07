@@ -1,16 +1,15 @@
-#ifndef ARRAY_OPERA_MAX_H
-#define ARRAY_OPERA_MAX_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/crush/
 // https://www.hackerrank.com/challenges/crush/editorial
 //
 
-long array_opera_max(int n, vector<vector<int>> queries)
+long array_opera_max(int n, std::vector<std::vector<int>> queries)
 {
-    vector<int> arr(n, 0);
+    std::vector<int> arr(n, 0);
     for (auto& q : queries) {
         int a = q[0];
         int b = q[1];
@@ -25,7 +24,7 @@ long array_opera_max(int n, vector<vector<int>> queries)
     for (auto v : arr) {
         // sum here actually gives the final value at particular index
         sum += v;
-        max_v = max(sum, max_v);
+        max_v = std::max(sum, max_v);
     }
     return max_v;
 }
@@ -33,4 +32,3 @@ long array_opera_max(int n, vector<vector<int>> queries)
 // Segment Tree
 // https://www.geeksforgeeks.org/segment-tree-set-1-sum-of-given-range/
 
-#endif

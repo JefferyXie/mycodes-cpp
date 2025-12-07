@@ -1,7 +1,6 @@
-#ifndef GRAPH_DIJKSTRA_H
-#define GRAPH_DIJKSTRA_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/dijkstrashortreach
@@ -22,11 +21,11 @@
 
 // TODO: idea is right, somehow the code is buggy
 // this is actually not Dijkstra algorithm, check above geeksforgeeks link for details
-vector<int> graph_dijkstra(int n, vector<vector<int>> edges, int s)
+std::vector<int> graph_dijkstra(int n, std::vector<std::vector<int>> edges, int s)
 {
-    vector<int> results(n + 1, -1);
+    std::vector<int> results(n + 1, -1);
     // < 0: child and length, 0: not connected, 1: parent, > 1: higher ancestor
-    vector<vector<int>> ancestors(n + 1, vector<int>(n + 1, 0));
+    std::vector<std::vector<int>> ancestors(n + 1, std::vector<int>(n + 1, 0));
     for (auto& eg : edges) {
         auto p1           = eg[0];
         auto p2           = eg[1];
@@ -34,7 +33,7 @@ vector<int> graph_dijkstra(int n, vector<vector<int>> edges, int s)
         ancestors[p1][p2] = -1 * length;
         ancestors[p2][p1] = -1 * length;
     }
-    queue<int> node_q;
+    std::queue<int> node_q;
     // breath first search
     node_q.push(s);
     do {
@@ -57,7 +56,7 @@ vector<int> graph_dijkstra(int n, vector<vector<int>> edges, int s)
                 } else {
                     // if having had path from s -> node and s -> i
                     // pick the min path s -> node -> i, or s -> i
-                    results[i] = min(results[node] + length, results[i]);
+                    results[i] = std::min(results[node] + length, results[i]);
                 }
                 // won't consider [node, i] any more
                 ancestors[node][i] = 1;
@@ -74,6 +73,4 @@ vector<int> graph_dijkstra(int n, vector<vector<int>> edges, int s)
     results.erase(results.begin());
     return results;
 }
-
-#endif
 

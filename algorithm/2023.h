@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
-#include "../main/node.h"
+#include "../core/node.h"
+#include "../core/utility.h"
 #include <functional>
 #include <utility>
 
@@ -351,9 +350,10 @@ void print_all_subsets(int* arr, int len)
     }
 
     int ignore = 0;
-    std::cout << "print_all_subsets: " << dump_array(arr, len, &ignore) << ", count=" << results.size() << std::endl;
+    std::cout << "print_all_subsets: " << util::dump_array(arr, len, &ignore) << ", count=" << results.size()
+              << std::endl;
     for (auto& result : results) {
-        std::cout << "\t" << dump_array(result, ignore) << std::endl;
+        std::cout << "\t" << util::dump_array(result, ignore) << std::endl;
     }
 }
 
@@ -391,7 +391,7 @@ bool tower_hopper(int* arr, int len)
             }
         }
     }
-    std::cout << "\tmiddle result: " << dump_array(cache, len) << "\n\t";
+    std::cout << "\tmiddle result: " << util::dump_array(cache, len) << "\n\t";
     return *cache;
 }
 
@@ -445,7 +445,7 @@ void run_tower_hopper()
          }) {
         const auto v1 = tower_hopper(arr.data(), arr.size());
         const auto v2 = tower_hopper_v2(arr.data(), arr.size());
-        std::cout << "array=" << dump_array(arr) << std::boolalpha << ", tower_hopper=" << v1 << ", "
+        std::cout << "array=" << util::dump_array(arr) << std::boolalpha << ", tower_hopper=" << v1 << ", "
                   << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; tower_hopper_v2=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::noboolalpha << std::endl;
     }
@@ -759,7 +759,7 @@ void run_array_max_pair_score()
         const auto v1 = array_max_pair_score(arr.data(), arr.size());
         const auto v2 = array_max_pair_score_v2(arr.data(), arr.size());
 
-        std::cout << "array=" << dump_array(arr) << ", array_max_pair_score=" << v1 << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", array_max_pair_score=" << v1 << ", "
                   << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; array_max_pair_score_v2=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -822,7 +822,7 @@ void run_max_profit_1_transaction()
              std::vector<int>{7, 1, 5, 3, 6, 4},      // 5
              std::vector<int>{1, 2, 3, 4, 5},         // 4
          }) {
-        std::cout << "\nprices: " << dump_array(prices) << std::endl;
+        std::cout << "\nprices: " << util::dump_array(prices) << std::endl;
         std::cout << "max_profit_1_transaction: " << max_profit_1_transaction(prices) << std::endl;
         std::cout << "max_profit_1_transaction_v2: " << max_profit_1_transaction_v2(prices) << std::endl;
         std::cout << "max_profit_1_transaction_v3: " << max_profit_1_transaction_v3(prices) << std::endl;
@@ -866,7 +866,7 @@ void run_array_max_product_subarray()
              use_case_t({-2, 3, -4}, 24),
          }) {
         const auto v = array_max_product_subarray(arr.data(), arr.size());
-        std::cout << "array=" << dump_array(arr) << ", array_max_product_subarray=" << v << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", array_max_product_subarray=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }

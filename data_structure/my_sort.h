@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // sorting algorithm, http://blog.csdn.net/semo_1006/article/details/4706890
 // method 1: insertion sort

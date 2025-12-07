@@ -1,7 +1,6 @@
-#ifndef SORT_BY_FREQ_THEN_INORDER_H
-#define SORT_BY_FREQ_THEN_INORDER_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 /*
@@ -26,12 +25,12 @@
     }
 */
 
-vector<int> sort_by_freq_then_inorder(vector<int>& nums)
+std::vector<int> sort_by_freq_then_inorder(std::vector<int>& nums)
 {
-    unordered_map<int, int>        freq;
-    priority_queue<pair<int, int>> maxHeap;
-    vector<int>                    res;
-    int                            n = nums.size();
+    std::unordered_map<int, int>             freq;
+    std::priority_queue<std::pair<int, int>> maxHeap;
+    std::vector<int>                         res;
+    int                                      n = nums.size();
     if (n == 0)
         return res;
 
@@ -43,7 +42,7 @@ vector<int> sort_by_freq_then_inorder(vector<int>& nums)
         // elements output by ascend
         // To keep element's original appearance order, we should replace it->first with
         // element's index in input array, then output by nums[it->first]
-        maxHeap.push(pair<int, int>(it->second, it->first));
+        maxHeap.push(std::pair<int, int>(it->second, it->first));
     }
     while (!maxHeap.empty()) {
         res.push_back(maxHeap.top().second);
@@ -51,6 +50,4 @@ vector<int> sort_by_freq_then_inorder(vector<int>& nums)
     }
     return res;
 }
-
-#endif
 

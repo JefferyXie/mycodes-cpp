@@ -1,7 +1,6 @@
-#ifndef CUTTREE_H
-#define CUTTREE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/cut-the-tree
 // this version follows these steps -
@@ -77,6 +76,4 @@ int CutTree(const std::vector<int>& vertices, const std::vector<std::pair<int, i
     auto              root = BuildTree(1, vertices, edges, visited);
     return Calc_treediff(root);
 }
-
-#endif
 

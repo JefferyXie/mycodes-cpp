@@ -1,7 +1,6 @@
-#ifndef FIND_K_MOST_FREQUENT_WORDS_H
-#define FIND_K_MOST_FREQUENT_WORDS_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 /*
@@ -49,6 +48,4 @@
 // http://www.geeksforgeeks.org/find-the-k-most-frequent-words-from-a-file/
 
 // TODO...
-
-#endif
 

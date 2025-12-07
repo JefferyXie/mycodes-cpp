@@ -1,7 +1,6 @@
-#ifndef INTERPOLATE_H
-#define INTERPOLATE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 template <typename T>
 T interpolate(const std::vector<int64_t>& sample_times, const std::vector<T>& sample_values, int64_t time_point)
@@ -58,4 +57,3 @@ T interpolate(const std::vector<int64_t>& sample_times, const std::vector<T>& sa
     return y0 + (time_point - x0) * (y1 - y0) / (x1 - x0);
 }
 
-#endif

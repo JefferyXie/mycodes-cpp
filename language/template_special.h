@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // http://stackoverflow.com/questions/14926482/const-and-non-const-template-specialization
 // http://stackoverflow.com/questions/13401716/selecting-a-member-function-using-different-enable-if-conditions

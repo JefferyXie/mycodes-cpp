@@ -1,7 +1,6 @@
-#ifndef FIND_UNIQUE_NUMBER_H
-#define FIND_UNIQUE_NUMBER_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // Given an array with size 99, elements are from [1,100] and unique. Find the missing number.
@@ -27,6 +26,4 @@ int find_unique_number(const std::vector<int> a)
 //
 // A similar question: given an array with unique integers in increasing order, return the integer with its value equal
 // to its index in the array.
-
-#endif
 

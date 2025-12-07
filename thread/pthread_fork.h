@@ -1,19 +1,20 @@
-#include "../main/header.h"
+#pragma once
 
-int g_sum = 0;
+#include "../core/header.h"
+
+int   g_sum = 0;
 void* runner(void* param)
 {
-    int upper = *(int*)param;// (int)*param;
+    int upper = *(int*)param;    // (int)*param;
     for (int i = 1; i < upper; ++i)
         g_sum += i;
     pthread_exit(0);
 }
 
-
-void Run_pthread(int num)
+void run_pthread(int num)
 {
-    pthread_t tid; // thread id
-    pthread_attr_t attr; // thread attributes
+    pthread_t      tid;     // thread id
+    pthread_attr_t attr;    // thread attributes
 
     // get default attributes
     pthread_attr_init(&attr);
@@ -27,22 +28,17 @@ void Run_pthread(int num)
     printf("g_sum = %d\n", g_sum);
 }
 
-void Run_fork()
+void run_fork()
 {
     int time = rand();
-    int pid = fork();
-    if (pid == 0)
-    {
+    int pid  = fork();
+    if (pid == 0) {
         printf("process %d is sleeping for %d\n", pid, time);
         sleep(time);
         printf("process %d done!\n", pid);
-    }
-    else if (pid > 0)
-    {
+    } else if (pid > 0) {
         printf("process %d is sleeping for %d\n", pid, time);
-    }
-    else
-    {
+    } else {
         perror("fork");
     }
 }

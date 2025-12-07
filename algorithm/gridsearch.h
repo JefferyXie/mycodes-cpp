@@ -1,7 +1,6 @@
-#ifndef GRIDSEARCH_H
-#define GRIDSEARCH_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/the-grid-search
 // using string vector rather than char/int array makes the code easier
@@ -26,6 +25,4 @@ bool gridsearch(const std::vector<std::string>& G, const std::vector<std::string
     }
     return found;
 }
-
-#endif
 

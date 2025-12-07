@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../main/node.h"
-#include "../main/utility.h"
+#include "../core/node.h"
+#include "../core/utility.h"
 #include <queue>
 #include <tuple>
 #include <utility>
@@ -723,7 +723,7 @@ void run_job_compelte_time()
                  },
                  "[1,2,3,3,3,4,4]"),
          }) {
-        const auto v = dump_array(job_compelte_time(jobs, edges));
+        const auto v = util::dump_array(job_compelte_time(jobs, edges));
         std::cout << "jobs=" << jobs << ", job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
                   << std::endl;
     }
@@ -769,7 +769,8 @@ enhanced_job_compelte_time(int N, const std::vector<int>& jobs_time_cost, const 
     std::multimap<int, int> jobs_ordered_by_cost;
     while (!q.empty()) {
 
-        std::cout << "top job=" << q.front() << ", size=" << q.size() << ", result=" << dump_array(result) << std::endl;
+        std::cout << "top job=" << q.front() << ", size=" << q.size() << ", result=" << util::dump_array(result)
+                  << std::endl;
 
         const auto job = q.front();
         q.pop();
@@ -858,7 +859,7 @@ void run_enhanced_job_compelte_time()
                  },
                  "[1,2,4,5,7]"},
          }) {
-        const auto v = dump_array(enhanced_job_compelte_time(N, jobs_time_cost, jobs_deps));
+        const auto v = util::dump_array(enhanced_job_compelte_time(N, jobs_time_cost, jobs_deps));
         std::cout << "N=" << N << ", enhanced_job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
                   << std::endl;
     }
@@ -915,7 +916,7 @@ void run_max_rectangle()
              use_case_t({2, 3, 3, 2}, 8),
          }) {
         const auto v = max_rectangle(heights);
-        std::cout << "Heights: " << dump_array(heights) << ", max_rectangle=" << v << ", "
+        std::cout << "Heights: " << util::dump_array(heights) << ", max_rectangle=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -968,7 +969,7 @@ void run_max_rectangle_sub_matrix()
                  6),
          }) {
         const auto v = max_rectangle_sub_matrix(matrix);
-        std::cout << "matrix=" << dump_matrix(matrix) << ", max_rectangle_sub_matrix=" << v << ", "
+        std::cout << "matrix=" << util::dump_matrix(matrix) << ", max_rectangle_sub_matrix=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1245,8 +1246,8 @@ std::vector<int> find_pascal_triangle_row_2(int rowIdx)
 void run_find_pascal_triangle_row()
 {
     for (auto rowIdx : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}) {
-        std::cout << "rowIdx=" << rowIdx << ", row=" << dump_array(find_pascal_triangle_row(rowIdx)) << ", "
-                  << dump_array(find_pascal_triangle_row_2(rowIdx)) << std::endl;
+        std::cout << "rowIdx=" << rowIdx << ", row=" << util::dump_array(find_pascal_triangle_row(rowIdx)) << ", "
+                  << util::dump_array(find_pascal_triangle_row_2(rowIdx)) << std::endl;
     }
 }
 
@@ -1394,7 +1395,7 @@ void run_max_sub_array()
              use_case_t{{5, 4, 1, 7, 8}, 25},
          }) {
         const auto v = max_sub_array(arr);
-        std::cout << "array=" << dump_array(arr) << ", max_sub_array=" << v << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", max_sub_array=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1442,7 +1443,8 @@ void run_possible_words()
              std::vector{5},
              std::vector{1, 2, 8, 9, 0},
          }) {
-        std::cout << "array=" << dump_array(arr) << ", possible_words=" << dump_array(possible_words(arr)) << std::endl;
+        std::cout << "array=" << util::dump_array(arr) << ", possible_words=" << util::dump_array(possible_words(arr))
+                  << std::endl;
     }
 }
 
@@ -1559,8 +1561,9 @@ void run_merge_arrays()
     auto arr3 = std::vector<int>{4, 5, 6, 7, 8, 9};
     auto r1   = merge_arrays(arr1, arr2, arr3);
     auto r2   = merge_arrays_k({std::vector<int>{arr1}, std::vector<int>{arr2}, std::vector<int>{arr3}});
-    std::cout << "arr1=" << dump_array(arr1) << ", arr2=" << dump_array(arr2) << ", arr3=" << dump_array(arr3)
-              << ", merge_arrays=" << dump_array(r1) << ", merge_arrays_k=" << dump_array(r2) << std::endl;
+    std::cout << "arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
+              << ", arr3=" << util::dump_array(arr3) << ", merge_arrays=" << util::dump_array(r1)
+              << ", merge_arrays_k=" << util::dump_array(r2) << std::endl;
 }
 
 // https://www.geeksforgeeks.org/dsa/convert-binary-tree-to-doubly-linked-list-by-keeping-track-of-visited-node/
@@ -1667,8 +1670,8 @@ void run_graph_biparties_check()
              use_case_t({{1}, {0, 2}, {1, 3}, {2}}, true),
          }) {
         const auto v = graph_biparties_check(adj_list);
-        std::cout << "graph=" << dump_matrix(adj_list) << ", graph_biparties_check=" << std::boolalpha << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "graph=" << util::dump_matrix(adj_list) << ", graph_biparties_check=" << std::boolalpha << v
+                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1732,8 +1735,8 @@ void run_contiguous_sub_array()
              use_case_t({3, 4, 1, 6, 2}, "[1,3,1,5,1]"),
              use_case_t({2, 4, 7, 1, 5, 3}, "[1,2,6,1,3,1]"),
          }) {
-        const auto v = dump_array(contiguous_sub_array(arr));
-        std::cout << "Input: " << dump_array(arr) << ", contiguous_sub_array=" << v << ", "
+        const auto v = util::dump_array(contiguous_sub_array(arr));
+        std::cout << "Input: " << util::dump_array(arr) << ", contiguous_sub_array=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1778,7 +1781,7 @@ void run_number_sum_k()
              use_case_t({1, 1, 1, 1, 1, 1}, 2, 15),
          }) {
         const auto ans = number_sum_k(arr, k);
-        std::cout << "Array=" << dump_array(arr) << ", k=" << k << ", number_sum_k=" << ans << ", "
+        std::cout << "Array=" << util::dump_array(arr) << ", k=" << k << ", number_sum_k=" << ans << ", "
                   << (ans == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 #ifndef MEMORYLEAK_ENABLED
 #define MEMORYLEAK_ENABLED 0

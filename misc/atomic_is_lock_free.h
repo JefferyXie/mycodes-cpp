@@ -1,8 +1,6 @@
-#ifndef ATOMIC_IS_LOCK_FREE_H
-#define ATOMIC_IS_LOCK_FREE_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 #include "for_each.h"
 #include <type_traits>
 
@@ -249,6 +247,4 @@ void run_atomic_is_lock_free()
         static_assert(ATOM::is_always_lock_free == false);
     }
 }
-
-#endif
 

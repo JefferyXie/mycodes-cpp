@@ -1,7 +1,6 @@
-#ifndef CIRCULAR_BUF_H
-#define CIRCULAR_BUF_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://embeddedartistry.com/blog/2017/4/6/circular-buffers-in-cc
@@ -63,6 +62,4 @@ private:
     int              _offset;
     std::mutex       _mu;
 };
-
-#endif
 

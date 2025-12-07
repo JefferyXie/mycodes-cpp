@@ -1,7 +1,6 @@
-#ifndef SUBARRAY_MAX_SUM_H
-#define SUBARRAY_MAX_SUM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/maxsubarray
@@ -50,4 +49,3 @@ std::vector<int> subarray_max_sum_2(std::vector<int> arr)
     return {std::max(max_subarr_so_far, max_subarr_ending), max_subsequence};
 }
 
-#endif

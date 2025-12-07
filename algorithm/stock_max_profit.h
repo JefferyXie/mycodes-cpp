@@ -1,8 +1,6 @@
-#ifndef STOCK_MAX_PROFIT_H
-#define STOCK_MAX_PROFIT_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 
 //
 // https://www.hackerrank.com/challenges/stockmax/problem
@@ -57,9 +55,7 @@ void run_stock_max_profit()
 
          }) {
         const auto v = stock_max_profit(arr);
-        std::cout << "prices=" << dump_array(arr) << ", stock_max_profit=" << v << ", "
+        std::cout << "prices=" << util::dump_array(arr) << ", stock_max_profit=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
-
-#endif

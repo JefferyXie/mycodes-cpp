@@ -1,7 +1,6 @@
-#ifndef MAX_INCREASING_SUBSEQUENCE_H
-#define MAX_INCREASING_SUBSEQUENCE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.youtube.com/watch?v=EgXQp1YOtyY&ab_channel=Simplilearn
@@ -45,6 +44,4 @@ unsigned max_increasing_subsequence(std::vector<int> arr)
     print("max", max_subsequence);
     return result;
 }
-
-#endif
 

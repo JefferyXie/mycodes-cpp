@@ -1,7 +1,6 @@
-#ifndef SUBARRAY_EQUAL_SUM_H
-#define SUBARRAY_EQUAL_SUM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 // http://www.geeksforgeeks.org/dynamic-programming-subset-sum-problem/
@@ -124,4 +123,3 @@ subarray_equal_sum_3(const std::vector<int>& A, int sum)
     std::cout << "Found the number of subarray: " << dp[sum] << endl;
 }
 
-#endif

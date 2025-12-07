@@ -1,7 +1,6 @@
-#ifndef ARRAY_BUS_STATION_H
-#define ARRAY_BUS_STATION_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/bus-station
@@ -77,6 +76,4 @@ std::vector<int> array_bus_station_v2(std::vector<int> arr)
     }
     return result;
 }
-
-#endif
 

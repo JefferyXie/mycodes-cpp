@@ -1,8 +1,7 @@
-#ifndef FIND_MIN_PACKET_LENGTH_H
-#define FIND_MIN_PACKET_LENGTH_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/header.h"
+#include "../core/utility.h"
 
 //
 // 1) "A market data publisher must publish all messages in a queue within time Limit milliseconds.
@@ -27,7 +26,7 @@
 uint32_t find_min_packet_length(const std::vector<uint32_t>& messages, uint32_t max_packets_count)
 {
     std::cout << __FUNCTION__ << ": [INPUT] max_packets_count=" << max_packets_count
-              << ", messages=" << dump_array(messages) << std::endl;
+              << ", messages=" << util::dump_array(messages) << std::endl;
 
     const auto num_messages = messages.size();
     if (num_messages == 0 || max_packets_count == 0) {
@@ -90,9 +89,8 @@ uint32_t find_min_packet_length(const std::vector<uint32_t>& messages, uint32_t 
         }
     }
 
-    std::cout << "\tdp[" << (num_messages - 1) << "]=" << dump_array(dp[num_messages - 1]) << std::endl;
+    std::cout << "\tdp[" << (num_messages - 1) << "]=" << util::dump_array(dp[num_messages - 1]) << std::endl;
 
     return dp[num_messages - 1][max_packets_count - 1];
 }
 
-#endif

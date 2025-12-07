@@ -1,7 +1,6 @@
-#ifndef SUBSTRING_LONGEST_UNIQUE_H
-#define SUBSTRING_LONGEST_UNIQUE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // http://www.geeksforgeeks.org/length-of-the-longest-substring-without-repeating-characters/
@@ -86,6 +85,4 @@ std::string substring_longest_unique(char* str)
 // solution 3),4)
 // https://leetcode.com/articles/longest-substring-without-repeating-characters/
 //
-
-#endif
 

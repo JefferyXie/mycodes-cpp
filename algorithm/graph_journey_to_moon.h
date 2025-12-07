@@ -1,13 +1,12 @@
-#ifndef GRAPH_JOURNEY_TO_MOON_H
-#define GRAPH_JOURNEY_TO_MOON_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/journey-to-the-moon
 //
 
-int graph_journey_to_moon(int n, std::vector<vector<int>> astronaut)
+int graph_journey_to_moon(int n, std::vector<std::vector<int>> astronaut)
 {
     /* fail with below case
     n = 100000;
@@ -18,7 +17,7 @@ int graph_journey_to_moon(int n, std::vector<vector<int>> astronaut)
     */
 
     // use map than array can save memory
-    std::unordered_map<int, unordered_set<int>> astronaut_map;
+    std::unordered_map<int, std::unordered_set<int>> astronaut_map;
     for (auto& p : astronaut) {
         astronaut_map[p[0]].insert(p[1]);
         astronaut_map[p[1]].insert(p[0]);
@@ -62,6 +61,4 @@ int graph_journey_to_moon(int n, std::vector<vector<int>> astronaut)
     }
     return total_pairs;
 }
-
-#endif
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 1) by utilizing pointer to function, detect the constraint at compile time
 //

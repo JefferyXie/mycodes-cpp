@@ -1,22 +1,20 @@
-#ifndef SORT_CUT_STICKS_H
-#define SORT_CUT_STICKS_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
-// 
+//
 // https://www.hackerrank.com/challenges/cut-the-sticks
-// 
+//
 
-vector<int>
-sort_cut_sticks(vector<int> arr)
+std::vector<int> sort_cut_sticks(std::vector<int> arr)
 {
-    //arr.assign({1, 13, 3, 8, 14, 9, 4, 4});
-    // 8,7,6,4,3,2,1
-    sort(arr.begin(), arr.end());
-    int len = (int)arr.size();
-    vector<int> result{len};
-    int shortest = 0;
-    int i = 0;
+    // arr.assign({1, 13, 3, 8, 14, 9, 4, 4});
+    //  8,7,6,4,3,2,1
+    std::sort(arr.begin(), arr.end());
+    int              len = (int)arr.size();
+    std::vector<int> result{len};
+    int              shortest = 0;
+    int              i        = 0;
     do {
         if (!shortest || shortest == arr[i]) {
             shortest = arr[i];
@@ -30,4 +28,3 @@ sort_cut_sticks(vector<int> arr)
     return result;
 }
 
-#endif

@@ -1,7 +1,6 @@
-#ifndef LIST_NEXT_BIGGER_NUM_H
-#define LIST_NEXT_BIGGER_NUM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 /*
@@ -28,6 +27,4 @@ def nextGreater(nums):
         stack.append(i)
     return res
 */
-
-#endif
 

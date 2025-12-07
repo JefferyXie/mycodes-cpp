@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "header.h"
 
 // TODO: c++20 std::format(..) may handle all the cases here...
 namespace my_formatter {

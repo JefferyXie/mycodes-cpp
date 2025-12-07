@@ -1,7 +1,6 @@
-#ifndef SUBARRAY_MAX_NO_ADJACENT_H
-#define SUBARRAY_MAX_NO_ADJACENT_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 /*
@@ -21,7 +20,8 @@
 
 //
 // solution 1), recursive version, doing a lot of duplicate call & calc
-long subarray_max_non_adjacent_recursive(const vector<int>& arr, unsigned int index, bool index_picked, long max_by_far)
+long subarray_max_non_adjacent_recursive(
+    const std::vector<int>& arr, unsigned int index, bool index_picked, long max_by_far)
 {
     if (index == 0)
         return max_by_far;
@@ -29,7 +29,7 @@ long subarray_max_non_adjacent_recursive(const vector<int>& arr, unsigned int in
     if (index_picked) {
         return subarray_max_non_adjacent_recursive(arr, index - 1, false, max_by_far);
     } else {
-        return max(
+        return std::max(
             subarray_max_non_adjacent_recursive(arr, index - 1, false, max_by_far),
             subarray_max_non_adjacent_recursive(arr, index - 1, true, max_by_far + arr[index - 1]));
     }
@@ -37,7 +37,7 @@ long subarray_max_non_adjacent_recursive(const vector<int>& arr, unsigned int in
 
 //
 // solution 2), using dynamic programming, keep intermediate results
-long subarray_max_non_adjacent_dp(const vector<int>& arr)
+long subarray_max_non_adjacent_dp(const std::vector<int>& arr)
 {
     auto len = arr.size();
     // dp[0]: the max subset sum in range arr[0, i], given arr[i] is not selected
@@ -47,15 +47,15 @@ long subarray_max_non_adjacent_dp(const vector<int>& arr)
     dp[1][0] = arr[0];
 
     for (unsigned int i = 1; i < len; ++i) {
-        dp[0][i] = max(dp[0][i - 1], dp[1][i - 1]);
+        dp[0][i] = std::max(dp[0][i - 1], dp[1][i - 1]);
         dp[1][i] = dp[0][i - 1] + arr[i];
     }
-    return max(dp[0][len - 1], dp[1][len - 1]);
+    return std::max(dp[0][len - 1], dp[1][len - 1]);
 }
 
 //
 // solution 3), another way by using dynamic programming
-long subarray_max_non_adjacent_dp_2(const vector<int>& arr)
+long subarray_max_non_adjacent_dp_2(const std::vector<int>& arr)
 {
     auto len = arr.size();
     if (len == 0)
@@ -64,11 +64,11 @@ long subarray_max_non_adjacent_dp_2(const vector<int>& arr)
         return arr[0];
 
     auto vec = arr;
-    vec[1]   = max(vec[0], vec[1]);
+    vec[1]   = std::max(vec[0], vec[1]);
 
     for (unsigned int i = 2; i < len; ++i) {
         // 3 cases here
-        vec[i] = max({vec[i], vec[i] + vec[i - 2], vec[i - 1]});
+        vec[i] = std::max({vec[i], vec[i] + vec[i - 2], vec[i - 1]});
     }
     return vec[len - 1];
 }
@@ -81,7 +81,7 @@ long subarray_max_non_adjacent_dp_2(const vector<int>& arr)
 //    the current element will be excl + current element (Note that only excl is considered
 //    because elements cannot be adjacent).
 // 3) At the end of the loop return max of incl and excl.
-long subarray_max_non_adjacent_dp_3(const vector<int>& arr)
+long subarray_max_non_adjacent_dp_3(const std::vector<int>& arr)
 {
     auto n    = arr.size();
     int  incl = arr[0];
@@ -100,4 +100,3 @@ long subarray_max_non_adjacent_dp_3(const vector<int>& arr)
     return incl > excl ? incl : excl;
 }
 
-#endif

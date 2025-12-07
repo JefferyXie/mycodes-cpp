@@ -1,9 +1,7 @@
-#ifndef TYPE_DEDUCTION_H
-#define TYPE_DEDUCTION_H
+#pragma once
 
 #include "../core/my_formatter.h"
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 
 int  g_arr[] = {1, 2, 3};
 int* get_i()
@@ -103,6 +101,4 @@ void run_type_deduction()
     SECTION_BEGIN(check_universal(auto bg = get_i()));
     check_universal(bg);
 }
-
-#endif
 

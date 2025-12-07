@@ -1,7 +1,6 @@
-#ifndef STR_BIGGER_IS_GREATER_H
-#define STR_BIGGER_IS_GREATER_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/bigger-is-greater
@@ -13,13 +12,13 @@
 void str_bigger_is_greater_v1()
 {
     int t = 0;
-    cin >> t;
+    std::cin >> t;
     const int a_int = (int)'a';
     while (t--) {
         char arr[100];
         char characters[27];
         memset(characters, 0, 27);
-        cin >> arr;
+        std::cin >> arr;
         bool bExist = false;
         for (int i = strlen(arr) - 1; i >= 0; i--) {
             // char ch = arr[i];
@@ -43,11 +42,11 @@ void str_bigger_is_greater_v1()
                 break;
             }
         }
-        cout << (bExist ? arr : "no answer") << endl;
+        std::cout << (bExist ? arr : "no answer") << std::endl;
     }
 }
 
-string str_bigger_is_greater_v2(string w)
+std::string str_bigger_is_greater_v2(std::string w)
 {
     auto len = w.size();
     if (len <= 1)
@@ -84,4 +83,3 @@ string str_bigger_is_greater_v2(string w)
     return w;
 }
 
-#endif

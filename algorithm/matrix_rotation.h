@@ -1,7 +1,6 @@
-#ifndef MATRIX_ROTATION_H
-#define MATRIX_ROTATION_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/matrix-rotation-algo
 // there're a few better solutions on the site!
@@ -182,6 +181,4 @@ std::vector<std::vector<int>> matrix_rotation(const std::vector<std::vector<int>
     }
     return output;
 }
-
-#endif
 

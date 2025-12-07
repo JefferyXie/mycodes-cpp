@@ -1,7 +1,6 @@
-#ifndef ENCRYPTION_H
-#define ENCRYPTION_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/encryption
 std::string encryption(std::string text)
@@ -31,6 +30,4 @@ std::string encryption(std::string text)
     }
     return result.erase(result.length() - 1, 1);
 }
-
-#endif
 

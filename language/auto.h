@@ -1,4 +1,4 @@
-#include "../main/header.h"
+#include "../core/header.h"
 #include "./classtest.h"
 
 // C++11 auto, how to determine type of auto?

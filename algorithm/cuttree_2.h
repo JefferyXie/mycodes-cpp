@@ -1,7 +1,6 @@
-#ifndef CUTTREE_2_H
-#define CUTTREE_2_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/cut-the-tree
 // https://github.com/derekhh/HackerRank/blob/master/cut-the-tree.cpp
@@ -58,6 +57,4 @@ int CutTree_2(const std::vector<int>& vertices, const std::vector<std::pair<int,
     }
     return min_diff;
 }
-
-#endif
 

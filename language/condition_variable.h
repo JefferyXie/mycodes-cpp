@@ -1,7 +1,6 @@
-#ifndef CONDITION_VARIABLE_H
-#define CONDITION_VARIABLE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // test std::condition_variable and std::unique_lock
 struct CV_notify_before_unlock {
@@ -16,13 +15,13 @@ struct CV_notify_before_unlock {
             _cv.wait(lk, [&]() {
                 // this callback only executes after the mutex is released by other thread
                 if (_cargo != 0) {
-                    cout << "there is cargo, should consume!" << endl;
+                    std::cout << "there is cargo, should consume!" << std::endl;
                     return true;
                 }
                 return false;
             });
             // start consuming...
-            cout << _cargo << endl;
+            std::cout << _cargo << std::endl;
             _cargo = 0;
         }
     }
@@ -36,7 +35,7 @@ struct CV_notify_before_unlock {
         for (int i = 0; i < num_cargos; ++i) {
             while (_cargo != 0)
                 std::this_thread::yield();
-            std::unique_lock<mutex> lk(_mtx);
+            std::unique_lock<std::mutex> lk(_mtx);
             _cargo = i + 1;
             // notify is to send signal but won't change status of mutex
             _cv.notify_one();
@@ -44,8 +43,8 @@ struct CV_notify_before_unlock {
             // is released
             int t = 5;
             while (t--) {
-                this_thread::sleep_for(chrono::seconds(1));
-                cout << "sleep after notify but before unlock: " << t << endl;
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout << "sleep after notify but before unlock: " << t << std::endl;
             }
         }
 
@@ -64,13 +63,13 @@ struct CV_notify_after_unlock {
             std::unique_lock<std::mutex> lk(_mtx);
             _cv.wait(lk, [&]() {
                 if (_cargo != 0) {
-                    cout << "there is cargo, should consume!" << endl;
+                    std::cout << "there is cargo, should consume!" << std::endl;
                     return true;
                 }
                 return false;
             });
             // start consuming...
-            cout << _cargo << endl;
+            std::cout << _cargo << std::endl;
             _cargo = 0;
         }
     }
@@ -83,7 +82,7 @@ struct CV_notify_after_unlock {
         for (int i = 0; i < num_cargos; ++i) {
             while (_cargo != 0)
                 std::this_thread::yield();
-            std::unique_lock<mutex> lk(_mtx);
+            std::unique_lock<std::mutex> lk(_mtx);
             _cargo = i + 1;
             // typically we should manually release mutex before notify signal
             // with this, the waiting thread will receive signal immediately
@@ -91,8 +90,8 @@ struct CV_notify_after_unlock {
             _cv.notify_one();
             int t = 5;
             while (t--) {
-                this_thread::sleep_for(chrono::seconds(1));
-                cout << "sleep after notify and unlock: " << t << endl;
+                std::this_thread::sleep_for(std::chrono::seconds(1));
+                std::cout << "sleep after notify and unlock: " << t << std::endl;
             }
         }
 
@@ -110,30 +109,30 @@ struct CV_notify_all {
     {
         while (1) {
             std::unique_lock<std::mutex> lk(_mtx);
-            cout << "[" << this_thread::get_id() << "] before wait" << endl;
+            std::cout << "[" << std::this_thread::get_id() << "] before wait" << std::endl;
             _cv.wait(lk, [&]() {
                 // this callback will be executed once immediately when this wait runs
                 // after this, the callback is only called when receiving a signal
-                cout << "[" << this_thread::get_id() << "] received signal" << endl;
+                std::cout << "[" << std::this_thread::get_id() << "] received signal" << std::endl;
                 if (_consumed >= cargos) {
-                    cout << "[" << this_thread::get_id() << "] all consumed, stopped!" << endl;
+                    std::cout << "[" << std::this_thread::get_id() << "] all consumed, stopped!" << std::endl;
                     return true;
                 }
                 if (_cargo != 0) {
-                    cout << "[" << this_thread::get_id() << "] there is cargo, should consume!" << endl;
+                    std::cout << "[" << std::this_thread::get_id() << "] there is cargo, should consume!" << std::endl;
                     return true;
                 }
                 return false;
             });
             if (_consumed++ >= cargos) {
-                cout << "[" << this_thread::get_id() << "] break " << (_consumed - 1) << endl;
+                std::cout << "[" << std::this_thread::get_id() << "] break " << (_consumed - 1) << std::endl;
                 break;
             }
             // start consuming...
-            cout << "[" << this_thread::get_id() << "] " << _cargo << endl;
+            std::cout << "[" << std::this_thread::get_id() << "] " << _cargo << std::endl;
             _cargo = 0;
         }
-        cout << "[" << this_thread::get_id() << "] ends." << endl;
+        std::cout << "[" << std::this_thread::get_id() << "] ends." << std::endl;
     }
 
     void run()
@@ -147,9 +146,9 @@ struct CV_notify_all {
         for (int i = 0; i < num_cargos; ++i) {
             while (_cargo != 0)
                 std::this_thread::yield();
-            std::unique_lock<mutex> lk(_mtx);
+            std::unique_lock<std::mutex> lk(_mtx);
             _cargo = i + 1;
-            cout << "produced cargo, before unlock " << _cargo << endl;
+            std::cout << "produced cargo, before unlock " << _cargo << std::endl;
             lk.unlock();
             // if using notify_one, only one waiting thread can receive the signal
             //_cv.notify_one();
@@ -164,6 +163,4 @@ struct CV_notify_all {
         consumer_thread3.join();
     }
 };
-
-#endif
 

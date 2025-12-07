@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // http://pppboy.blog.163.com/blog/static/30203796201082494026399/
 

@@ -1,16 +1,16 @@
 #ifndef VOLANT_H
 #define VOLANT_H
 
-#include "../../main/header.h"
+#include "../../core/header.h"
 
 // 
 // Given a string which consists of number, space, and dash, normalize it as a phone number
 // string s1 = "   0  0-44  4  8 5555 8361      ";
 // string s2 = " 0 - 22 1985--32   4";
 // string s3 = "5310   ";
-string normalize_phone_number(string& S)
+std::string normalize_phone_number(std::string& S)
 {
-    vector<char> arr(S.size(), '\0');
+    std::vector<char> arr(S.size(), '\0');
     unsigned int len_total = 0;
     unsigned int len_digits = 0;
     for (unsigned int i = 0; i < S.size(); ++i)
@@ -32,7 +32,7 @@ string normalize_phone_number(string& S)
         arr[len_total-3] = arr[len_total-2];
         arr[len_total-2] = digit;
     }
-    return string(arr.data());
+    return std::string(arr.data());
 }
 
 // 
@@ -40,18 +40,18 @@ string normalize_phone_number(string& S)
 // string s1 = "13 DUP 4 POP 5 DUP + DUP + -";
 // string s2 = "5 6 + -";
 // string s3 = "3 DUP 5 - -";
-int process_commands(string& S)
+int process_commands(std::string& S)
 {
     static int MAX_NUM = pow(2, 20) - 1;
     static int MIN_NUM = 0;
 
-    stack<int> st;
+    std::stack<int> st;
     size_t pos_s = 0;
     size_t pos_e = 0;
     while (1)
     {
         pos_e = S.find(' ', pos_s);
-        if (pos_e == string::npos)
+        if (pos_e == std::string::npos)
         {
             if (pos_s < S.size())
                 pos_e = S.size();
@@ -59,7 +59,7 @@ int process_commands(string& S)
                 break;
         }
 
-        string op = S.substr(pos_s, pos_e - pos_s);
+        std::string op = S.substr(pos_s, pos_e - pos_s);
         pos_s = pos_e + 1;
 
         if (op == "POP")

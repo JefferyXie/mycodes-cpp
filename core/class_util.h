@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "header.h"
 #include <cxxabi.h>
 #include <execinfo.h>
 #include <typeindex>

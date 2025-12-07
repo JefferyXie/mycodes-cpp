@@ -1,18 +1,17 @@
-#ifndef SUBARRAY_MIN_COUNT_SUM_H
-#define SUBARRAY_MIN_COUNT_SUM_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/subset-sum/problem
 
 //
 // dynamic programming
-int subarray_min_count_sum(const vector<int>& arr, int sum)
+int subarray_min_count_sum(const std::vector<int>& arr, int sum)
 {
-    auto                len = arr.size();
-    vector<vector<int>> dp;
-    dp.resize(len, vector<int>(sum + 1, 0));
+    auto                          len = arr.size();
+    std::vector<std::vector<int>> dp;
+    dp.resize(len, std::vector<int>(sum + 1, 0));
     for (int j = 0; j < sum + 1; ++j) {
         dp[0][j] = (arr[0] >= j ? 1 : -1);
     }
@@ -28,7 +27,7 @@ int subarray_min_count_sum(const vector<int>& arr, int sum)
                 auto v2 = dp[i - 1][j - arr[i]] + 1;    // 0, or > 0
                 if (v1 > 0) {
                     if (v2 > 0) {
-                        v = min(v1, v2);
+                        v = std::min(v1, v2);
                     } else {
                         v = v1;
                     }
@@ -46,4 +45,3 @@ int subarray_min_count_sum(const vector<int>& arr, int sum)
     return dp[len - 1][sum];
 }
 
-#endif

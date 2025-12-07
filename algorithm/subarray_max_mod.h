@@ -1,7 +1,6 @@
-#ifndef SUBARRAY_MAX_MOD_H
-#define SUBARRAY_MAX_MOD_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/maximise-sum
 // http://stackoverflow.com/questions/31113993/maximum-subarray-sum-modulo-m
@@ -24,6 +23,4 @@ long long subarray_max_mod(long long* arr, int length, long long M)
     }
     return maxMod;
 }
-
-#endif
 

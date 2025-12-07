@@ -1,7 +1,6 @@
-#ifndef NEW_DELETE_H
-#define NEW_DELETE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 #ifndef CUSTOM_NEW_ENABLED
 #define CUSTOM_NEW_ENABLED 0
@@ -13,51 +12,57 @@
 
 #if CUSTOM_NEW_ENABLED > 0
 // override global new
-void* operator new(size_t s) {
+void* operator new(size_t s)
+{
     void* p = std::malloc(s);
-    cout << "global operator new called, size = " << s << endl;
+    std::cout << "global operator new called, size = " << s << std::endl;
     return p;
 }
 // override global new[]
-void* operator new[](size_t s) {
+void* operator new[](size_t s)
+{
     void* p = std::malloc(s);
-    cout << "global operator new[] called, size = " << s << endl;
+    std::cout << "global operator new[] called, size = " << s << std::endl;
     return p;
 }
 // this version provide additional parameter as init value
-void* operator new[](size_t s, char v) {
+void* operator new[](size_t s, char v)
+{
     void* p = ::operator new[](s);
     std::fill_n(reinterpret_cast<char*>(p), s, v);
     return p;
 }
 // override global delete
-void operator delete(void* p) noexcept {
-    cout << "global operator delete called: " << p << endl;
+void operator delete(void* p) noexcept
+{
+    std::cout << "global operator delete called: " << p << std::endl;
     std::free(p);
 }
 // override global delete[]
-void operator delete[](void* p) noexcept {
-    cout << "global operator delete[] called: " << p << endl;
+void operator delete[](void* p) noexcept
+{
+    std::cout << "global operator delete[] called: " << p << std::endl;
     std::free(p);
 }
 
-class OpNewDelete {
+class OpNewDelete
+{
 public:
-    static void* operator new(size_t s) {
+    static void* operator new(size_t s)
+    {
         // will call default global new
         void* p = ::operator new(s);
-        cout << "OpNewDelete::operator new called, size = " << s << endl;
+        std::cout << "OpNewDelete::operator new called, size = " << s << std::endl;
         return p;
     }
-    static void operator delete(void* p) {
-        cout << "OpNewDelete::operator delete called: " << p << endl;
+    static void operator delete(void* p)
+    {
+        std::cout << "OpNewDelete::operator delete called: " << p << std::endl;
         // will call default global delete
         ::operator delete(p);
     }
-    virtual ~OpNewDelete() {};
+    virtual ~OpNewDelete(){};
     virtual void foo() {};
 };
-#endif
-
 #endif
 

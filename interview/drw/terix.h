@@ -14,7 +14,7 @@
 #include <utility>
 #include <variant>
 #include <vector>
-#include "../../main/header.h"
+#include "../../core/header.h"
 
 using shape_type_t = char;
 using shape_meta_t = std::vector<std::vector<bool>>;

@@ -1,5 +1,4 @@
-#ifndef MATH_H
-#define MATH_H
+#pragma once
 
 #include "header.h"
 
@@ -53,4 +52,3 @@ constexpr uint32_t compile_time_count_primes(uint64_t N)
 
 };    // namespace math
 
-#endif

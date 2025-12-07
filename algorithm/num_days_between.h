@@ -1,7 +1,6 @@
-#ifndef NUM_DAYS_BETWEEN_H
-#define NUM_DAYS_BETWEEN_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 bool is_leap_year(int year)
 {
@@ -34,6 +33,4 @@ int num_days_between(int s_year, int s_month, int s_day, int e_year, int e_month
     }
     return numDays;
 }
-
-#endif
 

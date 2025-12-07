@@ -1,7 +1,6 @@
-#ifndef TREE_NEXT_RIGHT_H
-#define TREE_NEXT_RIGHT_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://leetcode.com/problems/populating-next-right-pointers-in-each-node-ii/
@@ -18,7 +17,7 @@ struct Node {
 //
 // solution 1)
 //
-void helper(Node* node, unsigned level, vector<Node*>& vec)
+void helper(Node* node, unsigned level, std::vector<Node*>& vec)
 {
     if (!node)
         return;
@@ -39,7 +38,7 @@ Node* tree_next_right_v1(Node* root)
 {
     if (!root)
         return NULL;
-    vector<Node*> vec;
+    std::vector<Node*> vec;
     helper(root, 0, vec);
     return root;
 }
@@ -130,4 +129,3 @@ Node* tree_next_right_v4(Node* root)
     return root;
 }
 
-#endif

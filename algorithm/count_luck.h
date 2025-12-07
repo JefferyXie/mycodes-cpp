@@ -1,7 +1,6 @@
-#ifndef COUNT_LUCK_H
-#define COUNT_LUCK_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // there have better solutions available from other developers on website!!
 // https://www.hackerrank.com/challenges/count-luck
@@ -98,6 +97,4 @@ int count_luck(const std::vector<std::vector<char>>& forest)
     return waveHandList.size();
     ;
 }
-
-#endif
 

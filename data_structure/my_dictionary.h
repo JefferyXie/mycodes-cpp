@@ -1,8 +1,6 @@
-#ifndef MY_DICTITONARY_H
-#define MY_DICTITONARY_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/node.h"
+#include "../core/node.h"
 
 template <class T>
 class my_dictionary
@@ -198,4 +196,3 @@ int my_dictionary<T>::Destroy(tree_node_t<T>* root)
     return num;
 }
 
-#endif

@@ -1,7 +1,6 @@
-#ifndef GAUGE_TIME_H
-#define GAUGE_TIME_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // http://www.geeksforgeeks.org/how-to-measure-time-taken-by-a-program-in-c/
@@ -54,4 +53,3 @@ void run_gauge_time()
     }
 }
 
-#endif

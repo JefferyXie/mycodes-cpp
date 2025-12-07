@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 #define DEFAULT_QUEUE_SIZE 2
 

@@ -1,8 +1,6 @@
-#ifndef FOR_EACH_H
-#define FOR_EACH_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 
 // for_each: call 'F' with integer from range [I, N)
 // this version is implemented with 'constexpr', and can be easily upgraded to support 'Step'
@@ -116,6 +114,4 @@ void run_for_each()
     });
 #endif
 }
-
-#endif
 

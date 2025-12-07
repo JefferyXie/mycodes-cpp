@@ -1,7 +1,6 @@
-#ifndef TRIE_H
-#define TRIE_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // 
 /*
@@ -17,5 +16,4 @@
 
 // TODO...
 
-#endif
 

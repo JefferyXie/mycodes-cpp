@@ -1,7 +1,6 @@
-#ifndef BOOST_H
-#define BOOST_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://github.com/boostorg/accumulators/blob/develop/example/main.cpp
 #include <boost/accumulators/accumulators.hpp>
@@ -32,6 +31,4 @@ void run_boost()
 {
     boost_accumulators();
 }
-
-#endif
 

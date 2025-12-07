@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // CRTP:  client class inherits from CRTP base, so impacts existing code
 // Mixin: inherits from existing class and provides extra functionality, leave existing code unchanged

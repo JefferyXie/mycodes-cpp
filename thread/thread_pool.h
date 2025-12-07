@@ -1,7 +1,6 @@
-#ifndef THREAD_POOL_H
-#define THREAD_POOL_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 class thread_pool
 {
@@ -103,6 +102,4 @@ void run_thread_pool()
     }
     std::cout << "Jobs Done ! " << std::endl;
 }
-
-#endif
 

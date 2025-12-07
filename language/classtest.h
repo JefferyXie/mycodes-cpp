@@ -1,7 +1,6 @@
-#ifndef CLASSTEST_H
-#define CLASSTEST_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 class A
 {
@@ -61,6 +60,4 @@ struct Plain {
     }
     ~Plain() { std::cout << "~Plain(): destruct a Plain object" << std::endl; }
 };
-
-#endif
 

@@ -1,7 +1,6 @@
-#ifndef REMOVE_DUPLICATES_H
-#define REMOVE_DUPLICATES_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // http://stackoverflow.com/questions/1532819/algorithm-efficient-way-to-remove-duplicate-integers-from-an-array
 // http://www.geeksforgeeks.org/remove-all-duplicates-from-the-input-string/
@@ -111,6 +110,4 @@ void remove_duplicates_4()
 
     std::cout << "After:  " << str << std::endl;
 }
-
-#endif
 

@@ -1,7 +1,7 @@
 #ifndef MAP_USAGE_H
 #define MAP_USAGE_H
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // We can use std::map, std::unordered_map and related algorithms to simplify your work

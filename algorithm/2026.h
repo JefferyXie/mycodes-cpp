@@ -1,7 +1,7 @@
 #pragma once
 
-#include "../main/node.h"
-#include "../main/utility.h"
+#include "../core/node.h"
+#include "../core/utility.h"
 
 // There are two types of persons:
 // Good person: The person who always tells the truth.
@@ -114,9 +114,9 @@ void run_good_or_bad()
                  0),
          }) {
         const auto v = good_or_bad(statement_counts, statements);
-        std::cout << "statement_counts=" << dump_array(statement_counts) << ", statements=" << dump_matrix(statements)
-                  << ", good_or_bad=" << std::boolalpha << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << "statement_counts=" << util::dump_array(statement_counts)
+                  << ", statements=" << util::dump_matrix(statements) << ", good_or_bad=" << std::boolalpha << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -444,7 +444,8 @@ void run_reverse_list()
             .next = tmp,
         };
     }
-    std::cout << "list=" << dump_list(head) << ", reverse_list=" << dump_list(reverse_list(head)) << std::endl;
+    std::cout << "list=" << util::dump_list(head) << ", reverse_list=" << util::dump_list(reverse_list(head))
+              << std::endl;
 }
 
 std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& str)
@@ -1005,11 +1006,11 @@ void run_queue_removal_find_positions()
              use_case_t({2, 4, 2, 4, 3, 1, 2, 2, 3, 4, 3, 4, 4}, 4, {2, 5, 10, 13}),
          }) {
         const auto ans_1 = queue_removal_find_positions(arr, k);
-        std::cout << "queue_removal_find_positions=" << dump_array(ans_1) << ", "
+        std::cout << "queue_removal_find_positions=" << util::dump_array(ans_1) << ", "
                   << (ans_1 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
 
         const auto ans_2 = queue_removal_find_positions_2(arr, k);
-        std::cout << "queue_removal_find_positions_2=" << dump_array(ans_2) << ", "
+        std::cout << "queue_removal_find_positions_2=" << util::dump_array(ans_2) << ", "
                   << (ans_2 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1066,7 +1067,7 @@ void run_min_oper_mod_for_permutation()
              use_case_t({1, 5, 4}, -1),
          }) {
         const auto v = min_oper_mod_for_permutation(arr);
-        std::cout << "array=" << dump_array(arr) << ", min_oper_mod_for_permutation=" << v << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", min_oper_mod_for_permutation=" << v << ", "
                   << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1590,12 +1591,12 @@ void run_switch_neighbors_list()
              use_case_t(create_list(9), "[7->8->5->6->3->4->1->2->0]"),
              use_case_t(create_list(10), "[8->9->6->7->4->5->2->3->0->1]"),
          }) {
-        std::cout << "input=" << dump_list(head);
+        std::cout << "input=" << util::dump_list(head);
 
         // auto new_head = switch_neighbors_list(head);
         auto new_head = switch_neighbors_list_2(head);
-        std::cout << ", switch_neighbors_list=" << dump_list(new_head) << ", "
-                  << (dump_list(new_head) == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << ", switch_neighbors_list=" << util::dump_list(new_head) << ", "
+                  << (util::dump_list(new_head) == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1675,12 +1676,12 @@ void run_reverse_every_k_list()
              use_case_t(create_list(9), 5, "[4->5->6->7->8->3->2->1->0]"),
              use_case_t(create_list(9), 10, "[8->7->6->5->4->3->2->1->0]"),
          }) {
-        std::cout << "input=" << dump_list(head) << ", k=" << k;
+        std::cout << "input=" << util::dump_list(head) << ", k=" << k;
 
         auto new_head = reverse_every_k_list(head, k);
 
-        std::cout << ", reverse_every_k_list=" << dump_list(new_head) << ", "
-                  << (dump_list(new_head) == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << ", reverse_every_k_list=" << util::dump_list(new_head) << ", "
+                  << (util::dump_list(new_head) == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1837,7 +1838,7 @@ void run_find_first_missing_integer()
              use_case_t({7, 8, 9, 11, 12}, 1),
          }) {
         const auto v = find_first_missing_integer(arr);
-        std::cout << "array=" << dump_array(arr) << ", find_first_missing_integer=" << v << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", find_first_missing_integer=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1941,7 +1942,7 @@ void run_generate_spiral_matrix()
              use_case_t(3, "[[1,2,3],[8,9,4],[7,6,5]]"),
              use_case_t(4, "[[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]]"),
          }) {
-        const auto v = dump_matrix(generate_spiral_matrix(n));
+        const auto v = util::dump_matrix(generate_spiral_matrix(n));
         std::cout << "n=" << n << ", generate_spiral_matrix=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
                   << std::endl;
     }
@@ -1973,7 +1974,7 @@ void run_remove_more_than_2_dup()
              use_case_t({0, 0, 1, 1, 1, 1, 2, 3, 3}, 7),       // [0,0,1,1,2,3,3]
          }) {
         const auto v = remove_more_than_2_dup(arr);
-        std::cout << "array=" << dump_array(arr) << ", remove_more_than_2_dup=" << v << ", "
+        std::cout << "array=" << util::dump_array(arr) << ", remove_more_than_2_dup=" << v << ", "
                   << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -2016,8 +2017,9 @@ int largest_area_histogram(const std::vector<int>& heights)
         }
     }
 
-    // std::cout << "\nheights=" << dump_arr(heights) << ", smaller_idx_left_arr=" << dump_arr(smaller_idx_left_arr)
-    //           << ", smaller_idx_right_arr=" << dump_arr(smaller_idx_right_arr) << std::endl;
+    // std::cout << "\nheights=" << util::dump_arr(heights) << ", smaller_idx_left_arr=" <<
+    // util::dump_arr(smaller_idx_left_arr)
+    //           << ", smaller_idx_right_arr=" << util::dump_arr(smaller_idx_right_arr) << std::endl;
 
     int largest_area = 0;
     for (int i = 0; i < len; ++i) {
@@ -2037,7 +2039,7 @@ void run_largest_area_histogram()
              use_case_t({60, 20, 50, 40, 10, 50, 60}, 100),
          }) {
         const auto v = largest_area_histogram(heights);
-        std::cout << "heights=" << dump_array(heights) << ", largest_area_histogram=" << v << ", "
+        std::cout << "heights=" << util::dump_array(heights) << ", largest_area_histogram=" << v << ", "
                   << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -2103,8 +2105,8 @@ void run_find_all_possible_ips()
              use_case_t("25525511135", {"255.255.11.135", "255.255.111.35"}),
          }) {
         const auto ss = find_all_possible_ips(s);
-        std::cout << "s=" << s << ", find_all_possible_ips=" << dump_array(ss) << ", "
-                  << (equal_container_unordered(exp_v, ss) ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << "s=" << s << ", find_all_possible_ips=" << util::dump_array(ss) << ", "
+                  << (util::equal_container_unordered(exp_v, ss) ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2441,7 +2443,7 @@ void run_triangle_min_sum_path()
               },
               -10)}) {
         const auto v = triangle_min_sum_path(triangle);
-        std::cout << "triangle=" << dump_matrix(triangle) << ", triangle_min_sum_path=" << v << ", "
+        std::cout << "triangle=" << util::dump_matrix(triangle) << ", triangle_min_sum_path=" << v << ", "
                   << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -2827,38 +2829,13 @@ void run_graph_undirected_clone()
         return n1;
     }();
 
-    auto dump_graph = [](graph_node_int_t* node) {
-        std::unordered_set<graph_node_int_t*> visited;
-        std::ostringstream                    oss;
-        oss << "[";
-        while (node) {
-            visited.emplace(node);
-
-            auto tmp = node;
-            node     = nullptr;
-
-            oss << "[";
-            for (auto neighbor : tmp->neighbors) {
-                oss << neighbor->data;
-                if (neighbor != tmp->neighbors.back()) {
-                    oss << ",";
-                }
-
-                if (!node && !visited.contains(neighbor)) {
-                    node = neighbor;
-                }
-            }
-            oss << "]";
-        }
-        oss << "]";
-        return oss.str();
-    };
     for (auto node : {gen_g1, gen_g2, gen_g3}) {
         const auto clone_node   = graph_undirected_clone(node);
         const auto clone_node_2 = graph_undirected_clone_2(node);
-        std::cout << "graph=" << dump_graph(node) << ", graph_undirected_clone=" << dump_graph(clone_node) << std::endl;
-        std::cout << "graph=" << dump_graph(node) << ", graph_undirected_clone_2=" << dump_graph(clone_node_2)
+        std::cout << "graph=" << util::dump_graph(node) << ", graph_undirected_clone=" << util::dump_graph(clone_node)
                   << std::endl;
+        std::cout << "graph=" << util::dump_graph(node)
+                  << ", graph_undirected_clone_2=" << util::dump_graph(clone_node_2) << std::endl;
     }
 }
 
@@ -2916,7 +2893,7 @@ void run_evaluate_reverse_polish_notation()
              use_case_t({"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"}, 22),
          }) {
         const auto v = evaluate_reverse_polish_notation(tokens);
-        std::cout << "tokens=" << dump_array(tokens) << ", evaluate_reverse_polish_notation=" << v << ", "
+        std::cout << "tokens=" << util::dump_array(tokens) << ", evaluate_reverse_polish_notation=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }

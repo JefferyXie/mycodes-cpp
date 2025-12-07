@@ -1,7 +1,6 @@
-#ifndef ARRAY_KTH_BIGGEST_H
-#define ARRAY_KTH_BIGGEST_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // Find the k-th biggest number in an unordered integer array
@@ -60,4 +59,3 @@ int array_kth_biggest_v3(std::vector<int> arr, size_t k)
     return 0;
 }
 
-#endif

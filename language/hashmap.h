@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 #include "classtest.h"
 
 // http://marknelson.us/2011/09/03/hash-functions-for-c-unordered-containers/

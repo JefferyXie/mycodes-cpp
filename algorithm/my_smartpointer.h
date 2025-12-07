@@ -1,7 +1,6 @@
-#ifndef MY_SMARTPOINTER_H
-#define MY_SMARTPOINTER_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 struct control_block_t {
     int  ref_count_{0};
@@ -17,13 +16,12 @@ struct control_block_t {
     int use_count() { return ref_count_; }
 
     virtual void on_ref_count_zero() = 0;
-    virtual ~control_block_t() {};
+    virtual ~control_block_t(){};
 
     // TODO: generic allocator, deallocator...
     // Alloc alloc_;
     // Dealloc dealloc_;
 };
-
 
 template <class T>
 class my_smartpointer
@@ -78,8 +76,10 @@ public:
     }
 
     // NOTICE: this explicit copy and move constructors are necessary, because -
-    // 1) by c++ grammar, template function will never be copy or move constructors! The following templates are actually template constructor rather than template copy constructor.
-    // 2) compiler always generate implicit copy and move constructors if possible, and by c++ discripline, non-template functions (i.e. overload) takes previlige over template functions if both match.
+    // 1) by c++ grammar, template function will never be copy or move constructors! The following templates are
+    // actually template constructor rather than template copy constructor. 2) compiler always generate implicit copy
+    // and move constructors if possible, and by c++ discripline, non-template functions (i.e. overload) takes previlige
+    // over template functions if both match.
     //
     // https://stackoverflow.com/questions/55845896/why-doesnt-the-standard-consider-a-template-constructor-as-a-copy-constructor
     // https://stackoverflow.com/questions/32537994/c-template-copy-constructor-on-template-class
@@ -122,7 +122,7 @@ public:
         object_     = o.object_;
         ctrl_block_ = o.ctrl_block_;
 
-        o.object_ = nullptr;
+        o.object_     = nullptr;
         o.ctrl_block_ = nullptr;
     }
 
@@ -132,7 +132,7 @@ public:
         object_     = o.object_;
         ctrl_block_ = o.ctrl_block_;
 
-        o.object_ = nullptr;
+        o.object_     = nullptr;
         o.ctrl_block_ = nullptr;
     }
 
@@ -157,8 +157,16 @@ public:
         }
     }
 
-    T* operator->() { std::cout << "operator->" << std::endl; return get(); }
-    T& operator*() { std::cout << "operator*()" << std::endl; return *get(); }
+    T* operator->()
+    {
+        std::cout << "operator->" << std::endl;
+        return get();
+    }
+    T& operator*()
+    {
+        std::cout << "operator*()" << std::endl;
+        return *get();
+    }
     T* get() { return object_; }
 
     template <typename U, std::enable_if_t<std::is_convertible_v<U, T>>* = nullptr>
@@ -166,9 +174,7 @@ public:
     {
         my_smartpointer{p}.swap(*this);
     }
-    void reset() {
-        my_smartpointer{}.swap(*this);
-    }
+    void reset() { my_smartpointer{}.swap(*this); }
     void swap(my_smartpointer& o)
     {
         std::swap(object_, o.object_);
@@ -188,6 +194,4 @@ auto my_make_shared(Args&&... args)
     auto cntl_block = new control_t{std::forward<Args>(args)...};
     return my_smartpointer<T>(cntl_block);
 }
-
-#endif
 

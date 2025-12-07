@@ -1,8 +1,7 @@
 #pragma once
 
-#include "../main/header.h"
-#include "../main/node.h"
-#include "../main/utility.h"
+#include "../core/node.h"
+#include "../core/utility.h"
 
 // TODO: initial version, need more test
 template <typename T>

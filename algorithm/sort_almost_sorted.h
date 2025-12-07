@@ -1,24 +1,22 @@
-#ifndef SORT_ALMOST_SORTED_H
-#define SORT_ALMOST_SORTED_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
-// 
+//
 // https://www.hackerrank.com/challenges/almost-sorted
-// 
+//
 
 // TODO: buggy, check code here -
 // https://github.com/havelessbemore/hackerrank/blob/master/algorithms/sorting/almost-sorted.java
 
-void
-sort_almost_sorted(vector<int> arr)
+void sort_almost_sorted(std::vector<int> arr)
 {
-    auto len = arr.size();
-    size_t ret_lt = 0;
-    size_t ret_rt = 0;
-    size_t lt = 0;
-    size_t rt = 0;
-    bool start_unordered = false;
+    auto   len             = arr.size();
+    size_t ret_lt          = 0;
+    size_t ret_rt          = 0;
+    size_t lt              = 0;
+    size_t rt              = 0;
+    bool   start_unordered = false;
     for (size_t i = 1; i < len; ++i) {
         if (start_unordered) {
             if (arr[i] > arr[rt]) {
@@ -26,7 +24,7 @@ sort_almost_sorted(vector<int> arr)
                     // swap/reverse [lt:rt]
                     if (rt - lt <= 2) {
                         // swap
-                        auto t = arr[lt];
+                        auto t  = arr[lt];
                         arr[lt] = arr[rt];
                         arr[rt] = t;
                     } else {
@@ -35,20 +33,20 @@ sort_almost_sorted(vector<int> arr)
                     ret_lt = lt;
                     ret_rt = rt;
                     // reset and keep going, following numbers must be ordered
-                    lt = 0;
-                    rt = 0;
+                    lt              = 0;
+                    rt              = 0;
                     start_unordered = false;
                 } else {
                     // TODO: buggy! there have 'swap' case
-/*  
-    arr.assign({
-        92941,
-        894947, // swap 1
-        125082, 864994, 868755,
-        116375, // swap 2
-        911042, 912634
-    });
-*/                    cout << "no" << endl;
+                    /*
+                        arr.assign({
+                            92941,
+                            894947, // swap 1
+                            125082, 864994, 868755,
+                            116375, // swap 2
+                            911042, 912634
+                        });
+                    */ std::cout << "no" << std::endl;
                     return;
                 }
             } else {
@@ -62,12 +60,12 @@ sort_almost_sorted(vector<int> arr)
                 // start having unordered numbers
                 // "no" if there's had an operation before,
                 // or current arr[i] is less than prior one arr[rt-1]
-                if (ret_rt || (rt > 0 && arr[i] < arr[rt-1])) {
-                    cout << "no" << endl;
+                if (ret_rt || (rt > 0 && arr[i] < arr[rt - 1])) {
+                    std::cout << "no" << std::endl;
                     return;
                 } else {
-                    lt = i-1;
-                    rt = i;
+                    lt              = i - 1;
+                    rt              = i;
                     start_unordered = true;
                 }
             }
@@ -77,14 +75,12 @@ sort_almost_sorted(vector<int> arr)
         ret_lt = lt;
         ret_rt = rt;
     }
-    cout << "yes" << endl;
+    std::cout << "yes" << std::endl;
     if (ret_rt - ret_lt <= 2) {
-        cout << "swap ";
+        std::cout << "swap ";
     } else {
-        cout << "reverse ";
+        std::cout << "reverse ";
     }
-    cout << ret_lt + 1 << " " << ret_rt + 1 << endl;
+    std::cout << ret_lt + 1 << " " << ret_rt + 1 << std::endl;
 }
-
-#endif
 

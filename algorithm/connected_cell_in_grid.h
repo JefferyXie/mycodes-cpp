@@ -1,7 +1,6 @@
-#ifndef CONNECTED_CELL_IN_GRID_H
-#define CONNECTED_CELL_IN_GRID_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/connected-cell-in-a-grid
 struct MatrixInfo {
@@ -71,6 +70,4 @@ int max_connected_cell_in_grid(std::vector<std::vector<int>>& matrix)
     cout << count_connected << endl;
     return 0;*/
 }
-
-#endif
 

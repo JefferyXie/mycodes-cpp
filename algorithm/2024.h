@@ -1,7 +1,5 @@
-#ifndef ALGO_2024_H
-#define ALGO_2024_H
+#pragma once
 
-#include "../main/utility.h"
 #include "2023.h"
 
 ///////////////////////////////////////////////////////////////////////////////
@@ -360,28 +358,28 @@ void run_matrix_traverse()
         std::cout << "\n--------------------" << std::endl;
 
         for (auto& a : matrix) {
-            std::cout << dump_array(a) << std::endl;
+            std::cout << util::dump_array(a) << std::endl;
         }
         {
             auto result = matrix_diagonal_order(matrix);
-            std::cout << "matrix_diagonal_order: " << dump_array(result) << std::endl;
+            std::cout << "matrix_diagonal_order: " << util::dump_array(result) << std::endl;
         }
         {
             auto result = matrix_diagonal_rotation_order(matrix);
-            std::cout << "matrix_diagonal_rotation_order: " << dump_array(result) << std::endl;
+            std::cout << "matrix_diagonal_rotation_order: " << util::dump_array(result) << std::endl;
         }
 
         {
             auto result = matrix_spiral_order(matrix);
-            std::cout << "matrix_spiral_order: " << dump_array(result) << std::endl;
+            std::cout << "matrix_spiral_order: " << util::dump_array(result) << std::endl;
         }
         {
             auto result = matrix_spiral_order_v2(matrix);
-            std::cout << "matrix_spiral_order_v2: " << dump_array(result) << std::endl;
+            std::cout << "matrix_spiral_order_v2: " << util::dump_array(result) << std::endl;
         }
         {
             auto result = matrix_spiral_order_v3(matrix);
-            std::cout << "matrix_spiral_order_v3: " << dump_array(result) << std::endl;
+            std::cout << "matrix_spiral_order_v3: " << util::dump_array(result) << std::endl;
         }
     };
 
@@ -583,7 +581,7 @@ void run_num_islands()
              },
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << dump_matrix(matrix) << "\n" << num_islands_v2(matrix) << num_islands(matrix) << std::endl;
+        std::cout << util::dump_matrix(matrix) << "\n" << num_islands_v2(matrix) << num_islands(matrix) << std::endl;
     }
 }
 
@@ -1875,7 +1873,7 @@ void run_min_path_sum_matrix()
              },    //
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << dump_matrix(matrix) << std::endl;
+        std::cout << util::dump_matrix(matrix) << std::endl;
         std::cout << min_path_sum_matrix(matrix) << std::endl;
         std::cout << min_path_sum_matrix_v2(matrix) << std::endl;
         std::cout << min_path_sum_matrix_v3(matrix) << std::endl;
@@ -2135,7 +2133,7 @@ void run_max_profit_2_transactions()
              std::vector<int>{3, 2, 6, 5, 0, 3},          // k=1, max=4; k=2, max=7; k=3, max=7;
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << dump_array(prices) << std::endl;
+        std::cout << util::dump_array(prices) << std::endl;
 
         std::cout << "1 transaction: max_profit_1_transaction=" << max_profit_1_transaction(prices) << std::endl;
         std::cout << "1 transaction: max_profit_k_transactions=" << max_profit_k_transactions(1, prices) << std::endl;
@@ -2293,7 +2291,7 @@ void run_graph_find_max_difference()
 {
     auto print = [](const auto& weights, auto max_diff) {
         std::cout << "---------------" << std::endl;
-        std::cout << "weights: " << dump_array(weights, std::numeric_limits<int>::max()) << ": " << max_diff
+        std::cout << "weights: " << util::dump_array(weights, std::numeric_limits<int>::max()) << ": " << max_diff
                   << std::endl;
     };
 
@@ -2387,8 +2385,8 @@ void run_graph_find_max_depth()
 {
     auto print = [](const auto& depths, int max_depth) {
         std::cout << "---------------" << std::endl;
-        std::cout << "depths: " << dump_array(depths, std::numeric_limits<int>::max()) << "\nmax depth: " << max_depth
-                  << std::endl;
+        std::cout << "depths: " << util::dump_array(depths, std::numeric_limits<int>::max())
+                  << "\nmax depth: " << max_depth << std::endl;
     };
 
     {
@@ -2568,25 +2566,25 @@ void run_factorization_divisor_prime()
     for (auto n : {1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18, 20, 50, 80, 100}) {
         {
             auto factorization = find_prime_factorization(n);
-            std::cout << n << "(factorization): " << dump_array(factorization) << std::endl;
+            std::cout << n << "(factorization): " << util::dump_array(factorization) << std::endl;
         }
 
         {
             auto divisors = find_all_divisors(n);
-            std::cout << n << "(divisors): " << dump_array(divisors);
+            std::cout << n << "(divisors): " << util::dump_array(divisors);
             auto v2 = find_all_divisors_v2(n);
             if (v2 != divisors) {
-                std::cout << "\n\terror: find_all_divisors_v2 is different: " << dump_array(v2);
+                std::cout << "\n\terror: find_all_divisors_v2 is different: " << util::dump_array(v2);
             }
             std::cout << std::endl;
         }
 
         {
             auto primes = find_all_primes(n);
-            std::cout << n << "(primes): " << dump_array(primes);
+            std::cout << n << "(primes): " << util::dump_array(primes);
             auto v2 = find_all_primes_v2(n);
             if (v2 != primes) {
-                std::cout << "\n\terror: find_all_primes_v2 is different: " << dump_array(v2);
+                std::cout << "\n\terror: find_all_primes_v2 is different: " << util::dump_array(v2);
             }
             std::cout << std::endl;
         }
@@ -2933,4 +2931,3 @@ struct producer_consumer_problem {
     }
 };
 
-#endif

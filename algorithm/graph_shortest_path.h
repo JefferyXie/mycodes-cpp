@@ -1,14 +1,14 @@
-#ifndef GRAPH_SHORTEST_PATH_H
-#define GRAPH_SHORTEST_PATH_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 //
 // https://www.hackerrank.com/challenges/bfsshortreach
 //
 
 // breath-first-search version
-std::vector<int> graph_shortest_path(int num_nodes, int edge_weight, std::vector<vector<int>> edges, int start_node)
+std::vector<int>
+graph_shortest_path(int num_nodes, int edge_weight, std::vector<std::vector<int>> edges, int start_node)
 {
     /*
         num_nodes = 10;
@@ -58,4 +58,3 @@ std::vector<int> graph_shortest_path(int num_nodes, int edge_weight, std::vector
     return result;
 }
 
-#endif

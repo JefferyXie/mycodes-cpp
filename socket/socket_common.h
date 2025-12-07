@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 #define ERROR -1
 #define MAX_CLIENTS 2

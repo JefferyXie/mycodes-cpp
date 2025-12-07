@@ -1,7 +1,6 @@
-#ifndef BIKE_RACER_H
-#define BIKE_RACER_H
+#pragma once
 
-#include "../main/header.h"
+#include "../core/header.h"
 
 // https://www.hackerrank.com/challenges/bike-racers
 // https://en.wikipedia.org/wiki/Hungarian_algorithm
@@ -151,6 +150,4 @@ long long BikeRacerShortestTime(std::vector<Coordinate>& bikers, std::vector<Coo
     auto bikesPerm  = ListAllPermutation(bikes, Kth);
     return CalcShortestTime(bikersPerm, bikesPerm, Kth);
 }
-
-#endif
 

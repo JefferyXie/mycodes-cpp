@@ -1,9 +1,9 @@
-#ifndef UTILITY_H
-#define UTILITY_H
+#pragma once
 
-#include "header.h"
 #include "node.h"
 #include <fcntl.h>
+
+namespace util {
 
 #define ARRAY_SIZE(A) (sizeof(A) / sizeof(A[0]))
 
@@ -100,6 +100,35 @@ std::string dump_list(list_node_t<T>* node)
     return oss.str();
 };
 
+template <typename T>
+std::string dump_graph(graph_node_t<T>* node)
+{
+    std::unordered_set<graph_node_t<T>*> visited;
+    std::ostringstream                   oss;
+    oss << "[";
+    while (node) {
+        visited.emplace(node);
+
+        auto tmp = node;
+        node     = nullptr;
+
+        oss << "[";
+        for (auto neighbor : tmp->neighbors) {
+            oss << neighbor->data;
+            if (neighbor != tmp->neighbors.back()) {
+                oss << ",";
+            }
+
+            if (!node && !visited.contains(neighbor)) {
+                node = neighbor;
+            }
+        }
+        oss << "]";
+    }
+    oss << "]";
+    return oss.str();
+};
+
 // TODO: define some concept for container to satisfy xxx.size() and std::find_if
 bool equal_container_unordered(auto& a, auto& b)
 {
@@ -152,4 +181,4 @@ struct shm_utils {
     }
 };
 
-#endif
+}    // namespace util

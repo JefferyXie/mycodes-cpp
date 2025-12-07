@@ -1,5 +1,5 @@
 #include <gtest/gtest.h>
-#include "../main/header.h"
+#include "../core/header.h"
 
 // It is typical to do some custom initialization work before executing a unit test.
 // For example, if you are trying to measure the time/memory footprint of a test, you

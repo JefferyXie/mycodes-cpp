@@ -1,8 +1,6 @@
-#ifndef XML_H
-#define XML_H
+#pragma once
 
-#include "../main/header.h"
-#include "../main/utility.h"
+#include "../core/utility.h"
 #include <nlohmann/json.hpp>
 
 //
@@ -178,6 +176,4 @@ void run_json()
     std::cout << j.dump() << "\n" << std::setw(2) << j << std::endl;
     std::cout << j2.dump() << "\n" << std::setw(2) << j2 << std::endl;
 }
-
-#endif
 
