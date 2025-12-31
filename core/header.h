@@ -114,22 +114,22 @@ typedef struct cpu_set {
     uint32_t count;
 } cpu_set_t;
 
-static inline void CPU_ZERO(cpu_set_t* cs)
+inline void CPU_ZERO(cpu_set_t* cs)
 {
     cs->count = 0;
 }
 
-static inline void CPU_SET(int num, cpu_set_t* cs)
+inline void CPU_SET(int num, cpu_set_t* cs)
 {
     cs->count |= (1 << num);
 }
 
-static inline int CPU_ISSET(int num, cpu_set_t* cs)
+inline int CPU_ISSET(int num, cpu_set_t* cs)
 {
     return (cs->count & (1 << num));
 }
 
-int sched_getaffinity(pid_t pid, size_t cpu_size, cpu_set_t* cpu_set)
+inline int sched_getaffinity([[maybe_unused]] pid_t pid, [[maybe_unused]] size_t cpu_size, cpu_set_t* cpu_set)
 {
     int32_t core_count = 0;
     size_t  len        = sizeof(core_count);
@@ -146,7 +146,7 @@ int sched_getaffinity(pid_t pid, size_t cpu_size, cpu_set_t* cpu_set)
     return 0;
 }
 
-int pthread_setaffinity_np(pthread_t thread, size_t cpu_size, cpu_set_t* cpu_set)
+inline int pthread_setaffinity_np(pthread_t thread, size_t cpu_size, cpu_set_t* cpu_set)
 {
     thread_port_t mach_thread;
     size_t        core = 0;

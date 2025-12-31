@@ -1,23 +1,26 @@
 #include "tcp_client.h"
 
 tcp_client::tcp_client()
-{ }
+{
+}
 
 tcp_client::~tcp_client()
-{ }
+{
+}
 
-int tcp_client::Launch(const char* addr, unsigned short port) {
+int tcp_client::Launch(const char* addr, unsigned short port)
+{
     int sock_client = socket(AF_INET, SOCK_STREAM, 0);
     if (ERROR == sock_client) {
         perror("client socket: ");
         return -1;
     }
 
-    sockaddr_in addr_server;
+    sockaddr_in  addr_server;
     unsigned int addr_size = sizeof(sockaddr_in);
 
-    addr_server.sin_family = AF_INET;
-    addr_server.sin_port = htons(port);
+    addr_server.sin_family      = AF_INET;
+    addr_server.sin_port        = htons(port);
     addr_server.sin_addr.s_addr = inet_addr(addr);
     bzero(&addr_server.sin_zero, 8);
 
@@ -30,24 +33,25 @@ int tcp_client::Launch(const char* addr, unsigned short port) {
     // dump connection information
     printf("\t**origin server %s:%d\n", inet_ntoa(addr_server.sin_addr), ntohs(addr_server.sin_port));
     sockaddr_in addr_info;
-    getsockname(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+    getsockname(sock_client, (struct sockaddr*)&addr_info, &addr_size);
     printf("\t**getsockname - connect to %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
 
-    getsockname(iconnect, (struct sockaddr *)&addr_info, &addr_size);
+    getsockname(iconnect, (struct sockaddr*)&addr_info, &addr_size);
     printf("\t**getsockname - client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
 
-    getpeername(sock_client, (struct sockaddr *)&addr_info, &addr_size);
+    getpeername(sock_client, (struct sockaddr*)&addr_info, &addr_size);
     printf("\t**getpeername - connect to %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
 
-    getpeername(iconnect, (struct sockaddr *)&addr_info, &addr_size);
+    getpeername(iconnect, (struct sockaddr*)&addr_info, &addr_size);
     printf("\t**getpeername - client is %s:%d\n", inet_ntoa(addr_info.sin_addr), ntohs(addr_info.sin_port));
     // end dump
 
     while (1) {
-        char data_req[MAX_DATA] = {0};
+        char data_req[MAX_DATA]  = {0};
         char data_resp[MAX_DATA] = {0};
         fgets(data_req, MAX_DATA, stdin);
-        if (strlen(data_req) == 1 && data_req[0] == '\n') break;
+        if (strlen(data_req) == 1 && data_req[0] == '\n')
+            break;
         auto r = send(sock_client, data_req, strlen(data_req), 0);
         if (r < 0) {
             printf("ERROR: send fails, err=%s\n", strerror(errno));

@@ -1,0 +1,35 @@
+#
+# Default rules, downstream typically just needs to reuse this file by including it in the Makefile
+# 
+
+DIR_PROJ_ROOT = $(shell dirname $(realpath $(lastword $(MAKEFILE_LIST))))
+include $(DIR_PROJ_ROOT)/Makefile-config
+
+# http://stackoverflow.com/questions/9253200/undefined-reference-to-pthread-create
+# rule to link the target/executable from obj filles; when linking object files, add dependent library params after object files
+$(EXE): $(OBJ_FILES)
+	$(CC) $< -o $@ $(CFLAGS_DEBUG) $(INCLUDES)
+
+# This part is crucial for handling header dependencies automatically
+# It generates dependency information and includes it in the makefile
+# This requires a modern compiler feature (like -MMD or -MP)
+-include $(OBJ_FILES:.o=.d)
+
+# Rule to generate dependency files (.d) alongside object files (.o)
+# The -MMD flag creates a .d file with prerequisites (including headers)
+$(OBJ_FILES): $(CPP_FILES)
+	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@ -MMD
+
+# Below two rules are same and they dont generate dependency files (.d)
+#.cpp.o:
+#	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@
+#$(OBJ_FILES): $(CPP_FILES)
+#	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@
+
+
+# defines default target/executable
+all: $(EXE)
+
+clean:
+	rm -f $(OBJ_FILES) $(OBJ_FILES:.o=.d) $(EXE)
+
