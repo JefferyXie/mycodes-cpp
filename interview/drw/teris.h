@@ -45,6 +45,7 @@
 //      3
 //
 // Implementation highlights:
+//
 // 0) For simplicity, all codes are in one file. Hopefully the naming convention will help you know the code, though
 //    some comments are available.
 //
@@ -63,8 +64,10 @@
 
 #include <algorithm>
 #include <fstream>
+#include <iomanip>
 #include <iostream>
 #include <memory>
+#include <sstream>
 #include <string>
 #include <vector>
 
@@ -160,6 +163,45 @@ public:
     // Read & parse a line from input, return true if succeed, false otherwise.
     bool read_line(std::vector<input_shape_t>& shape_series)
     {
+        /*
+        std::vector<std::pair<std::string, int>> all = {
+            {"I0,I4,Q8", 1},
+            {"T1,Z3,I4", 4},
+            {"Q0,I2,I6", 1},
+            {"Q0,I2,I6,I0,I6,I6", 2},
+            {"Q0,I2,I6,I0,I6,I6,Q2", 4},
+            {"Q0,I2,I6,I0,I6,I6,Q2,Q4", 3},
+
+            {"Q0", 2},
+            {"Q0,Q1", 4},
+            {"Q0,Q2,Q4,Q6,Q8", 0},
+            {"Q0,Q2,Q4,Q6,Q8,Q1", 2},
+            {"Q0,Q2,Q4,Q6,Q8,Q1,Q1", 4},
+            {"I0,I4,Q8", 1},
+            {"I0,I4,Q8,I0,I4", 0},
+            {"L0,J2,L4,J6,Q8", 2},
+            {"L0,Z1,Z3,Z5,Z7", 2},
+            {"T0,T3", 2},
+            {"T0,T3,I6,I6", 1},
+            {"I0,I6,S4", 1},
+            {"T1,Z3,I4", 4},
+            {"L0,J3,L5,J8,T1", 3},
+            {"L0,J3,L5,J8,T1,T6", 1},
+            {"L0,J3,L5,J8,T1,T6,J2,L6,T0,T7", 2},
+            {"L0,J3,L5,J8,T1,T6,J2,L6,T0,T7,Q4", 1},
+            {"S0,S2,S4,S6", 8},
+            {"S0,S2,S4,S5,Q8,Q8,Q8,Q8,T1,Q1,I0,Q4", 8},
+            {"L0,J3,L5,J8,T1,T6,S2,Z5,T0,T7", 0},
+            {"Q0,I2,I6,I0,I6,I6,Q2,Q4", 3},
+        };
+        static int index = 0;
+        if (index == all.size()) return false;
+        const auto& sample = all[index++];
+        auto input = sample.first;
+
+        std::cout << "Input=" << input << ", height=" << sample.second << std::endl;
+        */
+
         shape_series.clear();
         if (!is_.good()) {
             return false;
@@ -191,7 +233,7 @@ public:
             return false;
         }
 
-        // std::cout << " Input=" << input << std::endl;
+        std::cout << " Input=" << input << std::endl;
 
         auto split = [](std::string_view str, char delimiter) {
             size_t                   last = 0;
@@ -230,10 +272,11 @@ public:
                 return false;
             }
 
-            shape_series.emplace_back(input_shape_t{
-                .shape        = shape,
-                .starting_col = starting_col,
-            });
+            shape_series.emplace_back(
+                input_shape_t{
+                    .shape        = shape,
+                    .starting_col = starting_col,
+                });
         }
 
         return true;
@@ -263,11 +306,14 @@ public:
             return;
         }
 
+        std::cout << "\n--------------------------------------------" << std::endl;
+
         std::vector<input_shape_t> shape_series;
         while (reader_->read_line(shape_series)) {
             internal_state_t state{max_width_, max_height_};
 
             for (const auto& input : shape_series) {
+                std::cout << "\n Adding input shape: " << input << std::endl;
                 if (!validate_boundary(input)) {
                     std::cout << "Error: input shape is out of boundary, '" << input << "'" << std::endl;
                     return;
@@ -275,6 +321,7 @@ public:
 
                 // add_shape: find starting row - the location where shape's left-bottom cell sits
                 const auto starting_row = find_starting_row(input, state);
+                std::cout << " Before adding: starting_row=" << starting_row << std::endl;
 
                 // add shape to the grid, update grid
                 const auto min_idx_updated_row = update_grid(input, state, starting_row);
@@ -282,8 +329,10 @@ public:
                 erase_rows(state, min_idx_updated_row);
             }
 
-            // std::cout << " Grid height=" << state.grid_height << std::endl;
-            std::cout << state.grid_height << std::endl;
+            std::cout << "\n Final grid height=" << state.grid_height << std::endl;
+            std::cout << "\n Grid:" << std::endl;
+            print(state);
+            std::cout << "\n--------------------------------------------" << std::endl;
         }
     }
 
@@ -436,28 +485,39 @@ private:
         return num_erased_rows;
     }
 
+    void print(const internal_state_t& state)
+    {
+        std::ostringstream oss;
+
+        oss << std::setw(3) << "";
+        for (auto height : state.height_by_cols) {
+            oss << std::setw(3) << height;
+        }
+        oss << "\n";
+
+        bool touched_top = false;
+        int  rows        = static_cast<int>(state.occupied_by_rows.size());
+        while (rows--) {
+            const auto count_occupied = state.occupied_by_rows[rows];
+            if (count_occupied == 0 && !touched_top) {
+                continue;
+            }
+            touched_top = true;
+
+            oss << std::setw(3) << count_occupied;
+
+            for (auto occupied : state.grid[rows]) {
+                oss << std::setw(3) << (occupied ? 'x' : ' ');
+            }
+
+            oss << "\n";
+        }
+        std::cout << oss.str() << std::endl;
+    }
+
 private:
     const int                       max_width_  = -1;
     const int                       max_height_ = -1;    // TODO: this is not yet implemented
     std::unique_ptr<input_reader_t> reader_;
 };
-
-int main(int argc, char** argv)
-{
-    std::unique_ptr<input_reader_t> reader;
-    if (argc > 1) {
-        reader = std::make_unique<input_reader_t>(argv[1]);
-    } else {
-        std::cout << "Waiting for your input: empty input line, Ctrl+D, or Ctrl+Z will exit the app..." << std::endl;
-        reader = std::make_unique<input_reader_t>(std::cin);
-    }
-
-    constexpr int Max_Grid_Width  = 10;
-    constexpr int Max_Grid_Height = 200;
-
-    teris_engine_t engine{Max_Grid_Width, Max_Grid_Height};
-    engine.set_reader(std::move(reader)).run();
-
-    return 0;
-}
 

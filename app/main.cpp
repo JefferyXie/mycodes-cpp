@@ -1,30 +1,3 @@
-/*
-#include <benchmark/benchmark.h>
-#include <gtest/gtest.h>
-
-#include "../test/test_algorithm.h"
-#include "../test/test_fixture.h"
-#include "../test/test_language.h"
-#include "../test/test_utility.h"
-#include "../test/benchmark_test.h"
-
-int main(int argc, char** argv)
-{
-    ::testing::InitGoogleTest(&argc, argv);
-
-    // Run Google Tests
-    int gtest_result = RUN_ALL_TESTS();
-
-    // Run Google Benchmarks only if tests passed or desired
-    if (gtest_result == 0) {
-        ::benchmark::Initialize(&argc, argv);
-        ::benchmark::RunSpecifiedBenchmarks();
-    }
-
-    return gtest_result;
-}
-*/
-
 #include "../algorithm/2023.h"
 #include "../algorithm/2024.h"
 #include "../algorithm/2025.h"
@@ -43,8 +16,13 @@ int main(int argc, char** argv)
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
 
+#include "../misc/logger.h"
+
 int main(int argc, char** argv)
 {
+    run_logger();
+    return 0;
+
     run_type_deduction();
 
     run_meta();

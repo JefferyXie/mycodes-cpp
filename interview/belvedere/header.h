@@ -1,5 +1,4 @@
-#ifndef BELVEDERE_HEADER_H
-#define BELVEDERE_HEADER_H
+#pragma once
 
 #include <iostream>
 #include <vector>
@@ -15,5 +14,3 @@
 #include <ctime>
 #include <random>
 #include <cstring>
-
-#endif
