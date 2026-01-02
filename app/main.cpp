@@ -16,13 +16,8 @@
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
 
-#include "../misc/logger.h"
-
 int main(int argc, char** argv)
 {
-    run_logger();
-    return 0;
-
     run_type_deduction();
 
     run_meta();

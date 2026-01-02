@@ -8,7 +8,7 @@ include $(DIR_PROJ_ROOT)/Makefile-config
 # http://stackoverflow.com/questions/9253200/undefined-reference-to-pthread-create
 # rule to link the target/executable from obj filles; when linking object files, add dependent library params after object files
 $(EXE): $(OBJ_FILES)
-	$(CC) $< -o $@ $(CFLAGS_DEBUG) $(INCLUDES)
+	$(CC) $^ -o $@ $(CFLAGS_DEBUG) $(INCLUDES)
 
 # This part is crucial for handling header dependencies automatically
 # It generates dependency information and includes it in the makefile
@@ -17,14 +17,11 @@ $(EXE): $(OBJ_FILES)
 
 # Rule to generate dependency files (.d) alongside object files (.o)
 # The -MMD flag creates a .d file with prerequisites (including headers)
-$(OBJ_FILES): $(CPP_FILES)
+%.o: %.cpp
 	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@ -MMD
 
-# Below two rules are same and they dont generate dependency files (.d)
-#.cpp.o:
-#	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@
-#$(OBJ_FILES): $(CPP_FILES)
-#	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@
+#$(OBJ_FILES): $(CPP_FILES) # this works in macbook but not in linux/ubuntu
+#	$(CC) $(CFLAGS_DEBUG) $(INCLUDES) -c $< -o $@ -MMD
 
 
 # defines default target/executable

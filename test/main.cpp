@@ -5,7 +5,6 @@
 #include "test_fixture.h"
 #include "test_language.h"
 #include "test_utility.h"
-#include "test_benchmark.h"
 
 int main(int argc, char** argv)
 {
