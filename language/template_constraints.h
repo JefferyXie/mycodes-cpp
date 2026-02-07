@@ -2,6 +2,116 @@
 
 #include "../core/header.h"
 
+//
+// constraints
+//
+// v1: traits as return type
+template <typename T>
+typename std::enable_if_t<std::is_integral_v<T>, int> count_one_bits(T arg)
+{
+    //...
+    return 0;
+}
+
+// v2: traits as dummy template argument
+template <typename T, typename = std::enable_if_t<std::is_integral_v<T>, void>>
+int count_one_bits(T arg)
+{
+    //...
+    return 0;
+}
+
+// v3: 'requires' with traits
+template <typename T>
+    requires std::is_integral_v<T>
+int count_one_bits(T arg)
+{
+    //...
+    return 0;
+}
+
+// v4: 'requires' a concept and decoramte the return type
+template <typename T>
+    requires std::integral<T>
+int count_one_bits(T arg)
+{
+    //...
+    return 0;
+}
+
+// v5: concept as template argument
+template <std::integral T>    // std::integral is a concept
+int count_one_bits(T arg)
+{
+    //...
+    return 0;
+}
+
+// v6: auto with concept
+int count_one_bits1(std::integral auto arg)    // rename to avoid duplication of above one
+{
+    //...
+    return 0;
+}
+
+// v7: 'requires' at the end of function declaration
+template <typename T>
+int count_one_bits(T arg)
+    requires std::is_integral_v<T>
+{
+    //...
+    return 0;
+}
+
+//
+// specialization
+//
+// v1: specialization all cases that don't fit for sizeof(..)
+template <typename T>
+struct safe_sizeof {
+    static constexpr std::size_t value = sizeof(T);
+};
+
+template <>
+struct safe_sizeof<void> {
+    static constexpr std::size_t value = 0;
+};
+
+// specialization for array with 0 length
+template <typename T>
+struct safe_sizeof<T[]> {
+    static constexpr std::size_t value = 0;
+};
+
+// specialization for function with return type R and arguments Args...
+template <typename R, typename... Args>
+struct safe_sizeof<R(Args...)> {
+    static constexpr std::size_t value = 0;
+};
+
+// v2: 'requires' sizeof(..) cases
+template <typename T>
+struct safe_sizeof1 {
+    static constexpr std::size_t value = 0;
+};
+
+template <typename T>
+    requires(sizeof(T) > 0)
+struct safe_sizeof1<T> {
+    static constexpr std::size_t value = sizeof(T);
+};
+
+// v3: modern way by using variable template
+template <typename T>
+constexpr std::size_t safe_sizeof2 = 0;
+
+template <typename T>
+    requires(sizeof(T) > 0)
+constexpr std::size_t safe_sizeof2<T> = sizeof(T);
+
+///
+///
+
 // 1) by utilizing pointer to function, detect the constraint at compile time
 //
 // https://isocpp.org/wiki/faq/templates
@@ -96,6 +206,12 @@ class ContainerB
     // ...
 };
 
+// 'requires'
+template <typename T>
+    requires std::is_base_of_v<B_, T>
+struct ContainerB2 {
+};
+
 // function template with constainted type as int
 template <class T, typename std::enable_if<std::is_integral<T>::value, int>::type = 0>
 void increment(T& x)
@@ -103,9 +219,21 @@ void increment(T& x)
     x++;
 }
 
+// use built-in concept before 'auto'
+void increment2(std::integral auto& x)
+{
+    ++x;
+}
+
 // the return type (bool) is only valid if T is integral type
 template <class T>
 typename std::enable_if<std::is_integral<T>::value, bool>::type is_odd(T i)
+{
+    return bool(i % 2);
+}
+
+// use built-in concept before 'auto'
+bool is_odd2(std::integral auto i)
 {
     return bool(i % 2);
 }
@@ -119,17 +247,25 @@ bool is_even(T i)
 
 void run_template_constraints_2()
 {
-    [[maybe_unused]] ContainerB<B_> b;
-    [[maybe_unused]] ContainerB<DD> dd;
+    [[maybe_unused]] ContainerB<B_>  b;
+    [[maybe_unused]] ContainerB<DD>  dd;
+    [[maybe_unused]] ContainerB2<B_> b2;
+    [[maybe_unused]] ContainerB2<DD> dd2;
     // ContainerB<X> x; // compile error
     // ContainerB<int> i; // compile error
+    // ContainerB2<X> x; // compile error
+    // ContainerB2<int> i; // compile error
 
     [[maybe_unused]] float f = 5.55f;
     int                    a = 10;
     increment(a);
+    increment2(a);
     // increment(f); // compile error
+    // increment2(f); // compile error
     is_odd(a);
+    is_odd2(a);
     // is_odd(f); // compile error
+    // is_odd2(f); // compile error
     is_even(a);
     // is_even(f); // compile error
 }

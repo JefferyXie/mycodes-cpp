@@ -2,6 +2,9 @@
 
 #include "../core/header.h"
 
+// A very nice macro!!
+#define RUN_N_DUMP(...) std::cout << #__VA_ARGS__ << " = " << __VA_ARGS__ << '\n'
+
 template <typename... Args>
 void try_fold(Args... args)
 {
@@ -15,7 +18,7 @@ void try_fold(Args... args)
 
     std::cout << "dump: " << ((std::cout << args) << ...) << std::endl;
 
-    std::cout << "dump: " << ((std::cout << args), ...) << std::endl;
+    std::cout << "dump: " << ((std::cout << args), ...) << std::endl; // type 2: (std::cout << arg1), ((std::cout << arg2), ((std::cout << arg3), (...)))
 
     std::cout << "sum: " << (args + ...) << std::endl;
     std::cout << "sum: " << (... + args) << std::endl;
@@ -35,7 +38,26 @@ void try_fold(Args... args)
     // clang-format on
 }
 
+void try_fold_2(auto... args) {
+    // same as above try_fold(..) function template
+}
+
+constexpr auto try_lcm(auto x, auto... xs)
+{
+    return ((x = std::lcm(x, xs)), ...);
+}
+
 void run_template_fold()
 {
-    // TODO
+    constexpr int p{2 * 2 * 3};
+    constexpr int q{2 * 3 * 3};
+    static_assert(2 * 2 * 3 * 3 == std::lcm(p, q));
+    static_assert(225 == std::lcm(45, 75));
+
+    // try_lcm(2 * 3, 3 * 4, 4 * 5) = 60
+    // try_lcm(2 * 3 * 4, 3 * 4 * 5, 4 * 5 * 6) = 120
+    // try_lcm(2 * 3 * 4, 3 * 4 * 5, 4 * 5 * 6, 5 * 6 * 7) = 840
+    RUN_N_DUMP(try_lcm(2 * 3, 3 * 4, 4 * 5));
+    RUN_N_DUMP(try_lcm(2 * 3 * 4, 3 * 4 * 5, 4 * 5 * 6));
+    RUN_N_DUMP(try_lcm(2 * 3 * 4, 3 * 4 * 5, 4 * 5 * 6, 5 * 6 * 7));
 }
