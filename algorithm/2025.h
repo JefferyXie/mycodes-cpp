@@ -63,8 +63,8 @@ void run_find_min_steps_to_1()
              use_case_t(100, 5),    // 100 > 10 > 9 > 3 > 2 > 1
          }) {
         const auto v = find_min_steps_to_1(N);
-        std::cout << "N=" << N << ", steps=" << v << ", find_min_steps_to_1=" << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": N=" << N << ", find_min_steps_to_1=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -128,12 +128,14 @@ void run_find_min_steps_to_x_y()
              use_case_t({10, 12}, {4, 4}, -1),
          }) {
         const auto v1 = find_min_steps_to_x_y(target[0], target[1], start[0], start[1]);
-        std::cout << "target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", " << start[1]
-                  << "), find_min_steps_to_x_y=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", "
+                  << start[1] << "), find_min_steps_to_x_y=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << std::endl;
 
         const auto v2 = find_min_steps_to_x_y_2(target[0], target[1], start[0], start[1]);
-        std::cout << "target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", " << start[1]
-                  << "), find_min_steps_to_x_y_2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": target=(" << target[0] << ", " << target[1] << "), start=(" << start[0] << ", "
+                  << start[1] << "), find_min_steps_to_x_y_2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -173,16 +175,16 @@ void run_find_min_steps_to_N_multi()
              use_case_t(10, 1, 9),
          }) {
         const auto v = find_min_steps_to_N_multi(start, target);
-        std::cout << "start=" << start << ", target=" << target << ", find_min_steps_to_N_multi=" << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": start=" << start << ", target=" << target << ", find_min_steps_to_N_multi=" << v
+                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
 // Given a positive integer N, find the minimum number of steps that it takes to get reduced to 1.
 // You can perform any one of the following 3 steps:
-// 1) Subtract 1 from it. (n = n — 1) ,
-// 2) If n is divisible by 2, divide by 2.( if n % 2 == 0, then n = n / 2 ) ,
-// 3) If n is divisible by 3, divide by 3. (if n % 3 == 0, then n = n / 3 ).
+// 1) Subtract 1 from it. (n = n — 1).
+// 2) If n is divisible by 2, divide by 2.( if n % 2 == 0, then n = n / 2 ).
+// 3) If n is divisible by 3, divide by 3.( if n % 3 == 0, then n = n / 3 ).
 int find_min_steps_to_1_dp(int N)
 {
     std::vector<int> dp(N + 1, -1);
@@ -221,7 +223,7 @@ int find_min_steps_to_1_recursive(int N)
 int find_min_steps_to_1_recursive_2(int N)
 {
     std::vector<int>        dp(N + 1, -1);
-    std::function<int(int)> run = [&](int n) {
+    std::function<int(int)> impl = [&](int n) {
         if (n == 1) {
             return 0;
         }
@@ -229,19 +231,19 @@ int find_min_steps_to_1_recursive_2(int N)
             return dp[n];
         }
 
-        auto steps_1 = run(n - 1);
+        auto steps_1 = impl(n - 1);
         auto steps_2 = steps_1;
         if (n % 2 == 0) {
-            steps_2 = run(n / 2);
+            steps_2 = impl(n / 2);
         }
         auto steps_3 = steps_1;
         if (n % 3 == 0) {
-            steps_3 = run(n / 3);
+            steps_3 = impl(n / 3);
         }
         dp[n] = 1 + std::min({steps_1, steps_2, steps_3});
         return dp[n];
     };
-    return run(N);
+    return impl(N);
 }
 void run_find_min_steps_to_1_dp()
 {
@@ -257,15 +259,15 @@ void run_find_min_steps_to_1_dp()
              use_case_t(100, 7),    // 100 > 50 > 25 > 24 > 8 > 4 > 2 > 1
          }) {
         const auto v1 = find_min_steps_to_1_dp(N);
-        std::cout << "N=" << N << ", find_min_steps_to_1_dp=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": N=" << N << ", find_min_steps_to_1_dp=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
 
         const auto v2 = find_min_steps_to_1_recursive(N);
-        std::cout << "N=" << N << ", find_min_steps_to_1_recursive=" << v2 << ", "
+        std::cout << __FUNCTION__ << ": N=" << N << ", find_min_steps_to_1_recursive=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
 
         const auto v3 = find_min_steps_to_1_recursive_2(N);
-        std::cout << "N=" << N << ", find_min_steps_to_1_recursive_2=" << v3 << ", "
+        std::cout << __FUNCTION__ << ": N=" << N << ", find_min_steps_to_1_recursive_2=" << v3 << ", "
                   << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -324,8 +326,8 @@ void run_find_min_steps_to_1_bitwise()
              use_case_t(62, 7),    // 62 > 31 > 32 > 16 > 8 > 4 > 2 > 1
          }) {
         const auto v = find_min_steps_to_1_bitwise(N);
-        std::cout << "N=" << N << ", find_min_steps_to_1_bitwise=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": N=" << N << ", find_min_steps_to_1_bitwise=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -434,50 +436,92 @@ void run_tree_all_paths()
     n4.left    = &n9;
     n4.right   = &n0;
 
-    std::cout << "---------------------------" << std::endl;
+    std::cout << __FUNCTION__ << ": " << std::endl;
     tree_all_paths(&root);
 
-    std::cout << "---------------------------" << std::endl;
+    std::cout << __FUNCTION__ << ": " << std::endl;
     tree_all_paths_v2(&root);
 }
 
 // leetcode 114: given a binary tree, change it to list
 // - left child is null, right child is 'next'
-// - follow pre-order traversal, left-root-right
+// - follow pre-order traversal, root-left-right
 tree_node_int_t* tree_to_list(tree_node_int_t* root)
 {
     std::cout << root->data << ",";
 
     auto l     = root->left;
     auto r     = root->right;
-    auto tail  = root;
+    auto tail  = root;    // 1) root first
     tail->left = nullptr;
-    if (l) {
+    if (l) {    // 2) left branch
         tail->right = l;
         tail        = tree_to_list(l);
     }
-    if (r) {
+    if (r) {    // 3) right branch
         tail->right = r;
         tail        = tree_to_list(r);
     }
-    return tail;
+    return tail;    // at this point, this branch root/tail is done
+}
+
+// same idea as above version by using recursion, also same idea as following binary_tree_2_double_list(...)
+tree_node_int_t* tree_to_list_2(tree_node_int_t* root)
+{
+    using return_t                                 = std::pair<tree_node_int_t*, tree_node_int_t*>;
+    std::function<return_t(tree_node_int_t*)> impl = [&](tree_node_int_t* node) {
+        if (!node) {
+            return return_t{nullptr, nullptr};
+        }
+
+        auto child_l = node->left;
+        auto child_r = node->right;
+
+        auto [head_l, tail_l] = impl(child_l);
+        node->left            = nullptr;
+        node->right           = head_l;
+        if (!tail_l) {
+            tail_l = node;
+        }
+
+        auto [head_r, tail_r] = impl(child_r);
+        tail_l->right         = head_r;
+        if (!tail_r) {
+            tail_r = tail_l;
+        }
+
+        return std::pair{node, tail_r};
+    };
+
+    auto [head, tail] = impl(root);
+    auto node         = head;
+    while (node) {
+        std::cout << node->data << ",";
+        node = node->right;
+    }
+    return head;
 }
 
 // this is kind of BFS, each cycle put the right child to right-bottom from left branch, and put left child on right
-void tree_to_list_2(tree_node_int_t* root)
+void tree_to_list_3(tree_node_int_t* root)
 {
+    // 1) root first
     while (root) {
         std::cout << root->data << ",";
+        // 2) left branch
         if (root->left) {
             auto pre = root->left;
-            while (pre->right) {
+            while (pre->right) {    // pre: the right most node in the 2) left branch
                 pre = pre->right;
             }
-            pre->right  = root->right;
+            pre->right  = root->right;    // pre->right should be 1) root->right
             root->right = root->left;
             root->left  = nullptr;
         }
+        // 3) right branch
         root = root->right;
+
+        // after each cycle, the current 1) root node has its left & right nodes in the desired places
     }
 }
 
@@ -509,13 +553,68 @@ void run_tree_to_list()
         return root;
     };
 
-    using use_case_t = std::tuple<tree_node_int_t*, tree_node_int_t*, std::string>;
-    for (auto [root1, root2, exp_v] : {
-             use_case_t(create_tree(), create_tree(), "[100->1->3->7->8->4->9->0->2->5->6]"),
+    using use_case_t = std::tuple<tree_node_int_t*, tree_node_int_t*, tree_node_int_t*, std::string>;
+    for (auto [root1, root2, root3, exp_v] : {
+             use_case_t(create_tree(), create_tree(), create_tree(), "[100->1->3->7->8->4->9->0->2->5->6]"),
          }) {
+        std::cout << __FUNCTION__ << ": " << std::endl;
         tree_to_list(root1);
         tree_to_list_2(root2);
+        tree_to_list_3(root3);
     }
+}
+
+// https://www.geeksforgeeks.org/dsa/convert-binary-tree-to-doubly-linked-list-by-keeping-track-of-visited-node/
+//
+// Convert binary tree into double linked list so that node's left child is previous node and right child is next node
+// The list is inorder: left > root > right
+tree_node_int_t* binary_tree_2_double_list(tree_node_int_t* root)
+{
+    using return_t                                 = std::pair<tree_node_int_t*, tree_node_int_t*>;
+    std::function<return_t(tree_node_int_t*)> impl = [&](tree_node_int_t* node) {
+        if (!node) {
+            return return_t{nullptr, nullptr};
+        }
+        auto [l_head, l_tail] = impl(node->left);
+        node->left            = l_tail;
+        if (l_tail) {
+            l_tail->right = node;
+        }
+
+        auto [r_head, r_tail] = impl(node->right);
+        node->right           = r_head;
+        if (r_head) {
+            r_head->left = node;
+        }
+
+        auto head = l_head ? l_head : node;
+        auto tail = r_tail ? r_tail : node;
+        return return_t{head, tail};
+    };
+    auto [head, _] = impl(root);
+    return head;
+}
+void run_binary_tree_2_double_list()
+{
+    auto root         = new tree_node_int_t(10);
+    root->left        = new tree_node_int_t(12);
+    root->right       = new tree_node_int_t(15);
+    root->left->left  = new tree_node_int_t(25);
+    root->left->right = new tree_node_int_t(30);
+    root->right->left = new tree_node_int_t(36);
+
+    auto result = binary_tree_2_double_list(root);
+    while (result) {
+        if (result->left) {
+            std::cout << "(" << result->left->data << ")";
+        }
+        std::cout << result->data;
+        result = result->right;
+        if (result) {
+            std::cout << "(" << result->data << ")" << " -> ";
+        }
+    }
+    std::cout << std::endl;
 }
 
 // Find next greater number with same set of digits
@@ -542,6 +641,7 @@ std::string find_next_greater_with_same_set_digits(std::string str)
         if (curr >= prev)
             continue;
 
+        // exchange str[idx - 1] with the smallest bigger number from std[idx, length - 1]
         for (auto i = length - 1; i >= idx; --i) {
             if (str[i] > curr) {
                 str[idx - 1] = str[i];
@@ -549,6 +649,8 @@ std::string find_next_greater_with_same_set_digits(std::string str)
                 break;
             }
         }
+
+        // reverse str[idx, length - 1]
         size_t i = 0;
         while (idx + i < length - i - 1) {
             const auto t        = str[length - i - 1];
@@ -575,7 +677,7 @@ void run_find_next_greater_with_same_set_digits()
              use_case_t("534976", "536479"),
          }) {
         const auto v = find_next_greater_with_same_set_digits(input);
-        std::cout << "Input=" << input << ", find_next_greater_with_same_set_digits=" << v << ", "
+        std::cout << __FUNCTION__ << ": Input=" << input << ", find_next_greater_with_same_set_digits=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -720,8 +822,8 @@ void run_job_compelte_time()
                  "[1,2,3,3,3,4,4]"),
          }) {
         const auto v = util::dump_array(job_compelte_time(jobs, edges));
-        std::cout << "jobs=" << jobs << ", job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": jobs=" << jobs << ", job_compelte_time=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -856,8 +958,8 @@ void run_enhanced_job_compelte_time()
                  "[1,2,4,5,7]"},
          }) {
         const auto v = util::dump_array(enhanced_job_compelte_time(N, jobs_time_cost, jobs_deps));
-        std::cout << "N=" << N << ", enhanced_job_compelte_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": N=" << N << ", enhanced_job_compelte_time=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -912,7 +1014,7 @@ void run_max_rectangle()
              use_case_t({2, 3, 3, 2}, 8),
          }) {
         const auto v = max_rectangle(heights);
-        std::cout << "Heights: " << util::dump_array(heights) << ", max_rectangle=" << v << ", "
+        std::cout << __FUNCTION__ << ": Heights: " << util::dump_array(heights) << ", max_rectangle=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -965,8 +1067,8 @@ void run_max_rectangle_sub_matrix()
                  6),
          }) {
         const auto v = max_rectangle_sub_matrix(matrix);
-        std::cout << "matrix=" << util::dump_matrix(matrix) << ", max_rectangle_sub_matrix=" << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": matrix=" << util::dump_matrix(matrix) << ", max_rectangle_sub_matrix=" << v
+                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -996,36 +1098,43 @@ int max_square_sub_matrix(std::vector<std::vector<int>> matrix)
 }
 void run_max_square_sub_matrix()
 {
-    using Matrix = std::vector<std::vector<int>>;
-    for (auto& matrix : {
-             Matrix{
-                 {1, 1},
-                 {1, 1},
-             },    // 2
-
-             Matrix{
-                 {0, 1, 1, 0},
-                 {1, 1, 1, 1},
-                 {1, 1, 1, 1},
-                 {1, 1, 0, 0},
-             },    // 2
-
-             Matrix{
-                 {0, 1, 1},
-                 {1, 1, 1},
-                 {0, 1, 1},
-             },    // 2
-
-             Matrix{
-                 {0, 1, 1, 0, 1},
-                 {1, 1, 0, 1, 0},
-                 {0, 1, 1, 1, 0},
-                 {1, 1, 1, 1, 0},
-                 {1, 1, 1, 1, 1},
-                 {0, 0, 0, 0, 0},
-             },    // 3
+    using use_case_t = std::tuple<std::vector<std::vector<int>>, int>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 1},
+                     {1, 1},
+                 },
+                 2},
+             use_case_t{
+                 {
+                     {0, 1, 1, 0},
+                     {1, 1, 1, 1},
+                     {1, 1, 1, 1},
+                     {1, 1, 0, 0},
+                 },
+                 2},
+             use_case_t{
+                 {
+                     {0, 1, 1},
+                     {1, 1, 1},
+                     {0, 1, 1},
+                 },
+                 2},
+             use_case_t{
+                 {
+                     {0, 1, 1, 0, 1},
+                     {1, 1, 0, 1, 0},
+                     {0, 1, 1, 1, 0},
+                     {1, 1, 1, 1, 0},
+                     {1, 1, 1, 1, 1},
+                     {0, 0, 0, 0, 0},
+                 },
+                 3},
          }) {
-        std::cout << "Max-square-sub-matrix=" << max_square_sub_matrix(matrix) << std::endl;
+        const auto v = max_square_sub_matrix(matrix);
+        std::cout << __FUNCTION__ << ": matrix=" << util::dump_matrix(matrix) << ", max_square_sub_matrix=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1035,8 +1144,6 @@ void run_max_square_sub_matrix()
 // Below code can be generated by google: c++ graph check cycle
 bool graph_undirected_cycle(int N, const std::vector<std::array<int, 2>>& edges)
 {
-    std::vector<bool> visited(N, false);
-
     std::vector<std::vector<int>> children(N, std::vector<int>{});
     for (const auto edge : edges) {
         const auto from = edge[0];
@@ -1046,10 +1153,11 @@ bool graph_undirected_cycle(int N, const std::vector<std::array<int, 2>>& edges)
         children[to].push_back(from);
     }
 
-    using lambda_t         = std::function<bool(int, int)>;
-    lambda_t dfs_has_cycle = [&](int idx, int idx_parent) {
-        if (visited[idx])
+    std::vector<bool>             visited(N, false);
+    std::function<bool(int, int)> dfs_has_cycle = [&](int idx, int idx_parent) {
+        if (visited[idx]) {
             return false;
+        }
 
         visited[idx] = true;
 
@@ -1059,7 +1167,9 @@ bool graph_undirected_cycle(int N, const std::vector<std::array<int, 2>>& edges)
                     return true;
                 }
             }
-            // TODO: not sure why need to check (child != idx_parent)??
+            // If there is a cycle, it must reach this line. For instance, A->B->C->A:
+            // Starting from A, it goes to child B then C. In this loop A is C's child ('child'=='A', 'idx_parent'=='B')
+            // and has been visited but ('child' != 'idx_parent')
             else if (child != idx_parent) {
                 return true;
             }
@@ -1067,6 +1177,7 @@ bool graph_undirected_cycle(int N, const std::vector<std::array<int, 2>>& edges)
         return false;
     };
 
+    // dont need this loop if this is a single graph
     for (int i = 0; i < N; ++i) {
         if (dfs_has_cycle(i, -1))
             return true;
@@ -1086,9 +1197,6 @@ bool graph_undirected_cycle(int N, const std::vector<std::array<int, 2>>& edges)
 //
 bool graph_directed_cycle(int N, const std::vector<std::array<int, 2>>& edges)
 {
-    std::vector<bool> visited(N, false);
-    std::vector<bool> on_route(N, false);
-
     std::vector<std::vector<int>> children(N, std::vector<int>{});
     for (const auto edge : edges) {
         const auto from = edge[0];
@@ -1096,8 +1204,10 @@ bool graph_directed_cycle(int N, const std::vector<std::array<int, 2>>& edges)
         children[from].push_back(to);
     }
 
-    using lambda_t         = std::function<bool(int)>;
-    lambda_t dfs_has_cycle = [&](int idx) {
+    std::vector<bool> visited(N, false);
+    std::vector<bool> on_route(N, false);
+
+    std::function<bool(int)> dfs_has_cycle = [&](int idx) {
         if (visited[idx])
             return false;
 
@@ -1211,8 +1321,8 @@ void run_graph_directed_cycle()
                  false},
          }) {
         const auto v = graph_directed_cycle(vertices, edges);
-        std::cout << "vertices=" << vertices << ", graph_directed_cycle=" << std::boolalpha << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": vertices=" << vertices << ", graph_directed_cycle=" << std::boolalpha << v
+                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1242,7 +1352,8 @@ std::vector<int> find_pascal_triangle_row_2(int rowIdx)
 void run_find_pascal_triangle_row()
 {
     for (auto rowIdx : {0, 1, 2, 3, 4, 5, 6, 7, 8, 9}) {
-        std::cout << "rowIdx=" << rowIdx << ", row=" << util::dump_array(find_pascal_triangle_row(rowIdx)) << ", "
+        std::cout << __FUNCTION__ << ": rowIdx=" << rowIdx
+                  << ", row=" << util::dump_array(find_pascal_triangle_row(rowIdx)) << ", "
                   << util::dump_array(find_pascal_triangle_row_2(rowIdx)) << std::endl;
     }
 }
@@ -1391,7 +1502,7 @@ void run_max_sub_array()
              use_case_t{{5, 4, 1, 7, 8}, 25},
          }) {
         const auto v = max_sub_array(arr);
-        std::cout << "array=" << util::dump_array(arr) << ", max_sub_array=" << v << ", "
+        std::cout << __FUNCTION__ << ": array=" << util::dump_array(arr) << ", max_sub_array=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1439,8 +1550,8 @@ void run_possible_words()
              std::vector{5},
              std::vector{1, 2, 8, 9, 0},
          }) {
-        std::cout << "array=" << util::dump_array(arr) << ", possible_words=" << util::dump_array(possible_words(arr))
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": array=" << util::dump_array(arr)
+                  << ", possible_words=" << util::dump_array(possible_words(arr)) << std::endl;
     }
 }
 
@@ -1482,6 +1593,43 @@ std::string simplify_dir_path(const std::string& path)
     return ans;
 }
 
+std::string simplify_dir_path_v2(const std::string& path)
+{
+    std::vector<std::string> result;
+    const int                len = (int)path.size();
+    int                      pos = 1;
+    while (pos < len) {
+        std::string d;
+        auto        p1 = path.find('/', pos);
+        if (p1 == std::string::npos) {
+            d   = path.substr(pos);
+            pos = len;    // break after this
+        } else {
+            d   = path.substr(pos, p1 - pos);
+            pos = p1 + 1;
+        }
+        if (d == "") {
+            // ignore
+        } else if (d == ".") {
+            // ignore
+        } else if (d == "..") {
+            if (!result.empty()) {
+                result.pop_back();
+            }
+        } else {
+            result.push_back(d);
+        }
+    }
+    if (result.empty()) {
+        return "/";
+    }
+    std::string ans;
+    for (auto& d : result) {
+        ans += "/" + d;
+    }
+    return ans;
+}
+
 void run_simplify_dir_path()
 {
     using use_case_t = std::tuple<std::string, std::string>;
@@ -1495,9 +1643,11 @@ void run_simplify_dir_path()
              use_case_t("/a/../.././../../.", "/"),
              use_case_t("/a//b//c//////d", "/a/b/c/d"),
          }) {
-        const auto v = simplify_dir_path(p);
-        std::cout << "raw_path=" << p << ", simplify_dir_path=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        const auto v1 = simplify_dir_path(p);
+        const auto v2 = simplify_dir_path_v2(p);
+        std::cout << __FUNCTION__ << ": raw_path=" << p << ", simplify_dir_path=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", simplify_dir_path_v2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1538,7 +1688,7 @@ std::vector<int> merge_arrays_k(const std::vector<std::vector<int>>& arrs)
 
     std::vector<int> result;
     while (!pq.empty()) {
-        auto& p = pq.top();
+        auto  p = pq.top();    // should be a copy because of the usage after pop below
         auto& v = p.arr->at(p.idx);
         if (result.empty() || result.back() != v) {
             result.push_back(v);
@@ -1557,62 +1707,9 @@ void run_merge_arrays()
     auto arr3 = std::vector<int>{4, 5, 6, 7, 8, 9};
     auto r1   = merge_arrays(arr1, arr2, arr3);
     auto r2   = merge_arrays_k({std::vector<int>{arr1}, std::vector<int>{arr2}, std::vector<int>{arr3}});
-    std::cout << "arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
+    std::cout << __FUNCTION__ << ": arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
               << ", arr3=" << util::dump_array(arr3) << ", merge_arrays=" << util::dump_array(r1)
               << ", merge_arrays_k=" << util::dump_array(r2) << std::endl;
-}
-
-// https://www.geeksforgeeks.org/dsa/convert-binary-tree-to-doubly-linked-list-by-keeping-track-of-visited-node/
-//
-// Convert binary tree into double linked list so that node's left child is previous node and right child is next node
-// The list is inorder: left > root > right
-tree_node_int_t* binary_tree_2_double_list(tree_node_int_t* root)
-{
-    using return_t                                 = std::pair<tree_node_int_t*, tree_node_int_t*>;
-    std::function<return_t(tree_node_int_t*)> impl = [&](tree_node_int_t* node) {
-        if (!node) {
-            return return_t{nullptr, nullptr};
-        }
-        auto [l_head, l_tail] = impl(node->left);
-        node->left            = l_tail;
-        if (l_tail) {
-            l_tail->right = node;
-        }
-
-        auto [r_head, r_tail] = impl(node->right);
-        node->right           = r_head;
-        if (r_head) {
-            r_head->left = node;
-        }
-
-        auto head = l_head ? l_head : node;
-        auto tail = r_tail ? r_tail : node;
-        return return_t{head, tail};
-    };
-    auto [head, _] = impl(root);
-    return head;
-}
-void run_binary_tree_2_double_list()
-{
-    auto root         = new tree_node_int_t(10);
-    root->left        = new tree_node_int_t(12);
-    root->right       = new tree_node_int_t(15);
-    root->left->left  = new tree_node_int_t(25);
-    root->left->right = new tree_node_int_t(30);
-    root->right->left = new tree_node_int_t(36);
-
-    auto result = binary_tree_2_double_list(root);
-    while (result) {
-        if (result->left) {
-            std::cout << "(" << result->left->data << ")";
-        }
-        std::cout << result->data;
-        result = result->right;
-        if (result) {
-            std::cout << "(" << result->data << ")" << " -> ";
-        }
-    }
-    std::cout << std::endl;
 }
 
 // https://www.geeksforgeeks.org/dsa/check-if-a-given-graph-is-bipartite-using-dfs/
@@ -1666,8 +1763,9 @@ void run_graph_biparties_check()
              use_case_t({{1}, {0, 2}, {1, 3}, {2}}, true),
          }) {
         const auto v = graph_biparties_check(adj_list);
-        std::cout << "graph=" << util::dump_matrix(adj_list) << ", graph_biparties_check=" << std::boolalpha << v
-                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": graph=" << util::dump_matrix(adj_list)
+                  << ", graph_biparties_check=" << std::boolalpha << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -1696,7 +1794,10 @@ std::vector<int> contiguous_sub_array(const std::vector<int>& arr)
     const int        N = arr.size();
     std::vector<int> result(N, 1);
 
-    // from left to right, stack tracks all elements bigger than current arr[i], and the stack is sorted
+    // from left to right, stack tracks past elements indexes, given current index i:
+    // 1) prior element index, i.e. (i-1)
+    // 2) the index of nearest past element that is greater than arr[i-1]
+    // 3) and so forth 2)
     std::stack<int> st;
     for (int i = 0; i < N; ++i) {
         // pop top from stack if it is smaller than current arr[i]
@@ -1708,7 +1809,7 @@ std::vector<int> contiguous_sub_array(const std::vector<int>& arr)
         st.push(i);
     }
 
-    // from right to left, stack tracks all elements bigger than current arr[i], and the stack is sorted
+    // from right to left, same idea as above step
     std::stack<int> dummy;
     st.swap(dummy);
     for (int i = N - 1; i >= 0; --i) {
@@ -1732,7 +1833,7 @@ void run_contiguous_sub_array()
              use_case_t({2, 4, 7, 1, 5, 3}, "[1,2,6,1,3,1]"),
          }) {
         const auto v = util::dump_array(contiguous_sub_array(arr));
-        std::cout << "Input: " << util::dump_array(arr) << ", contiguous_sub_array=" << v << ", "
+        std::cout << __FUNCTION__ << ": Input: " << util::dump_array(arr) << ", contiguous_sub_array=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1777,8 +1878,8 @@ void run_number_sum_k()
              use_case_t({1, 1, 1, 1, 1, 1}, 2, 15),
          }) {
         const auto ans = number_sum_k(arr, k);
-        std::cout << "Array=" << util::dump_array(arr) << ", k=" << k << ", number_sum_k=" << ans << ", "
-                  << (ans == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": Array=" << util::dump_array(arr) << ", k=" << k << ", number_sum_k=" << ans
+                  << ", " << (ans == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 

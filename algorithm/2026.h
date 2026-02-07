@@ -114,7 +114,7 @@ void run_good_or_bad()
                  0),
          }) {
         const auto v = good_or_bad(statement_counts, statements);
-        std::cout << "statement_counts=" << util::dump_array(statement_counts)
+        std::cout << __FUNCTION__ << ":statement_counts=" << util::dump_array(statement_counts)
                   << ", statements=" << util::dump_matrix(statements) << ", good_or_bad=" << std::boolalpha << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -194,7 +194,7 @@ bool validity_pyramid_dominoes(const std::vector<std::array<int, 2>>& dominoes)
                     }
 
                     // don't need to handle the last 2 since they don't matter, this is the ending point!
-                    if (visited_count + 2 == dominoes.size()) {
+                    if (visited_count + 2 == (int)dominoes.size()) {
                         return true;
                     }
 
@@ -226,197 +226,129 @@ bool validity_pyramid_dominoes(const std::vector<std::array<int, 2>>& dominoes)
 void run_validity_pyramid_dominoes()
 {
     using dominoes_t = std::vector<std::array<int, 2>>;
-    for (const auto& arr : {
-             /*
-                     [1, 1]
-                  [1, 1][1, 1]
-               [1, 1][1, 1][1, 1]
-             */
-             dominoes_t{{1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}, {1, 1}},    // true
-             /*
-                     [1, 1]
-                  [1, 1][1, 1]
-               [5, 1][1, 1][1, 5]
-             */
-             dominoes_t{{1, 1}, {1, 1}, {1, 1}, {1, 5}, {1, 1}, {1, 5}},    // true
-             /*
-                     [3, 4]
-                  [2, 3][4, 5]
-               [1, 2][3, 4][5, 6]
-             */
-             dominoes_t{{3, 4}, {2, 3}, {4, 5}, {1, 2}, {3, 4}, {5, 6}},    // true
-             dominoes_t{{2, 3}, {4, 5}, {3, 4}, {1, 2}, {3, 4}, {5, 6}},    // true
-             dominoes_t{{2, 3}, {4, 5}, {1, 2}, {3, 4}, {5, 6}, {3, 4}},    // true
-             dominoes_t{{1, 2}, {3, 4}, {5, 6}, {3, 4}, {2, 3}, {4, 5}},    // true
-             /*
-                     [3, 4]
-                  [5, 3][4, 2]
-               [6, 5][3, 4][2, 1]
-             */
-             dominoes_t{{3, 4}, {2, 4}, {3, 5}, {1, 2}, {3, 4}, {5, 6}},    // true
-
-             dominoes_t{{3, 5}, {2, 3}, {4, 5}, {1, 2}, {3, 4}, {5, 6}},    // false
-             dominoes_t{{3, 4}, {3, 3}, {4, 5}, {1, 2}, {3, 4}, {5, 6}},    // false
-             dominoes_t{{3, 4}, {2, 3}, {4, 5}, {1, 2}, {3, 4}, {3, 6}},    // false
+    using use_case_t = std::tuple<dominoes_t, bool>;
+    for (const auto& [arr, exp_v] : {
+             use_case_t{/*
+                                [1, 1]
+                             [1, 1][1, 1]
+                          [1, 1][1, 1][1, 1]
+                        */
+                        {
+                            {1, 1},
+                            {1, 1},
+                            {1, 1},
+                            {1, 1},
+                            {1, 1},
+                            {1, 1},
+                        },
+                        true},
+             use_case_t{/*
+                                [1, 1]
+                             [1, 1][1, 1]
+                          [5, 1][1, 1][1, 5]
+                        */
+                        {
+                            {1, 1},
+                            {1, 1},
+                            {1, 1},
+                            {1, 5},
+                            {1, 1},
+                            {1, 5},
+                        },
+                        true},
+             use_case_t{/*
+                                [3, 4]
+                             [2, 3][4, 5]
+                          [1, 2][3, 4][5, 6]
+                        */
+                        {
+                            {3, 4},
+                            {2, 3},
+                            {4, 5},
+                            {1, 2},
+                            {3, 4},
+                            {5, 6},
+                        },
+                        true},
+             use_case_t{
+                 {
+                     {2, 3},
+                     {4, 5},
+                     {3, 4},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                 },
+                 true},
+             use_case_t{
+                 {
+                     {2, 3},
+                     {4, 5},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                     {3, 4},
+                 },
+                 true},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                     {3, 4},
+                     {2, 3},
+                     {4, 5},
+                 },
+                 true},
+             use_case_t{/*
+                                [3, 4]
+                             [5, 3][4, 2]
+                          [6, 5][3, 4][2, 1]
+                        */
+                        {
+                            {3, 4},
+                            {2, 4},
+                            {3, 5},
+                            {1, 2},
+                            {3, 4},
+                            {5, 6},
+                        },
+                        true},
+             use_case_t{
+                 {
+                     {3, 5},
+                     {2, 3},
+                     {4, 5},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                 },
+                 false},
+             use_case_t{
+                 {
+                     {3, 4},
+                     {3, 3},
+                     {4, 5},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                 },
+                 false},
+             use_case_t{
+                 {
+                     {3, 4},
+                     {2, 3},
+                     {4, 5},
+                     {1, 2},
+                     {3, 4},
+                     {3, 6},
+                 },
+                 false},
          }) {
-        std::cout << std::boolalpha << validity_pyramid_dominoes(arr) << std::endl;
+        const auto v = validity_pyramid_dominoes(arr);
+        std::cout << __FUNCTION__ << ": validity_pyramid_dominoes=" << std::boolalpha << v
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
-}
-
-// https://www.youtube.com/watch?v=kPh8pod0-gk
-// 0) sometimes this is called 'sticky counter' - it gets stuck at zero
-// 1) required by std::weak_ptr<T>::lock;
-// 2) also useful for atomic memory management / concurrent data structures, i.e. atomic<shared_ptr>
-class counter_t
-{
-private:
-    static constexpr uint64_t IS_ZERO   = 1ull << 63;
-    static constexpr uint64_t BE_HELPED = 1ull << 62;
-    // precondition: counter is not zero
-    std::atomic<uint64_t> counter_ = 1;
-
-public:
-    // increase counter and return true if counter is greater than zero, otherwise do nothing and return false
-    bool increment_if_not_zero() { return (counter_.fetch_add(1) & IS_ZERO) == 0; }
-
-    // always decrease counter, return true if counter after decrease is zero, otherwise return false
-    bool decrement()
-    {
-        if (counter_.fetch_sub(1) == 1) {
-            uint64_t e = 0;
-            if (counter_.compare_exchange_strong(e, IS_ZERO)) {
-                return true;
-            }
-            if ((e & BE_HELPED) && (counter_.exchange(IS_ZERO) & BE_HELPED)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    // return current value of counter
-    uint64_t read()
-    {
-        auto val = counter_.load();
-        if (val == 0 && counter_.compare_exchange_strong(val, IS_ZERO | BE_HELPED)) {
-            return 0;    // in helping
-        }
-        return (val & IS_ZERO) ? 0 : val;
-    }
-};
-
-void run_perf_test()
-{
-    constexpr int CACHE_LINE         = 64;
-    constexpr int LENGTH             = 512 * 1024 * 1024;
-    constexpr int NUM_PER_CACHE_LINE = CACHE_LINE / sizeof(int);
-    constexpr int NUM_ITEMS          = LENGTH / NUM_PER_CACHE_LINE;
-
-    std::vector<int> arr(LENGTH);
-    const auto       start = std::chrono::high_resolution_clock::now();
-
-    // access NUM_ITEMS/16 cache lines
-    /*
-        for (int i = 0; i < NUM_ITEMS; i++)
-            arr[i]++;
-    */
-    /*
-        // access NUM_ITEMS cache lines: much higher cost than above
-        for (int i = 0; i < NUM_ITEMS*NUM_PER_CACHE_LINE; i+=NUM_PER_CACHE_LINE)
-            arr[i]++;
-    */
-    // access NUM_ITEMS cache lines, twice of index access: similar cost as above
-    for (int i = 0; i < NUM_ITEMS * NUM_PER_CACHE_LINE; i += NUM_PER_CACHE_LINE) {
-        arr[i]++;
-        arr[i + NUM_PER_CACHE_LINE - 1]++;
-    }
-
-    const auto stop = std::chrono::high_resolution_clock::now();
-    const auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-
-    std::cout << (float)dura.count() << std::endl;
-}
-
-void run_thread_atom_perf_test()
-{
-    using int_t               = int32_t;
-    using atom_int_t          = std::atomic<int_t>;
-    constexpr auto CAPPED_NUM = std::numeric_limits<int_t>::max();
-    constexpr auto NUM_THREAD = 10;
-
-    auto do_test = []() {
-        int_t                    cnt = 0;
-        std::vector<std::thread> threads;
-        for (int i = 0; i < NUM_THREAD; i++) {
-            threads.emplace_back([&cnt]() {
-                int_t prev = 0, tmp = 0;
-                while (prev < CAPPED_NUM) {
-                    tmp = cnt;
-
-                    // If it is not safe, tmp will not increase all the time.
-                    if (tmp < prev) {
-                        std::cout << "Error cnt declined" << std::endl;
-                    }
-
-                    // if (tmp % 1000000 == 0) cout << tmp << endl;
-                    prev = tmp;
-                }
-            });
-        }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        while (cnt < CAPPED_NUM) {
-            ++cnt;
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << (float)dura.count() / 1000 << std::endl;
-    };
-
-    do_test();
-
-    auto do_atom = []() {
-        atom_int_t               cnt = 0;
-        std::vector<std::thread> threads;
-        for (int i = 0; i < NUM_THREAD; i++) {
-            threads.emplace_back([&cnt]() {
-                int_t prev = 0, tmp = 0;
-                while (prev < CAPPED_NUM) {
-                    tmp = cnt.load(std::memory_order_relaxed);
-
-                    // If it is not safe, tmp will not increase all the time.
-                    if (tmp < prev) {
-                        std::cout << "Error cnt declined" << std::endl;
-                    }
-
-                    // if (tmp % 1000000 == 0) cout << tmp << endl;
-                    prev = tmp;
-                }
-            });
-        }
-        std::this_thread::sleep_for(std::chrono::seconds(1));
-
-        auto start = std::chrono::high_resolution_clock::now();
-
-        int_t v = 0;
-        while (v < CAPPED_NUM) {
-            cnt.store(++v, std::memory_order_relaxed);
-        }
-        for (auto& t : threads) {
-            t.join();
-        }
-
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto dura = std::chrono::duration_cast<std::chrono::microseconds>(stop - start);
-        std::cout << (float)dura.count() / 1000 << std::endl;
-    };
-    do_atom();
 }
 
 list_node_int_t* reverse_list(list_node_int_t* head)
@@ -444,8 +376,8 @@ void run_reverse_list()
             .next = tmp,
         };
     }
-    std::cout << "list=" << util::dump_list(head) << ", reverse_list=" << util::dump_list(reverse_list(head))
-              << std::endl;
+    std::cout << __FUNCTION__ << ": list=" << util::dump_list(head)
+              << ", reverse_list=" << util::dump_list(reverse_list(head)) << std::endl;
 }
 
 std::pair<size_t, std::string> find_max_non_dupe_substring(const std::string& str)
@@ -486,7 +418,7 @@ void run_find_max_non_dupe_substring()
              use_case_t("pwwkew", 3),
          }) {
         const auto [len, s] = find_max_non_dupe_substring(str);
-        std::cout << "Input=" << str << ", max_non_dupe_substring=[" << len << ", " << s << "], "
+        std::cout << __FUNCTION__ << ": Input=" << str << ", max_non_dupe_substring=[" << len << ", " << s << "], "
                   << (exp_v == len ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -531,11 +463,12 @@ void run_find_longest_palindrome()
              use_case_t("cbbd", "bb"),
          }) {
         const auto v = find_longest_palindrome(str);
-        std::cout << "Input=" << str << ", longest_palindrome=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": Input=" << str << ", longest_palindrome=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
+// leetcode 6
 std::string transform_str_zigzag(const std::string& str, int rows)
 {
     std::vector<std::string> matrix(rows);
@@ -596,15 +529,26 @@ void run_transform_str_zigzag()
 {
     using use_case_t = std::tuple<std::string, int, std::string>;
     for (auto& [str, rows, exp_v] : {
-             use_case_t("PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"),
-             use_case_t("PAYPALISHIRING", 4, "PINALSIGYAHRPI"),
-             use_case_t("A", 1, "A"),
+             use_case_t{/*
+                        P   A   H   N
+                        A P L S I I G
+                        Y   I   R
+                        */
+                        "PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"},
+             use_case_t{/*
+                        P     I    N
+                        A   L S  I G
+                        Y A   H R
+                        P     I
+                        */
+                        "PAYPALISHIRING", 4, "PINALSIGYAHRPI"},
+             use_case_t{"A", 1, "A"},
          }) {
         const auto v1 = transform_str_zigzag(str, rows);
         const auto v2 = transform_str_zigzag_2(str, rows);
-        std::cout << "Input=[" << str << ", " << rows << "], transform_str_zigzag=" << v1 << ", "
+        std::cout << __FUNCTION__ << ": Input=[" << str << ", " << rows << "], transform_str_zigzag=" << v1 << ", "
                   << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
-        std::cout << "Input=[" << str << ", " << rows << "], transform_str_zigzag_2=" << v2 << ", "
+        std::cout << __FUNCTION__ << ": Input=[" << str << ", " << rows << "], transform_str_zigzag_2=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -649,8 +593,8 @@ void run_reverse_signed_int()
              use_case_t(-2063847412, -2147483602),
          }) {
         const auto v = reverse_signed_int(a);
-        std::cout << "Input=" << a << ", reverse_signed_int=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": Input=" << a << ", reverse_signed_int=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -700,8 +644,8 @@ void run_rotational_cipher()
              use_case_t("abcdZXYzxy-999.@", 200, "stuvRPQrpq-999.@"),
          }) {
         const auto v = rotational_cipher(str, factor);
-        std::cout << "String=\"" << str << "\", factor=" << factor << ", rotational_cipher=\"" << v << "\", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": String=\"" << str << "\", factor=" << factor << ", rotational_cipher=\"" << v
+                  << "\", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -781,7 +725,7 @@ void run_matching_pairs_after_one_swap()
              use_case_t("abcdefg", "abcdfeh", 6),
          }) {
         const auto v = matching_pairs_after_one_swap(s1, s2);
-        std::cout << "Input=[" << s1 << ", " << s2 << "], matching_pairs_after_one_swap=" << v << ", "
+        std::cout << __FUNCTION__ << ": Input=[" << s1 << ", " << s2 << "], matching_pairs_after_one_swap=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -849,7 +793,7 @@ void run_min_length_substring_cover_all()
              use_case_t("bfbeadbcbcbfeaaeefcddcccbbbfaaafdbebedddf", "cbccfafebccdccebdd", ""),
          }) {
         const auto str = min_length_substring_cover_all(s1, s2);
-        std::cout << "Input=[" << s1 << ", " << s2 << "], min_length_substring_cover_all=["
+        std::cout << __FUNCTION__ << ": Input=[" << s1 << ", " << s2 << "], min_length_substring_cover_all=["
                   << (str.empty() ? -1 : (int)str.size()) << ", " << str << "], "
                   << (exp_v == str ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -902,7 +846,8 @@ void run_get_billion_users_day()
              use_case_t({1.01, 1.02}, 1047),
          }) {
         const auto v = get_billion_users_day(rates);
-        std::cout << "get_billion_users_day=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": growth_rates=" << util::dump_array(rates) << ", get_billion_users_day=" << v
+                  << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1006,11 +951,11 @@ void run_queue_removal_find_positions()
              use_case_t({2, 4, 2, 4, 3, 1, 2, 2, 3, 4, 3, 4, 4}, 4, {2, 5, 10, 13}),
          }) {
         const auto ans_1 = queue_removal_find_positions(arr, k);
-        std::cout << "queue_removal_find_positions=" << util::dump_array(ans_1) << ", "
+        std::cout << __FUNCTION__ << ": queue_removal_find_positions=" << util::dump_array(ans_1) << ", "
                   << (ans_1 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
 
         const auto ans_2 = queue_removal_find_positions_2(arr, k);
-        std::cout << "queue_removal_find_positions_2=" << util::dump_array(ans_2) << ", "
+        std::cout << __FUNCTION__ << ": queue_removal_find_positions_2=" << util::dump_array(ans_2) << ", "
                   << (ans_2 == exp_arr ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1067,8 +1012,8 @@ void run_min_oper_mod_for_permutation()
              use_case_t({1, 5, 4}, -1),
          }) {
         const auto v = min_oper_mod_for_permutation(arr);
-        std::cout << "array=" << util::dump_array(arr) << ", min_oper_mod_for_permutation=" << v << ", "
-                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": array=" << util::dump_array(arr) << ", min_oper_mod_for_permutation=" << v
+                  << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1142,8 +1087,12 @@ void run_min_platforms_required()
          }) {
         const auto v1 = min_platforms_required(arrs, deps);
         const auto v2 = min_platforms_required_2(arrs, deps);
-        std::cout << "min_platforms_required=" << v1 << (v1 == exp_v ? ", SUCCESS" : ", FAILED") << std::endl;
-        std::cout << "min_platforms_required_2=" << v2 << (v2 == exp_v ? ", SUCCESS" : ", FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": arrivals=" << util::dump_array(arrs)
+                  << ", departures=" << util::dump_array(deps) << ", min_platforms_required=" << v1
+                  << (v1 == exp_v ? ", SUCCESS" : ", FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": arrivals=" << util::dump_array(arrs)
+                  << ", departures=" << util::dump_array(deps) << ", min_platforms_required_2=" << v2
+                  << (v2 == exp_v ? ", SUCCESS" : ", FAILED") << std::endl;
     }
 }
 
@@ -1155,7 +1104,7 @@ void run_min_platforms_required()
 //
 // Input: arr[] = ['P', 'T', 'T', 'P', 'T'], k = 1
 // Output: 2.
-// Explanation: policeman of 0th index catches thief  at index 1 and policeman of 3rd index can catch thief at either
+// Explanation: policeman of 0th index catches thief at index 1 and policeman of 3rd index can catch thief at either
 // 2nd or 4th index.
 //
 // Input: arr[] = ['T', 'T', 'P'], k = 1
@@ -1234,8 +1183,10 @@ void run_max_thieves_caught()
          }) {
         const auto v1 = max_thieves_caught(arr, k);
         const auto v2 = max_thieves_caught_2(arr, k);
-        std::cout << "max_thieves_caught=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
-        std::cout << "max_thieves_caught_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": input=" << util::dump_array(arr) << ", k=" << k << ", max_thieves_caught=" << v1
+                  << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": input=" << util::dump_array(arr) << ", k=" << k
+                  << ", max_thieves_caught_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1845,9 +1796,9 @@ void run_find_first_missing_integer()
 
 // leetcode 50
 // O(log(x)) by using binary exponentiation
-double pow_x(double x, int exp)
+constexpr double pow_x(double x, int exp)
 {
-    std::function<double(double, int)> impl = [](double x, int exp) {
+    auto impl = [](double x, int exp) {
         double result = 1;
         // NOTICE: idea is x ^ exp = (x ^ (exp/2)) ^ 2
         while (exp / 2) {
@@ -1864,6 +1815,11 @@ double pow_x(double x, int exp)
 }
 void run_pow_x()
 {
+    static_assert(pow_x(1, 1) == 1);
+    static_assert(pow_x(2, 2) == 4);
+    static_assert(pow_x(2, 5) == 32);
+    static_assert(pow_x(2, -2) == 0.25);
+
     using use_case_t = std::tuple<double, int, double>;
     for (auto [x, exp, exp_v] : {
              use_case_t(1, 1, 1),
@@ -1874,8 +1830,8 @@ void run_pow_x()
              use_case_t(2, -2, 0.2500),
              use_case_t(2, -3, 0.12500),
          }) {
-        std::cout << "x=" << x << ", exponent=" << exp << ", pow_x=" << pow_x(x, exp) << ", exp_v=" << exp_v
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": x=" << x << ", exponent=" << exp << ", pow_x=" << pow_x(x, exp)
+                  << ", exp_v=" << exp_v << std::endl;
     }
 }
 
@@ -2725,8 +2681,10 @@ void run_binary_tree_max_width()
          }) {
         const auto v1 = binary_tree_max_width(root);
         const auto v2 = binary_tree_max_width_2(root);
-        std::cout << "binary_tree_max_path=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
-        std::cout << "binary_tree_max_path_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": binary_tree_max_path=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+        std::cout << __FUNCTION__ << ": binary_tree_max_path_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -2832,9 +2790,9 @@ void run_graph_undirected_clone()
     for (auto node : {gen_g1, gen_g2, gen_g3}) {
         const auto clone_node   = graph_undirected_clone(node);
         const auto clone_node_2 = graph_undirected_clone_2(node);
-        std::cout << "graph=" << util::dump_graph(node) << ", graph_undirected_clone=" << util::dump_graph(clone_node)
-                  << std::endl;
-        std::cout << "graph=" << util::dump_graph(node)
+        std::cout << __FUNCTION__ << ": graph=" << util::dump_graph(node)
+                  << ", graph_undirected_clone=" << util::dump_graph(clone_node) << std::endl;
+        std::cout << __FUNCTION__ << ": graph=" << util::dump_graph(node)
                   << ", graph_undirected_clone_2=" << util::dump_graph(clone_node_2) << std::endl;
     }
 }
@@ -2893,8 +2851,9 @@ void run_evaluate_reverse_polish_notation()
              use_case_t({"10", "6", "9", "3", "+", "-11", "*", "/", "*", "17", "+", "5", "+"}, 22),
          }) {
         const auto v = evaluate_reverse_polish_notation(tokens);
-        std::cout << "tokens=" << util::dump_array(tokens) << ", evaluate_reverse_polish_notation=" << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": tokens=" << util::dump_array(tokens)
+                  << ", evaluate_reverse_polish_notation=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -3102,8 +3061,8 @@ void run_binary_tree_burn_down_time()
              // clang-format on
          }) {
         const auto v = binary_tree_burn_down_time(root, target);
-        std::cout << "root=" << root->data << ", target=" << target << ", binary_tree_burn_down_time=" << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": root=" << root->data << ", target=" << target
+                  << ", binary_tree_burn_down_time=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -3146,6 +3105,29 @@ bool is_palindrome(const std::string& s)
     }
     return true;
 }
+bool is_palindrome_v2(const std::string& s)
+{
+    const auto len = (int)s.size();
+
+    std::function<bool(int, int, bool)> impl = [&](int l, int r, bool remove_one_letter) {
+        if (r - l <= 1) {
+            return true;
+        }
+        while (l < r && s[l] == s[r]) {
+            ++l;
+            --r;
+        }
+        if (l >= r) {
+            return true;
+        }
+        if (remove_one_letter) {
+            return impl(l + 1, r, false) || impl(l, r - 1, false);
+        }
+        return false;
+    };
+
+    return impl(0, len - 1, true);
+}
 void run_is_palindrome()
 {
     using use_case_t = std::tuple<std::string, bool>;
@@ -3159,8 +3141,11 @@ void run_is_palindrome()
              use_case_t("btnnure", false),
              use_case_t("baaba", true),
          }) {
-        const auto v = is_palindrome(s);
-        std::cout << "s=" << s << ", is_palindrome=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        const auto v1 = is_palindrome(s);
+        const auto v2 = is_palindrome_v2(s);
+        std::cout << __FUNCTION__ << ": s=" << s << ", is_palindrome=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", is_palindrome_v2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -3200,6 +3185,8 @@ std::string integer_to_binary_2(T x)
 }
 void run_integer_to_binary()
 {
+    std::cout << __FUNCTION__ << std::endl;
+
     std::cout << "integer_to_binary(0): " << integer_to_binary(0) << std::endl;
     std::cout << "integer_to_binary(1): " << integer_to_binary(1) << std::endl;
     std::cout << "integer_to_binary(5): " << integer_to_binary(5) << std::endl;
@@ -3235,7 +3222,7 @@ void run_integer_to_binary()
 }
 
 // log(x)
-int find_log_n(uint64_t x)
+constexpr int find_log_n(uint64_t x)
 {
     if (x == 0) {
         throw std::invalid_argument("invalid argument");
@@ -3250,10 +3237,218 @@ int find_log_n(uint64_t x)
 }
 void run_find_log_n()
 {
+    static_assert(find_log_n(1) == 0);
+    static_assert(find_log_n(8) == 3);
+    static_assert(find_log_n(32) == 5);
+    static_assert(find_log_n(1024) == 10);
+    static_assert(find_log_n(1024 * 1024) == 20);
+
+    std::cout << __FUNCTION__ << std::endl;
     std::cout << "log(1): " << find_log_n(1) << std::endl;
     std::cout << "log(8): " << find_log_n(8) << std::endl;
     std::cout << "log(32): " << find_log_n(32) << std::endl;
     std::cout << "log(1024): " << find_log_n(1024) << std::endl;
     std::cout << "log(1024*1024): " << find_log_n(1024 * 1024) << std::endl;
 }
+
+namespace __event_queue {
+
+class EventQueue
+{
+private:
+    struct Event {
+        using TriggerTime = std::chrono::system_clock::time_point;
+        using Callback    = std::function<void()>;
+        TriggerTime triggerTime{};
+        Callback    callback;
+
+        bool operator>(const Event& other) { return triggerTime > other.triggerTime; }
+    };
+
+    bool                    stopped_{};
+    std::mutex              mu_;
+    std::condition_variable cv_;
+
+    // TODO:
+    // - real time high priority event
+    // - real time low priority event
+    // - delayed event
+
+    // - pre-allocated Event pool
+    // - lock free queue than mutex
+    std::priority_queue<Event, std::vector<Event>, std::greater<>> events_;
+
+public:
+    explicit EventQueue() = default;
+    ~EventQueue()
+    {
+        // ...
+    }
+
+    void Run()
+    {
+        while (true) {
+            std::unique_lock<std::mutex> lk{mu_};
+            if (events_.empty()) {
+                cv_.wait(lk, [&]() {
+                    return !events_.empty() || stopped_;
+                });
+            }
+            if (stopped_) {
+                break;
+            }
+
+            if (events_.top().triggerTime > std::chrono::system_clock::now()) {
+                continue;
+            }
+
+            // TODO: extract multiple or all events than one by one
+            auto ev = std::move(events_.top());
+            events_.pop();
+            lk.unlock();
+
+            ev.callback();
+        }
+    }
+    void Stop()
+    {
+        std::unique_lock<std::mutex> lk{mu_};
+        stopped_ = true;
+        cv_.notify_all();
+    }
+
+    void Add(Event::Callback callback)
+    {
+        static constexpr auto kEpochTimepoint = std::chrono::system_clock::time_point{};
+
+        Add(kEpochTimepoint, std::move(callback));
+    }
+
+    // TODO: in place creation of Event::Callback than created in client thread stack
+    void Add(Event::TriggerTime triggerTime, Event::Callback callback)
+    {
+        std::lock_guard<std::mutex> lk{mu_};
+        events_.push(Event{
+            .triggerTime = triggerTime,
+            .callback    = callback,
+        });
+        cv_.notify_all();
+    }
+};
+
+void run_event_queue()
+{
+    EventQueue evtQ;
+
+    // may have multiple workers
+    std::thread eventWorkerThread1{[&]() {
+        evtQ.Run();
+    }};
+
+    std::thread eventWorkerThread2{[&]() {
+        evtQ.Run();
+    }};
+
+    auto now = std::chrono::system_clock::now();
+    for (int i = 0; i < 10; ++i) {
+        evtQ.Add(now + std::chrono::seconds{2 + i}, [i /* capture any variable you want */]() {
+            // your code here, keep in mind this is running in EventQueue thread!
+            // ...
+            std::cout << std::this_thread::get_id() << ": client event handler, in " << 2 + i << " seconds..."
+                      << std::endl;
+        });
+
+        evtQ.Add([/* capture any variable you want */]() {
+            // your code here, keep in mind this is running in EventQueue thread!
+            // ...
+            std::cout << std::this_thread::get_id() << ": client event handler, run now..." << std::endl;
+        });
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(6));
+
+    evtQ.Stop();
+
+    eventWorkerThread1.join();
+    eventWorkerThread2.join();
+}
+
+}    // namespace __event_queue
+
+namespace __bandwidth {
+
+/*
+            dist switch 1    <----------------->    dist switch 2
+          /               \                        /
+       switch1         switch2                 switch3     ...
+      /       \       /       \               /       \
+    host1   host2   host3   host4           host5   host6  ...
+*/
+
+struct Switch;
+struct DistSwitch;
+
+struct Host {
+    uint32_t    bandwidth{};
+    std::string name;    // unique
+    Switch*     localSwitch{};
+    DistSwitch* distSwitch{};
+};
+
+struct Switch {
+    uint32_t           bandwidth{};
+    std::string        name;    // unique
+    DistSwitch*        distSwitch{};
+    std::vector<Host*> hosts;
+};
+
+struct DistSwitch {
+    uint32_t                 bandwidth{};
+    std::string              name;    // unique
+    std::vector<Switch*>     localSwitches;
+    std::vector<DistSwitch*> neighbors;
+};
+
+uint32_t get_max_bandwidth(Host* host1, Host* host2)
+{
+    if (!host1 || !host2 || host1 == host2) {
+        return 0;
+    }
+
+    uint32_t result =
+        std::min({host1->bandwidth, host2->bandwidth, host1->localSwitch->bandwidth, host2->localSwitch->bandwidth});
+    if (host1->localSwitch == host2->localSwitch) {
+        return result;
+    }
+
+    if (host1->distSwitch == host2->distSwitch) {
+        result = std::min(result, host1->distSwitch->bandwidth);
+        return result;
+    }
+
+    const auto                           targetNode = host2->distSwitch;
+    std::unordered_set<DistSwitch*>      visited;
+    std::function<uint32_t(DistSwitch*)> impl = [&](DistSwitch* node) {
+        if (node == targetNode) {
+            return node->bandwidth;
+        }
+
+        visited.emplace(node);
+
+        uint32_t bandwidth = node->bandwidth;
+        for (auto neighbor : node->neighbors) {
+            if (visited.count(neighbor) == 0) {
+                bandwidth = std::min(bandwidth, impl(neighbor));
+            }
+        }
+
+        visited.erase(node);
+
+        return bandwidth;
+    };
+
+    return std::min(result, impl(host1->distSwitch));
+}
+
+}    // namespace __bandwidth
 

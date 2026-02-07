@@ -1,6 +1,7 @@
 #pragma once
 
-#include "2023.h"
+#include "../core/node.h"
+#include "../core/util.h"
 
 ///////////////////////////////////////////////////////////////////////////////
 //
@@ -211,7 +212,7 @@ std::vector<int> matrix_spiral_order(const std::vector<std::vector<int>>& matrix
 
 std::vector<int> matrix_spiral_order_v2(const std::vector<std::vector<int>>& matrix)
 {
-    const std::array<std::array<int, 2>, 4> rotations = {{
+    constexpr std::array<std::array<int, 2>, 4> rotations = {{
         {0, 1},    // {r, c}
         {1, 0},
         {0, -1},
@@ -352,101 +353,147 @@ std::vector<int> matrix_diagonal_rotation_order(const std::vector<std::vector<in
     return result;
 }
 
+void run_matrix_diagonal_order()
+{
+    using use_case_t = std::pair<std::vector<std::vector<int>>, std::vector<int>>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{{{1}}, {1}},
+             use_case_t{{{1, 2}}, {1, 2}},
+             use_case_t{{{1}, {2}}, {1, 2}},
+             use_case_t{{{1, 2}, {3, 4}}, {1, 3, 2, 4}},
+             use_case_t{
+                 {
+                     {1, 2, 3},
+                     {4, 5, 6},
+                     {7, 8, 9},
+                 },
+                 {1, 4, 2, 7, 5, 3, 8, 6, 9}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                 },
+                 {1, 5, 2, 9, 6, 3, 10, 7, 4, 11, 8, 12}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                     {13, 14, 15, 16},
+                 },
+                 {1, 5, 2, 9, 6, 3, 13, 10, 7, 4, 14, 11, 8, 15, 12, 16}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4, 5},
+                     {6, 7},
+                     {8},
+                     {9, 10, 11},
+                     {12, 13, 14, 15, 16},
+                 },
+                 {1, 6, 2, 8, 7, 3, 9, 4, 12, 10, 5, 13, 11, 14, 15, 16}},
+         }) {
+        const auto v = matrix_diagonal_order(matrix);
+        std::cout << __FUNCTION__ << ": matrix=" << util::dump_matrix(matrix, true)
+                  << ", matrix_diagonal_order=" << util::dump_array(v) << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
+}
+
+void run_matrix_diagonal_rotation_order()
+{
+    using use_case_t = std::pair<std::vector<std::vector<int>>, std::vector<int>>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{{{1}}, {1}},
+             use_case_t{{{1, 2}}, {1, 2}},
+             use_case_t{{{1}, {2}}, {1, 2}},
+             use_case_t{{{1, 2}, {3, 4}}, {1, 2, 3, 4}},
+             use_case_t{
+                 {
+                     {1, 2, 3},
+                     {4, 5, 6},
+                     {7, 8, 9},
+                 },
+                 {1, 2, 4, 7, 5, 3, 6, 8, 9}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                 },
+                 {1, 2, 5, 9, 6, 3, 4, 7, 10, 11, 8, 12}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                     {13, 14, 15, 16},
+                 },
+                 {1, 2, 5, 9, 6, 3, 4, 7, 10, 13, 14, 11, 8, 12, 15, 16}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4, 5},
+                     {6, 7},
+                     {8},
+                     {9, 10, 11},
+                     {12, 13, 14, 15, 16},
+                 },
+                 {1, 2, 6, 8, 7, 3, 4, 9, 12, 10, 5, 11, 13, 14, 15, 16}},
+         }) {
+        const auto v = matrix_diagonal_rotation_order(matrix);
+        std::cout << __FUNCTION__ << ": matrix=" << util::dump_matrix(matrix, true)
+                  << ", matrix_diagonal_rotation_order=" << util::dump_array(v) << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+void run_matrix_spiral_order()
+{
+    using use_case_t = std::pair<std::vector<std::vector<int>>, std::vector<int>>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{{{1}}, {1}},
+             use_case_t{{{1, 2}}, {1, 2}},
+             use_case_t{{{1}, {2}}, {1, 2}},
+             use_case_t{{{1, 2}, {3, 4}}, {1, 2, 4, 3}},
+             use_case_t{
+                 {
+                     {1, 2, 3},
+                     {4, 5, 6},
+                     {7, 8, 9},
+                 },
+                 {1, 2, 3, 6, 9, 8, 7, 4, 5}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                 },
+                 {1, 2, 3, 4, 8, 12, 11, 10, 9, 5, 6, 7}},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {5, 6, 7, 8},
+                     {9, 10, 11, 12},
+                     {13, 14, 15, 16},
+                 },
+                 {1, 2, 3, 4, 8, 12, 16, 15, 14, 13, 9, 5, 6, 7, 11, 10}},
+         }) {
+        const auto v1 = matrix_spiral_order(matrix);
+        const auto v2 = matrix_spiral_order_v2(matrix);
+        const auto v3 = matrix_spiral_order_v3(matrix);
+        std::cout << __FUNCTION__ << ": matrix=" << util::dump_matrix(matrix, true)
+                  << ", matrix_spiral_order=" << util::dump_array(v1) << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << ", matrix_spiral_order_v2=" << util::dump_array(v2) << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << ", matrix_spiral_order_v3=" << util::dump_array(v3) << ", " << (exp_v == v3 ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
+}
+
 void run_matrix_traverse()
 {
-    auto run = [](const std::vector<std::vector<int>>& matrix) {
-        std::cout << "\n--------------------" << std::endl;
-
-        for (auto& a : matrix) {
-            std::cout << util::dump_array(a) << std::endl;
-        }
-        {
-            auto result = matrix_diagonal_order(matrix);
-            std::cout << "matrix_diagonal_order: " << util::dump_array(result) << std::endl;
-        }
-        {
-            auto result = matrix_diagonal_rotation_order(matrix);
-            std::cout << "matrix_diagonal_rotation_order: " << util::dump_array(result) << std::endl;
-        }
-
-        {
-            auto result = matrix_spiral_order(matrix);
-            std::cout << "matrix_spiral_order: " << util::dump_array(result) << std::endl;
-        }
-        {
-            auto result = matrix_spiral_order_v2(matrix);
-            std::cout << "matrix_spiral_order_v2: " << util::dump_array(result) << std::endl;
-        }
-        {
-            auto result = matrix_spiral_order_v3(matrix);
-            std::cout << "matrix_spiral_order_v3: " << util::dump_array(result) << std::endl;
-        }
-    };
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1},
-            {2},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2},
-            {3, 4},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2, 3},
-            {4, 5, 6},
-            {7, 8, 9},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2, 3, 4},
-            {5, 6, 7, 8},
-            {9, 10, 11, 12},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2, 3, 4},
-            {5, 6, 7, 8},
-            {9, 10, 11, 12},
-            {13, 14, 15, 16},
-        };
-        run(matrix);
-    }
-
-    {
-        std::vector<std::vector<int>> matrix = {
-            {1, 2, 3, 4, 5}, {6, 7}, {8}, {9, 10, 11}, {12, 13, 14, 15, 16},
-        };
-        run(matrix);
-    }
+    run_matrix_diagonal_order();
+    run_matrix_diagonal_rotation_order();
+    run_matrix_spiral_order();
 }
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -585,422 +632,11 @@ void run_num_islands()
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// [Belvedere] Naive Hedging Algorithm
-//
-// In order to properly offload risk, we need to implement a trading algorithm which places trades to offset the risk
-// of incoming trades (this is called hedging). Each incoming trade has some risk associated with it, defined as
-// quantity * riskPerUnit
-// * For example, if an incoming trade has bought 20 units of risk, we should sell 20 units of risk to offset it. If
-//   the incoming trade buys 20.9 units of risk, we should still sell 20 units of risk to offset it because we cannot
-//   buy fractions of a stock. However, we should remember that there is still 0.9 risk to be covered, and add it to
-//   the amount of risk for the next trade.
-//
-// Given two incoming trades, each with 0.5 units of risk, we should not make any trades when we receive the first
-// trade, and then sell 1 when we receive the second trade.
-// * For each incoming trade, you'll output the corresponding trade to offset the risk, and the average fill price.
-//
-// We can define the average fill price of a trade as:
-// AvgFillPrice = Sum(quantity_i * price_i) / Sum(quantity_i)
-//
-// * When we make a trade, we trade against the given market data, affecting the state of the market for future trades.
-//   For example, if the best price/quantity in the market to buy was quantity 100 for price $1850, and we bought 75
-//   for $1850, there would only be 25 remaining at that price level. If, for example, our next trade was for a quantity
-//   of 30, we would execute 25 at the remaining price level, and then the remaining 5 at the next-best price level.
-//
-// Input:
-// * The first two lines of each test case will represent the market data. Each line of market data will always have
-//   exactly 3 quantities and exactly 3 prices. You can assume there is enough quantity to fully offset all the risk of
-//    all incoming trades.
-// * The first line will represent the "offers", or prices you can buy at. The second line will represent the "bids",
-//   or prices you can sell at. When trading with the market, we buy at the cheapest price available, and sell at the
-//   highest price available.
-//
-// Market data will be formatted as follows:
-// 100 1850.00 200 1850.25 300 1850.50
-// 100 1849.75 200 1849.50 300 1849.25
-//
-// This means that the first 100 purchased will be bought at a price of 1850.00, and the next 200 will be bought at a
-// price of 1850.25. Similarly, the first 100 sold will be sold at 1849.75, and the next 200 will be sold at 1849.50
-//
-// If we were to purchase 300, we would fill 100 at 1850.00, and 200 at 1850.25, for an average fill price of 1850.17
-// (rounded to two decimal places).
-//
-// Incoming trades are formatted as follows:
-// +10 0.20
-// +15 -0.20
-// -40 0.50
-//
-// This means we traded, in order
-// * Buy quantity 10, risk per unit of 0.20 (risk is +2)
-// * Buy quantity 15, risk per unit of -0.20 (risk is -3)
-// * Sell quantity 40, risk per unit of 0.50 (risk is -20)
-//
-// NOTE: You have been given skeleton code to help parse this input. You may alter this code as you wish, including not
-// using it at all.
-//
-// Output:
-// * We should output the trades required to offset the risk, as well as the average fill price. Buying is represented
-//   as a positive quantity, and selling is represented as a negative quantity.
-// * The average fill price should output exactly two decimal places, rounded. For example, 1849.6666666 should be
-//   rounded to 1849.67.
-//
-// For the above input, this is the correct output
-// -2 1849.75
-// 3 1850.00
-// 20 1850.00
-//
-struct naive_order_t {
-    naive_order_t(int qty, double prc) : quantity(qty), price(prc * price_divisor) {}
-    int                  quantity      = 0;
-    int                  price         = 0;
-    constexpr static int price_divisor = 100;
-};
-
-std::vector<naive_order_t> naive_hedging(
-    std::vector<naive_order_t>& book_ask, std::vector<naive_order_t>& book_bid,
-    const std::vector<naive_order_t>& trades)
-{
-    std::vector<naive_order_t> result;
-    constexpr int              price_divisor = naive_order_t::price_divisor;
-    int                        carry_risk    = 0;
-    for (auto& trade : trades) {
-        int risk   = trade.price * trade.quantity + carry_risk;
-        carry_risk = risk % price_divisor;
-
-        auto hedge = [](int unsigned_qty, auto& side_book) {
-            int cum_value = 0;
-            int hedge_qty = unsigned_qty;
-            for (auto& order : side_book) {
-                if (unsigned_qty > order.quantity) {
-                    cum_value += order.quantity * order.price;
-                    unsigned_qty -= order.quantity;
-                    // hedge impacts market orders
-                    order.quantity = 0;
-                } else {
-                    cum_value += unsigned_qty * order.price;
-                    // hedge impacts market orders
-                    order.quantity -= unsigned_qty;
-                    unsigned_qty = 0;
-                    break;
-                }
-            }
-            // assume market is big enough to hedge all??
-            return (double)cum_value / (hedge_qty * price_divisor);
-        };
-
-        int    risk_qty    = risk / price_divisor;
-        double hedge_price = 0;
-        if (risk_qty < 0) {
-            hedge_price = hedge(-1 * risk_qty, book_ask);
-        } else if (risk_qty > 0) {
-            hedge_price = hedge(risk_qty, book_bid);
-        }
-        result.emplace_back(naive_order_t{-1 * risk_qty, hedge_price});
-    }
-    return result;
-}
-
-void run_naive_order()
-{
-    {
-        std::cout << "\n--------------------" << std::endl;
-        std::vector<naive_order_t> mkt_asks = {
-            naive_order_t{100, 1850.00},
-            naive_order_t{200, 1850.25},
-            naive_order_t{300, 1850.50},
-        };
-        std::vector<naive_order_t> mkt_bids = {
-            naive_order_t{100, 1849.75},
-            naive_order_t{200, 1849.50},
-            naive_order_t{300, 1849.25},
-        };
-        std::vector<naive_order_t> trades = {
-            naive_order_t{10, 0.20},
-            naive_order_t{15, -0.20},
-            naive_order_t{-40, 0.50},
-        };
-        auto orders = naive_hedging(mkt_asks, mkt_bids, trades);
-        for (auto& order : orders) {
-            ::printf("%d %.02f\n", order.quantity, (double)order.price / order.price_divisor);
-        }
-        //-2 1849.75
-        // 3 1850.00
-        // 20 1850.00
-    }
-
-    {
-        std::cout << "\n--------------------" << std::endl;
-        // clang-format off
-        std::vector<naive_order_t> mkt_asks = {
-            naive_order_t{100, 1850.00},
-            naive_order_t{200, 1850.25},
-            naive_order_t{300, 1850.50},
-        };
-        std::vector<naive_order_t> mkt_bids = {
-            naive_order_t{100, 1849.75},
-            naive_order_t{200, 1849.50},
-            naive_order_t{300, 1849.25},
-        };
-        std::vector<naive_order_t> trades = {
-            naive_order_t{15, 0.25},
-            naive_order_t{1, 0.25},
-            naive_order_t{-15, 0.50},
-            naive_order_t{-1, 0.50},
-            naive_order_t{-11, 0.25},
-            naive_order_t{14, 0.25},
-            naive_order_t{1, 0.25},
-        };
-        // clang-format on
-        auto orders = naive_hedging(mkt_asks, mkt_bids, trades);
-        for (auto& order : orders) {
-            ::printf("%d %.02f\n", order.quantity, (double)order.price / order.price_divisor);
-        }
-        //-3 1849.75
-        //-1 1849.75
-        // 7 1850.00
-        // 1 1850.00
-        // 2 1850.00
-        //-2 1849.75
-        //-1 1849.75
-    }
-
-    {
-        std::cout << "\n--------------------" << std::endl;
-        // clang-format off
-        std::vector<naive_order_t> mkt_asks = {
-            naive_order_t{100, 1850.00},
-            naive_order_t{200, 1850.25},
-            naive_order_t{300, 1850.50},
-        };
-        std::vector<naive_order_t> mkt_bids = {
-            naive_order_t{100, 1849.75},
-            naive_order_t{200, 1849.50},
-            naive_order_t{300, 1849.25},
-        };
-        std::vector<naive_order_t> trades = {
-            naive_order_t{200, 0.50},
-            naive_order_t{200, 0.50},
-            naive_order_t{400, 0.50},
-            naive_order_t{-400, 0.50},
-            naive_order_t{-200, 0.50},
-            naive_order_t{-100, 0.50},
-        };
-        // clang-format on
-        auto orders = naive_hedging(mkt_asks, mkt_bids, trades);
-        for (auto& order : orders) {
-            ::printf("%d %.02f\n", order.quantity, (double)order.price / order.price_divisor);
-        }
-        //-100 1849.75
-        //-100 1849.50
-        //-200 1849.37
-        // 200 1850.12
-        // 100 1850.25
-        // 50 1850.50
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// [Belvedere] Concert Ticket Exchange
-//
-// Concert tickets can be hard to come by, especially when going through the resale market. We would like to build our
-// own concert ticket exchange system so that we can view available tickets in real time.
-//
-// This system will listen to incoming ticket orders for a new concert venue, BT Arena. We'd like to build a system
-// that listens to concert ticket orders and provides fans with this market information in the form of a price ladder.
-// Concert ticket orders arrive as a stream of events that can either add an order to our market data book or delete an
-// order from our book. We also want to be able to delete all orders at a given price level.
-//
-// Add orders come with the following information:
-// - Action - ADD
-// - OrderId - unique identifier for order
-// - Artist - concert performer, such as "TaylorSwift" or "Drake"
-// - Price - Price for the order
-// - Quantity - positive quantity is a buy order and negative quantity is a sell order
-//
-// Delete orders come with the following information:
-// - Action - DEL
-// - Artist - concert performer, such as "TaylorSwift" or "Drake"
-// - OrderId - Unique identifier for the order to be deleted
-//
-// Delete price levels come with the following information:
-// - Action - DEL_PRICE
-// - Artist - concert performer, such as "TaylorSwift" or "Drake"
-// - Price - price level to be deleted
-//
-// We'd like to keep track of these events so that fans can request a market view in the form of a price ladder. A
-// price ladder is made up of n price levels for buy orders and sell orders. A price level consists of the Price,
-// BuyQuantity, and SellQuantity. A price level will either have a non-zero BuyQuantity or SellQuantity, but not both.
-// For buy orders, the best price is the highest price because that is the price a ticket holder would sell at.
-// Conversely, the best price for sell orders is the lowest price. The streamed events will guarantee at least n price
-// levels for both buys and sell.
-//
-// Input:
-// Repeated number of order operations in the following format:
-// We can get orders for different artists in the same stream of operations.
-// The last line of input will the artist and number of price levels that we would like to view in our ladder for both
-// buy and sell orders.
-//
-// Example Input:
-// ADD 1 TaylorSwift 100 10
-// ADD 2 TaylorSwift 101 -10
-// ADD 3 TaylorSwift 99 5
-// ADD 4 TaylorSwift 102 -5
-// ADD 5 TaylorSwift 100 2
-// ADD 6 Drake 95 2
-// DEL 1 TaylorSwift
-// TaylorSwift 2
-//
-// Output:
-// TaylorSwift 102 5  101 10 2 100 5 99
-//
-// The price ladder should begin with the artist's name and should be followed by a repeated list of levels. The levels
-// should be sorted by price in descending order and contain NumberOfPriceLevels for buy and sell orders. Levels with 0
-// BuyQuantity and 0 SellQuantity should not be printed. 
-//
-class ticket_system_t final
-{
-public:
-    ticket_system_t() = default;
-    void read(std::string_view input)
-    {
-        std::cout << "\t read=" << input << std::endl;
-
-        size_t pos       = 0;
-        auto   get_token = [&]() {
-            constexpr char delimiter = ' ';
-            const auto     pos_start = pos;
-            auto           pos_end   = input.find(delimiter, pos);
-            if (pos_end != std::string_view::npos) {
-                pos = pos_end + 1;
-                return input.substr(pos_start, pos_end - pos_start);
-            }
-            pos = std::string_view::npos;
-            return input.substr(pos_start);
-        };
-
-        auto action = get_token();
-        if (action == "ADD") {
-            int  order_id = std::stoi(std::string{get_token()});
-            auto artist   = get_token();
-            int  price    = std::stoi(std::string{get_token()});
-            int  qty      = std::stoi(std::string{get_token()});
-            add(artist, order_id, price, qty);
-        } else if (action == "DEL") {
-            int  order_id = std::stoi(std::string{get_token()});
-            auto artist   = get_token();
-            remove(artist, order_id);
-        } else if (action == "DEL_PRICE") {
-            auto artist = get_token();
-            int  price  = std::stoi(std::string{get_token()});
-            remove_price(artist, price);
-        } else {
-            auto artist = std::move(action);
-            auto levels = std::stoi(std::string{get_token()});
-            print(artist, levels);
-        }
-    }
-    void add(std::string_view artist, int order_id, int price, int qty)
-    {
-        std::cout << "\t add: artist=" << artist << ", order_id=" << order_id << ", price=" << price << ", qty=" << qty
-                  << std::endl;
-
-        auto& book = tickets_[std::string{artist}];
-        if (qty < 0) {
-            book.asks_[price] += (-1 * qty);
-        } else if (qty > 0) {
-            book.bids_[price] += qty;
-        }
-        book.orders_[order_id] = order_t{
-            .price    = price,
-            .quantity = qty,
-        };
-    }
-    void remove(std::string_view artist, int order_id)
-    {
-        std::cout << "\t remove: artist=" << artist << ", order_id=" << order_id << std::endl;
-
-        auto& book = tickets_[std::string{artist}];
-        if (auto iter = book.orders_.find(order_id); iter != book.orders_.end()) {
-            const auto& order = iter->second;
-            if (order.quantity < 0) {
-                book.asks_[order.price] += order.quantity;
-            } else {
-                book.bids_[order.price] -= order.quantity;
-            }
-            book.orders_.erase(order_id);
-        }
-    }
-    void remove_price(std::string_view artist, int price)
-    {
-        std::cout << "\t remove_price: artist=" << artist << ", price=" << price << std::endl;
-
-        auto&      book    = tickets_[std::string{artist}];
-        const auto top_ask = (book.asks_.size() > 0 ? book.asks_.begin()->first : std::numeric_limits<int>::max());
-        const auto top_bid = (book.bids_.size() > 0 ? book.bids_.begin()->first : std::numeric_limits<int>::min());
-        if (price >= top_ask) {
-            book.asks_.erase(price);
-        } else if (price <= top_bid) {
-            book.bids_.erase(price);
-        }
-    }
-    void print(std::string_view artist, int levels)
-    {
-        std::cout << artist;
-
-        auto& book = tickets_[std::string{artist}];
-        auto  iter = book.asks_.begin();
-        std::advance(iter, std::min(levels, (int)book.asks_.size()));
-        while (iter-- != book.asks_.begin()) {
-            std::cout << " " << iter->first << " " << iter->second;
-        }
-
-        for (auto iter = book.bids_.begin(); iter != book.bids_.end() && levels-- > 0; ++iter) {
-            std::cout << " " << iter->first << " " << iter->second;
-        }
-    }
-
-private:
-    struct order_t {
-        int price    = 0;
-        int quantity = 0;
-    };
-    struct ticket_book_t {
-        // price <> unsigned level qty
-        std::map<int, int, std::less<>>    asks_;
-        std::map<int, int, std::greater<>> bids_;
-        // order id <> order
-        std::unordered_map<int, order_t> orders_;
-    };
-    std::unordered_map<std::string, ticket_book_t> tickets_;
-};
-
-void run_ticket_system()
-{
-    // clang-format off
-    ticket_system_t system;
-    for (auto& input : {std::string_view{"ADD 1 TaylorSwift 100 10"},
-                        std::string_view{"ADD 2 TaylorSwift 101 -10"},
-                        std::string_view{"ADD 3 TaylorSwift 99 5"},
-                        std::string_view{"ADD 4 TaylorSwift 102 -5"},
-                        std::string_view{"ADD 5 TaylorSwift 100 2"},
-                        std::string_view{"ADD 6 Drake 95 2"},
-                        std::string_view{"DEL 1 TaylorSwift"},
-                        std::string_view{"TaylorSwift 2"}}) {
-        system.read(input);
-    }
-    // clang-format on
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// [Optiver] Job scheduler
 //
 // A simple version with good solution:
 // https://www.geeksforgeeks.org/minimum-time-taken-by-each-job-to-be-completed-given-by-a-directed-acyclic-graph/
 // https://www.geeksforgeeks.org/find-the-ordering-of-tasks-from-given-dependencies/
+//
 // This simple version simplifies each job time, also uses the job index rather than job name.
 // I don't find a way to apply its queue solution to following problem which has job time different from each other.
 //
@@ -1251,47 +887,61 @@ bool bipartition(const std::vector<std::array<int, 2>>& dislikes)
 
     return true;
 }
-
 void run_bipartition()
 {
-    for (auto& input : {
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {1, 3},
-                 {2, 4},
-             },
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {1, 3},
-                 {2, 3},
-             },
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {2, 3},
-                 {3, 4},
-                 {4, 5},
-                 {1, 5},
-             },
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {2, 3},
-                 {3, 4},
-             },
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {1, 3},
-                 {2, 4},
-             },
-             std::vector<std::array<int, 2>>{
-                 {1, 2},
-                 {1, 3},
-                 {2, 4},
-                 {2, 5},
-                 {3, 5},
-                 {6, 3},
-             },
+    using use_case_t = std::pair<std::vector<std::array<int, 2>>, bool>;
+    for (auto [dislikes, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 2},
+                     {1, 3},
+                     {2, 4},
+                 },
+                 true},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {1, 3},
+                     {2, 3},
+                 },
+                 false},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {2, 3},
+                     {3, 4},
+                     {4, 5},
+                     {1, 5},
+                 },
+                 false},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 true},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {1, 3},
+                     {2, 4},
+                 },
+                 true},
+             use_case_t{
+                 {
+                     {1, 2},
+                     {1, 3},
+                     {2, 4},
+                     {2, 5},
+                     {3, 5},
+                     {6, 3},
+                 },
+                 true},
          }) {
-        std::cout << "bipartition: " << std::boolalpha << bipartition(input) << std::endl;
+        const auto v = bipartition(dislikes);
+        std::cout << __FUNCTION__ << ": dislikes=" << util::dump_matrix(dislikes) << ", bipartition=" << std::boolalpha
+                  << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1486,6 +1136,54 @@ int max_invitation_friends_v2(const std::vector<std::array<int, 2>>& dislikes)
     return impl();
 }
 
+/* TODO: DFS, go through all people, for each person, choose to invite or not invite, find the max number
+int max_invitation_friends_v3(const std::vector<std::array<int, 2>>& dislikes)
+{
+    std::unordered_map<int, bool> visited;
+    std::unordered_map<int, std::unordered_set<int>> dislikes_map;
+    for (auto [a, b] : dislikes) {
+        dislikes_map[a].emplace(b);
+        dislikes_map[b].emplace(a);
+        visited.emplace(a);
+        visited.emplace(b);
+    }
+
+    auto impl = [&visited, &dislikes_map](int i) {
+        if (visited[i]) {
+            return 0;
+        }
+
+        visited[i] = true;
+
+        int result = 0;
+        std::unordered_set<int> invited_set;
+        std::unordered_set<int> not_invited_set;
+
+        // not invite i
+        not_invited_set.emplace(i);
+        for (auto j : dislikes_map[i]) {
+            // invite or not invite j
+            result = std::max(result, impl(j));
+        }
+
+        // invite i
+        not_invited_set.erase(i);
+        invited_set.emplace(i);
+        result = std::max(result, impl(i));
+
+        max_invitation_map[i] = std::max(max_invitation_map[i], result);
+    };
+
+    std::unordered_map<int, int> max_invitation_map;
+    int result = 0;
+    for (auto [i, _] : visited) {
+        // invite or not invite i
+        impl(i);
+    }
+    return result;
+}
+*/
+
 void run_max_invitition_friends()
 {
     for (auto& input : {
@@ -1540,8 +1238,7 @@ void run_max_invitition_friends()
 //
 // Return the maximum possible number of accepted invitations.
 //
-// https://github.com/doocs/leetcode/blob/main/solution/1800-1899/1820.Maximum%20Number%20of%20Accepted%20Invitations/README.md
-// https://www.youtube.com/watch?v=70cuAeXs6rk&ab_channel=%E5%AE%B0%E7%9B%B8%E5%B0%8F%E7%94%98%E7%BD%97
+// leetcode 1820
 //
 int max_invitation_boy_girl(const std::vector<std::vector<bool>>& possibilities)
 {
@@ -1595,7 +1292,7 @@ int max_invitation_boy_girl(const std::vector<std::vector<bool>>& possibilities)
 
     int max_invitations = 0;
     for (size_t boy = 0; boy < boys; ++boy) {
-        // this state is per boy/cycle in order to avoid duplicatee handling on same girl
+        // this state is per boy/cycle in order to avoid duplicate handling on same girl
         std::vector<bool> visited(girls, false);
         if (impl(boy, visited)) {
             ++max_invitations;
@@ -1606,20 +1303,27 @@ int max_invitation_boy_girl(const std::vector<std::vector<bool>>& possibilities)
 
 void run_max_invitition_boy_girl()
 {
-    for (auto& input : {
-             std::vector<std::vector<bool>>{
-                 {1, 1, 1},
-                 {1, 0, 1},
-                 {0, 0, 1},
-             },    // 3
-             std::vector<std::vector<bool>>{
-                 {1, 0, 1, 0},
-                 {1, 0, 0, 0},
-                 {0, 0, 1, 0},
-                 {1, 1, 1, 0},
-             },    // 3
+    using use_case_t = std::pair<std::vector<std::vector<bool>>, int>;
+    for (auto& [possibilities, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 1, 1},
+                     {1, 0, 1},
+                     {0, 0, 1},
+                 },
+                 3},
+             use_case_t{
+                 {
+                     {1, 0, 1, 0},
+                     {1, 0, 0, 0},
+                     {0, 0, 1, 0},
+                     {1, 1, 1, 0},
+                 },
+                 3},
          }) {
-        std::cout << max_invitation_boy_girl(input) << std::endl;
+        const auto v = max_invitation_boy_girl(possibilities);
+        std::cout << __FUNCTION__ << ": possibilities=" << util::dump_matrix(possibilities)
+                  << ", max_invitation_boy_girl=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1634,25 +1338,25 @@ void run_max_invitition_boy_girl()
 //
 // But if edge/vertex has weight, this won't work becausee the 'visited' and value check logic won't apply!!
 //
-int knight_move(int max_rows, int max_cols, const std::array<int, 2>& from, const std::array<int, 2>& to)
+int min_knight_move(int max_rows, int max_cols, const std::array<int, 2>& from, const std::array<int, 2>& to)
 {
-    int min_moves = std::numeric_limits<int>::max();
-
-    auto is_in_the_range = [&](const std::array<int, 2>& pos) {
+    using pos_t          = std::array<int, 2>;
+    auto is_in_the_range = [&](const pos_t& pos) {
         const auto row = pos[0];
         const auto col = pos[1];
         return row >= 0 && col >= 0 && row < max_rows && col < max_cols;
     };
 
     struct state_t {
-        int                moves = 0;
-        std::array<int, 2> pos{0, 0};
+        int   moves = 0;
+        pos_t pos{0, 0};
     };
 
     // Or just contains (pos_x, pos_y, moves) as std::queue<std::tuple<int, int, int>> q;
     std::queue<state_t> q;
     q.push({0, from});
 
+    int                            min_moves = std::numeric_limits<int>::max();
     std::vector<std::vector<bool>> visited(max_rows, std::vector<bool>(max_cols, false));
 
     // BFS, inside loop all possibilites (children), push to queue and iterate
@@ -1673,19 +1377,19 @@ int knight_move(int max_rows, int max_cols, const std::array<int, 2>& from, cons
             min_moves = std::min(state.moves, min_moves);
             continue;
         }
-        for (const auto& offset : {
-                 std::array<int, 2>{-2, -1},
-                 std::array<int, 2>{-1, -2},
-                 std::array<int, 2>{1, -2},
-                 std::array<int, 2>{2, -1},
-                 std::array<int, 2>{-2, 1},
-                 std::array<int, 2>{-1, 2},
-                 std::array<int, 2>{1, 2},
-                 std::array<int, 2>{2, 1},
+        for (const auto [offset_x, offset_y] : {
+                 pos_t{-2, -1},
+                 pos_t{-1, -2},
+                 pos_t{1, -2},
+                 pos_t{2, -1},
+                 pos_t{-2, 1},
+                 pos_t{-1, 2},
+                 pos_t{1, 2},
+                 pos_t{2, 1},
              }) {
             auto next_pos = state.pos;
-            next_pos[0] += offset[0];
-            next_pos[1] += offset[1];
+            next_pos[0] += offset_x;
+            next_pos[1] += offset_y;
             if (!is_in_the_range(next_pos)) {
                 continue;
             }
@@ -1707,39 +1411,23 @@ int knight_move(int max_rows, int max_cols, const std::array<int, 2>& from, cons
     return min_moves;
 }
 
-void run_knight_move()
+void run_min_knight_move()
 {
-    {
-        int                max_rows = 6;
-        int                max_cols = 6;
-        std::array<int, 2> knight{1, 3};
-        std::array<int, 2> target{5, 0};
-        // 3
-        std::cout << knight_move(max_rows, max_cols, knight, target) << std::endl;
-    }
-
-    {
-        int                max_rows = 8;
-        int                max_cols = 8;
-        std::array<int, 2> knight{4, 2};
-        std::array<int, 2> target{2, 6};
-        // 2
-        std::cout << knight_move(max_rows, max_cols, knight, target) << std::endl;
-    }
-
-    {
-        int                max_rows = 30;
-        int                max_cols = 30;
-        std::array<int, 2> knight{0, 0};
-        std::array<int, 2> target{29, 29};
-        // 20
-        std::cout << knight_move(max_rows, max_cols, knight, target) << std::endl;
+    // <rows, cols, knight, target, expected result>
+    using use_case_t = std::tuple<int, int, std::array<int, 2>, std::array<int, 2>, int>;
+    for (auto [rows, cols, knight, target, exp_v] : {
+             use_case_t{6, 6, {1, 3}, {5, 0}, 3},
+             use_case_t{8, 8, {4, 2}, {2, 6}, 2},
+             use_case_t{30, 30, {0, 0}, {29, 29}, 20},
+         }) {
+        const auto v = min_knight_move(rows, cols, knight, target);
+        std::cout << __FUNCTION__ << ": rows=" << rows << ", cols=" << cols << ", knight=(" << knight[0] << ", "
+                  << knight[1] << "), target=(" << target[0] << ", " << target[1] << "); min_knight_move=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
-///////////////////////////////////////////////////////////////////////////////
-//
-// https://leetcode.com/problems/minimum-path-sum/description/
+// leetcode 64
 //
 // Given 'm x n' matrix with all positive integers, find the min sum path from left-top to right-bottom.
 // You can only move either right or down at each point.
@@ -1782,7 +1470,6 @@ int min_path_sum_matrix(const std::vector<std::vector<int>>& matrix)
     return results.back().back();
 }
 
-// https://github.com/doocs/leetcode/tree/main/solution/0000-0099/0064.Minimum%20Path%20Sum/
 //
 // This gives even better/cleaner solution by using dynamic programming. NICE!
 //
@@ -1812,7 +1499,7 @@ int min_path_sum_matrix_v2(const std::vector<std::vector<int>>& matrix)
 
 // https://leetcode.com/discuss/interview-question/1292854/faang-get-the-minimum-value-of-maximum-values-of-2d-matrix-path
 //
-// This is a variant, for the max element value on the path, find the min value of all possible paths
+// This is a variant, for all the max cell values on each path, find the min value
 //
 // {1, 3, 1},
 // {1, 5, 1},
@@ -1824,7 +1511,7 @@ int min_path_sum_matrix_v2(const std::vector<std::vector<int>>& matrix)
 // ...
 // So the answer is 3!
 //
-int min_path_sum_matrix_v3(const std::vector<std::vector<int>>& matrix)
+int min_value_max_on_each_path(const std::vector<std::vector<int>>& matrix)
 {
     const int rows = matrix.size();
     const int cols = matrix.front().size();
@@ -1850,33 +1537,87 @@ int min_path_sum_matrix_v3(const std::vector<std::vector<int>>& matrix)
 
 void run_min_path_sum_matrix()
 {
-    for (auto& matrix : {
-             std::vector<std::vector<int>>{
-                 {1, 3, 1},
-                 {1, 5, 1},
-                 {4, 2, 1},
-             },    // 7
-             std::vector<std::vector<int>>{
-                 {1, 2, 3},
-                 {4, 5, 6},
-             },    // 12
-             std::vector<std::vector<int>>{
-                 {1, 3, 1},
-                 {1, 2, 1},
-                 {4, 2, 1},
-             },    // 6
-             std::vector<std::vector<int>>{
-                 {1, 2, 3, 4},
-                 {12, 14, 15, 16},
-                 {10, 22, 32, 34},
-                 {9, 8, 7, 5},
-             },    //
+    using use_case_t = std::pair<std::vector<std::vector<int>>, int>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 3, 1},
+                     {1, 5, 1},
+                     {4, 2, 1},
+                 },
+                 7},
+             use_case_t{
+                 {
+                     {1, 2, 3},
+                     {4, 5, 6},
+                 },
+                 12},
+             use_case_t{
+                 {
+                     {1, 3, 1},
+                     {1, 2, 1},
+                     {4, 2, 1},
+                 },
+                 6},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {12, 14, 15, 16},
+                     {10, 22, 32, 34},
+                     {9, 8, 7, 5},
+                 },
+                 52},
          }) {
         std::cout << "--------------------" << std::endl;
         std::cout << util::dump_matrix(matrix) << std::endl;
-        std::cout << min_path_sum_matrix(matrix) << std::endl;
-        std::cout << min_path_sum_matrix_v2(matrix) << std::endl;
-        std::cout << min_path_sum_matrix_v3(matrix) << std::endl;
+
+        const auto v1 = min_path_sum_matrix(matrix);
+        const auto v2 = min_path_sum_matrix_v2(matrix);
+
+        std::cout << __FUNCTION__ << ": min_path_sum_matrix=" << v1 << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << ", min_path_sum_matrix_v2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+void run_min_value_max_on_each_path()
+{
+    using use_case_t = std::pair<std::vector<std::vector<int>>, int>;
+    for (auto [matrix, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 3, 1},
+                     {1, 5, 1},
+                     {4, 2, 1},
+                 },
+                 3},
+             use_case_t{
+                 {
+                     {1, 2, 3},
+                     {4, 5, 6},
+                 },
+                 6},
+             use_case_t{
+                 {
+                     {1, 3, 1},
+                     {1, 2, 1},
+                     {4, 2, 1},
+                 },
+                 2},
+             use_case_t{
+                 {
+                     {1, 2, 3, 4},
+                     {12, 14, 15, 16},
+                     {10, 22, 32, 34},
+                     {9, 8, 7, 5},
+                 },
+                 12},
+         }) {
+        std::cout << "--------------------" << std::endl;
+        std::cout << util::dump_matrix(matrix) << std::endl;
+
+        const auto v = min_value_max_on_each_path(matrix);
+        std::cout << __FUNCTION__ << ": min_value_max_on_each_path=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -1886,30 +1627,30 @@ void run_min_path_sum_matrix()
 //
 // This is same question as friend invitation: given dislike friends, tell the max number of frieds you can invite.
 //
-int graph_max_nodes_exclu_neighbors(const std::vector<std::array<int, 2>>& edges, int N)
+int graph_max_nodes_exclu_neighbors(const std::vector<std::array<int, 2>>& edges)
 {
     struct node_t {
         int                  value = 0;
         std::vector<node_t*> neighbors;
     };
-    std::vector<node_t> graph(N);
+
+    std::unordered_map<int, node_t> graph;
     for (size_t i = 0; i < edges.size(); ++i) {
         const auto [a, b] = edges[i];
-        graph[a - 1].neighbors.emplace_back(&graph[b - 1]);
-        graph[b - 1].neighbors.emplace_back(&graph[a - 1]);
+        graph[a].neighbors.emplace_back(&graph[b]);
+        graph[b].neighbors.emplace_back(&graph[a]);
 
-        graph[a - 1].value = a;
-        graph[b - 1].value = b;
+        graph[a].value = a;
+        graph[b].value = b;
     }
 
     // Need this map for visited nodes since same node is next to multiple neighbors
     std::unordered_map<node_t*, int> visited;
 
     // DFS
-    using lambda_t = std::function<int()>;
-    lambda_t impl  = [&]() {
+    std::function<int()> impl = [&]() {
         node_t* current = nullptr;
-        for (auto& node : graph) {
+        for (auto& [_, node] : graph) {
             if (visited.find(&node) == visited.end()) {
                 current = &node;
                 break;
@@ -1958,191 +1699,51 @@ int graph_max_nodes_exclu_neighbors(const std::vector<std::array<int, 2>>& edges
 
 void run_max_nodes_exclu_neighbors()
 {
-    {
-        const auto input = std::vector<std::array<int, 2>>{
-            {1, 2},
-            {1, 3},
-            {2, 4},
-        };
-        // 2
-        std::cout << graph_max_nodes_exclu_neighbors(input, 4) << std::endl;
-    }
-
-    {
-        const auto input = std::vector<std::array<int, 2>>{
-            {1, 2},
-            {1, 3},
-            {2, 3},
-        };
-        // 1
-        std::cout << graph_max_nodes_exclu_neighbors(input, 3) << std::endl;
-    }
-
-    {
-        const auto input = std::vector<std::array<int, 2>>{
-            {1, 2}, {2, 3}, {3, 4}, {4, 5}, {1, 5},
-        };
-        // 2
-        std::cout << graph_max_nodes_exclu_neighbors(input, 5) << std::endl;
-    }
-
-    {
-        const auto input = std::vector<std::array<int, 2>>{
-            {1, 2},
-            {2, 3},
-            {3, 4},
-        };
-        // 2
-        std::cout << graph_max_nodes_exclu_neighbors(input, 4) << std::endl;
-    }
-
-    {
-        const auto input = std::vector<std::array<int, 2>>{
-            {1, 2}, {1, 3}, {2, 4}, {2, 5}, {3, 5}, {6, 3},
-        };
-        // 4
-        std::cout << graph_max_nodes_exclu_neighbors(input, 6) << std::endl;
-    }
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/
-//
-// You are given an array prices where prices[i] is the price of a given stock on the ith day.
-// Find the maximum profit you can achieve. You may complete at most two transactions.
-// Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy
-// again).
-//
-// Another less optimal solution: loop the array, split into 2 arrays, find max profit in each part and get the max sum
-//
-int max_profit_2_transactions(const std::vector<int>& prices)
-{
-    //
-    // clang-format off
-    //
-    // I can explain following variables in this way -
-    // @port_value_1st_buy:  port value if this is the 1st buy on this day, meaning '-1 * prices[0] (price on this day)'
-    // @port_value_1st_sell: port value if this is the 1st sell, meaning 'port_value_1st_buy + prices[0] (price on this day) = 0'
-    // @port_value_2nd_buy:  port value if this is the 2nd buy, meaning 'port_value_1st_sell - prices[0] (price on this day) = -prices[0]'
-    // @port_value_2nd_sell: port value if this is the 2nd sell, meaning 'port_value_2nd_buy + prices[0] (price on this day) = 0'
-    //
-    // clang-format on
-
-    // starting point, on day 1
-    int port_value_1st_buy  = -1 * prices[0];
-    int port_value_1st_sell = 0;
-    int port_value_2nd_buy  = -1 * prices[0];
-    int port_value_2nd_sell = 0;
-
-    for (size_t i = 1; i < prices.size(); ++i) {
-        const auto curr_prc = prices[i];
-        port_value_1st_buy  = std::max(port_value_1st_buy, -1 * curr_prc);
-        port_value_1st_sell = std::max(port_value_1st_sell, port_value_1st_buy + curr_prc);
-        port_value_2nd_buy  = std::max(port_value_2nd_buy, port_value_1st_sell - curr_prc);
-        port_value_2nd_sell = std::max(port_value_2nd_sell, port_value_2nd_buy + curr_prc);
-    }
-    return port_value_2nd_sell;
-}
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/
-//
-// You are given an array prices where prices[i] is the price of a given stock on the ith day.
-// Find the maximum profit you can achieve. You may complete at most k transactions.
-//
-// https://www.youtube.com/watch?v=t92vU3NvZ8k
-//
-int max_profit_k_transactions(int k, const std::vector<int>& prices)
-{
-    // represent the max portfolio value with 0-k transactions:
-    // max_port_values[i][0]: max port value with i transactions and hold position;
-    // max_port_values[i][1]: max port value with i transactions but no position;
-    std::vector<std::array<int, 2>> max_port_values(k, {0, 0});
-
-    const auto price_0 = prices[0];
-    for (int i = 0; i < k; ++i) {
-        max_port_values[i] = {
-            -1 * price_0,    // buy on day-1 and hold
-            0,               // sell on day-1, meaning empty portfolio
-        };
-    }
-
-    for (size_t n = 1; n < prices.size(); ++n) {
-        const auto price_n = prices[n];
-        for (int i = 0; i < k; ++i) {
-            const auto max_port_prev_none = (i > 0 ? max_port_values[i - 1][1] : 0);
-            const auto max_port_hold      = std::max(max_port_values[i][0], max_port_prev_none - price_n);
-            const auto max_port_none      = std::max(max_port_values[i][1], max_port_hold + price_n);
-            max_port_values[i]            = {max_port_hold, max_port_none};
-        }
-    }
-
-    return max_port_values.back()[1];
-}
-
-int max_profit_k_transactions_2(int k, const std::vector<int>& prices)
-{
-    // number of days
-    int n = prices.size();
-
-    // if there are 0 days then answer will be 0.
-    if (n == 0) {
-        return 0;
-    }
-
-    // Declaration and initialization of the dp vector.
-    std::vector<std::vector<int>> dp(k + 1, std::vector<int>(n, 0));
-
-    // Whenever k=0, you can make any transaction. Thus no profit.
-    for (int j = 0; j < n; j++) {
-        dp[0][j] = 0;
-    }
-
-    // Whenever the number of days is 0, the transaction is 0, and thus no profit.
-    for (int i = 0; i <= k; i++) {
-        dp[i][0] = 0;
-    }
-    for (int i = 1; i <= k; i++) {
-        // Set mx initially to -prices[0].
-        int mx = -prices[0];
-        for (int j = 1; j < n; j++) {
-
-            // option 1 -> don't do anything on this day
-            int op1 = dp[i][j - 1];
-
-            // option 2 -> sell the stock on this day if bought on some day t.
-            int op2  = prices[j] + mx;
-            dp[i][j] = std::max(op1, op2);
-
-            // Keep updating mx every time.
-            mx = std::max(mx, dp[i - 1][j - 1] - prices[j]);
-        }
-    }
-    return dp[k][n - 1];
-}
-
-void run_max_profit_2_transactions()
-{
-    for (const auto& prices : {
-             std::vector<int>{3, 3, 5, 0, 0, 3, 1, 4},    // k=1, max=4; k=2, max=6; k=3, max=8; k=4, max=8;
-             std::vector<int>{1, 2, 3, 4, 5},             // k=any, max=4;
-             std::vector<int>{7, 6, 4, 3, 1},             // max=0;
-             std::vector<int>{2, 4, 1},                   // k=1, max=2; k=2, max=2;
-             std::vector<int>{3, 2, 6, 5, 0, 3},          // k=1, max=4; k=2, max=7; k=3, max=7;
-         }) {
-        std::cout << "--------------------" << std::endl;
-        std::cout << util::dump_array(prices) << std::endl;
-
-        std::cout << "1 transaction: max_profit_1_transaction=" << max_profit_1_transaction(prices) << std::endl;
-        std::cout << "1 transaction: max_profit_k_transactions=" << max_profit_k_transactions(1, prices) << std::endl;
-
-        std::cout << "2 transactions: max_profit_2_transactions=" << max_profit_2_transactions(prices) << std::endl;
-        std::cout << "2 transactions: max_profit_k_transactions=" << max_profit_k_transactions(2, prices) << std::endl;
-
-        std::cout << "3 transactions: max_profit_k_transactions=" << max_profit_k_transactions(3, prices) << std::endl;
-        std::cout << "4 transactions: max_profit_k_transactions=" << max_profit_k_transactions(4, prices) << std::endl;
+    using use_case_t = std::tuple<std::vector<std::array<int, 2>>, int>;
+    for (auto [edges, exp_v] :
+         {use_case_t{
+              {
+                  {1, 2},
+                  {1, 3},
+                  {2, 4},
+              },
+              2},
+          use_case_t{
+              {
+                  {1, 2},
+                  {1, 3},
+                  {2, 3},
+              },
+              1},
+          use_case_t{
+              {
+                  {1, 2},
+                  {2, 3},
+                  {3, 4},
+                  {4, 5},
+                  {1, 5},
+              },
+              2},
+          use_case_t{
+              {
+                  {1, 2},
+                  {2, 3},
+                  {3, 4},
+              },
+              2},
+          use_case_t{
+              {
+                  {1, 2},
+                  {1, 3},
+                  {2, 4},
+                  {2, 5},
+                  {3, 5},
+                  {6, 3},
+              },
+              4}}) {
+        const auto v = graph_max_nodes_exclu_neighbors(edges);
+        std::cout << __FUNCTION__ << ": graph_max_nodes_exclu_neighbors=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2215,24 +1816,43 @@ void run_graph_find_dominator()
         }
     };
 
-    {
-        int                              vertices_count = 5;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {0, 1}, {0, 2}, {1, 3}, {2, 3}, {3, 4},
-        };
-        const auto dominators = graph_find_dominator(vertices_count, directed_edges);
-        print(dominators);
-    }
+    using use_case_t = std::tuple<int, std::vector<std::pair<int, int>>, std::vector<std::set<int>>>;
+    for (auto [vertex_count, edges, exp_v] : {
+             use_case_t{
+                 5,
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {
+                     {0},          // vertex 0
+                     {0, 1},       // vertex 1
+                     {0, 2},       // vertex 2
+                     {0, 3},       // vertex 3
+                     {0, 3, 4},    // vertex 4
+                 }},
+             use_case_t{
+                 4,
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
 
-    {
-        int                              vertices_count = 4;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {0, 1},
-            {0, 2},
-            {3, 2},
-        };
-        const auto dominators = graph_find_dominator(vertices_count, directed_edges);
-        print(dominators);
+                 },
+                 {
+                     {0},       // vertex 0
+                     {0, 1},    // vertex 1
+                     {2},       // vertex 2
+                     {3},       // vertex 3
+                 }},
+         }) {
+        const auto v = graph_find_dominator(vertex_count, edges);
+        std::cout << __FUNCTION__ << ": graph_find_dominator=\n";
+        print(v);
+        std::cout << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2268,8 +1888,7 @@ int graph_find_max_difference(const std::vector<int>& weights, const std::vector
     int max_diff = 0;
 
     // DFS: seems not easy to reach the goal by using BFS
-    using lambda_t = std::function<void(int, int, int)>;
-    lambda_t dfs   = [&](int idx_v, int min_weight, int max_weight) {
+    std::function<void(int, int, int)> dfs = [&](int idx_v, int min_weight, int max_weight) {
         for (const auto idx_child : graph[idx_v]) {
             max_diff = std::max(
                 {max_diff, std::abs(weights[idx_child] - min_weight), std::abs(weights[idx_child] - max_weight)});
@@ -2289,44 +1908,104 @@ int graph_find_max_difference(const std::vector<int>& weights, const std::vector
 
 void run_graph_find_max_difference()
 {
-    auto print = [](const auto& weights, auto max_diff) {
-        std::cout << "---------------" << std::endl;
-        std::cout << "weights: " << util::dump_array(weights, std::numeric_limits<int>::max()) << ": " << max_diff
-                  << std::endl;
-    };
+    // <edges, weights, exp_v>
+    using use_case_t = std::tuple<std::vector<std::pair<int, int>>, std::vector<int>, int>;
 
-    {
-        for (const auto& weights : {
-                 std::vector<int>{1, 3, 5, 7, 9},    // 8
-                 std::vector<int>{9, 7, 5, 3, 1},    // 8
-                 std::vector<int>{1, 2, 3, 4, 5},    // 4
-                 std::vector<int>{3, 3, 3, 3, 3},    // 0
-                 std::vector<int>{5, 3, 9, 6, 4},    // 5
-             }) {
-            std::vector<std::pair<int, int>> directed_edges = {
-                {0, 1}, {0, 2}, {1, 3}, {2, 3}, {3, 4},
-            };
-            const auto max_diff = graph_find_max_difference(weights, directed_edges);
-            print(weights, max_diff);
-        }
-    }
-
-    {
-        for (const auto& weights : {
-                 std::vector<int>{9, 2, 7, 8},    // 7
-                 std::vector<int>{1, 2, 3, 4},    // 3
-                 std::vector<int>{3, 0, 2, 8},    // 6
-                 std::vector<int>{1, 1, 1, 1},    // 0
-                 std::vector<int>{2, 6, 7, 3},    // 5
-             }) {
-            std::vector<std::pair<int, int>> directed_edges = {
-                {0, 1},
-                {0, 2},
-                {3, 2},
-            };
-            const auto max_diff = graph_find_max_difference(weights, directed_edges);
-            print(weights, max_diff);
-        }
+    for (auto [edges, weights, exp_v] : {
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {1, 3, 5, 7, 9},
+                 8},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {9, 7, 5, 3, 1},
+                 8},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {1, 2, 3, 4, 5},
+                 4},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {3, 3, 3, 3, 3},
+                 0},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 {5, 3, 9, 6, 4},
+                 5},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 {9, 2, 7, 8},
+                 7},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 {1, 2, 3, 4},
+                 2},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 {3, 0, 2, 8},
+                 6},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 {1, 1, 1, 1},
+                 0},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 {2, 6, 7, 3},
+                 5},
+         }) {
+        const auto v = graph_find_max_difference(weights, edges);
+        std::cout << __FUNCTION__ << ": weights=" << util::dump_array(weights, std::numeric_limits<int>::max())
+                  << ", graph_find_max_difference=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2362,10 +2041,9 @@ graph_find_max_depth(int vertices_count, const std::vector<std::pair<int, int>>&
 
     // DFS: for specific vertex 'v', its depths[v] = max(depths[v], depths[parent_of_v] + 1); iterate all 'parent_of_v'
     // TODO: BFS is also working!
-    std::vector<int> depths(vertices_count, 0);
-    int              max_depth = 0;
-    using lambda_t             = std::function<void(int)>;
-    lambda_t dfs               = [&](int idx_parent) {
+    std::vector<int>         depths(vertices_count, 0);
+    int                      max_depth = 0;
+    std::function<void(int)> dfs       = [&](int idx_parent) {
         for (auto idx_child : graph[idx_parent]) {
             depths[idx_child] = std::max(depths[idx_child], depths[idx_parent] + 1);
             max_depth         = std::max(depths[idx_child], max_depth);
@@ -2383,48 +2061,55 @@ graph_find_max_depth(int vertices_count, const std::vector<std::pair<int, int>>&
 
 void run_graph_find_max_depth()
 {
-    auto print = [](const auto& depths, int max_depth) {
-        std::cout << "---------------" << std::endl;
-        std::cout << "depths: " << util::dump_array(depths, std::numeric_limits<int>::max())
-                  << "\nmax depth: " << max_depth << std::endl;
-    };
+    // <edges, vertex_count, exp_v>
+    using use_case_t = std::tuple<std::vector<std::pair<int, int>>, int, int>;
 
-    {
-        int                              vertices_count = 4;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {0, 1}, {0, 2}, {1, 2}, {2, 3}, {1, 3},
-        };
-        const auto result = graph_find_max_depth(vertices_count, directed_edges);
-        print(result.first, result.second);    // 3
-    }
-
-    {
-        int                              vertices_count = 5;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {0, 1}, {0, 2}, {1, 3}, {2, 3}, {3, 4},
-        };
-        const auto result = graph_find_max_depth(vertices_count, directed_edges);
-        print(result.first, result.second);    // 3
-    }
-
-    {
-        int                              vertices_count = 4;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {0, 1},
-            {0, 2},
-            {3, 2},
-        };
-        const auto result = graph_find_max_depth(vertices_count, directed_edges);
-        print(result.first, result.second);    // 1
-    }
-
-    {
-        int                              vertices_count = 5;
-        std::vector<std::pair<int, int>> directed_edges = {
-            {4, 1}, {4, 2}, {4, 0}, {1, 2}, {0, 2}, {0, 3}, {1, 3}, {3, 2},
-        };
-        const auto result = graph_find_max_depth(vertices_count, directed_edges);
-        print(result.first, result.second);    // 3
+    for (auto [edges, vertex_count, exp_v] : {
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 2},
+                     {2, 3},
+                     {1, 3},
+                 },
+                 4,
+                 3},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {1, 3},
+                     {2, 3},
+                     {3, 4},
+                 },
+                 5,
+                 3},
+             use_case_t{
+                 {
+                     {0, 1},
+                     {0, 2},
+                     {3, 2},
+                 },
+                 4,
+                 1},
+             use_case_t{
+                 {
+                     {4, 1},
+                     {4, 2},
+                     {4, 0},
+                     {1, 2},
+                     {0, 2},
+                     {0, 3},
+                     {1, 3},
+                     {3, 2},
+                 },
+                 5,
+                 3},
+         }) {
+        const auto result = graph_find_max_depth(vertex_count, edges);
+        std::cout << __FUNCTION__ << ": graph_find_max_depth=" << result.second << ", "
+                  << (exp_v == result.second ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2459,6 +2144,12 @@ std::vector<int> find_all_divisors(int num)
             divisors.push_back(n);
         }
     }
+    // below commented code also works but this one performs better
+    int count = divisors.size();
+    while (count--) {
+        divisors.push_back(num % divisors[count]);
+    }
+    /*
     if (n * n > num) {
         --n;
     }
@@ -2467,6 +2158,8 @@ std::vector<int> find_all_divisors(int num)
             divisors.push_back(num / n);
         }
     }
+    */
+
     if (divisors.empty()) {
         divisors.push_back(num);
     }
@@ -2547,13 +2240,13 @@ int clumsy_factorial(int n)
         // First */ is positive while all rest are negative
         int tmp = (i == n ? i : -i);
         if (i > 1) {
-            tmp = i * (i - 1);
+            tmp *= (i - 1);
         }
         if (i > 2) {
             tmp /= (i - 2);
         }
         if (i > 3) {
-            tmp += i - 3;
+            tmp += (i - 3);
         }
         result += tmp;
         i -= 4;
@@ -2652,282 +2345,4 @@ void run_valid_sentence()
                   << std::endl;
     }
 }
-
-///////////////////////////////////////////////////////////////////////////////
-//
-// producer consumer
-//
-struct producer_consumer_problem {
-    struct storage_t {
-        explicit storage_t(size_t capacity) : capacity_{capacity} {}
-        bool block_push(int m)
-        {
-            size_t pre_storage_size = 0;
-            {
-                std::unique_lock<std::mutex> locker{mutex_};
-                if (storage_.size() >= capacity_) {
-                    if (has_consumer_) {
-                        std::cout << "" << __FUNCTION__ << ": wait until storage has room" << std::endl;
-                        cond_.wait(locker, [this]() {
-                            return storage_.size() < capacity_ || !has_consumer_;
-                        });
-                    }
-
-                    if (storage_.size() >= capacity_ && !has_consumer_) {
-                        std::cout << "\t" << __FUNCTION__ << ": storage is full" << std::endl;
-                        return false;
-                    }
-                }
-
-                pre_storage_size = storage_.size();
-
-                std::cout << __FUNCTION__ << ": value " << m << ", size=" << pre_storage_size << std::endl;
-
-                storage_.emplace_back(m);
-            }
-
-            if (pre_storage_size == 0) {
-                cond_.notify_all();
-            }
-            return true;
-        }
-        bool block_pop(int& m)
-        {
-            size_t pre_storage_size = 0;
-            {
-                std::unique_lock<std::mutex> locker{mutex_};
-                if (storage_.empty()) {
-                    if (has_producer_) {
-                        std::cout << "\t" << __FUNCTION__ << ": wait until storage is ready" << std::endl;
-                        cond_.wait(locker, [this]() {
-                            return !storage_.empty() || !has_producer_;
-                        });
-                    }
-
-                    if (storage_.empty() && !has_producer_) {
-                        std::cout << "\t" << __FUNCTION__ << ": storage is empty" << std::endl;
-                        return false;
-                    }
-                }
-
-                pre_storage_size = storage_.size();
-
-                m = std::move(storage_.front());
-                storage_.pop_front();
-
-                std::cout << "\t" << __FUNCTION__ << ": value " << m << ", size=" << pre_storage_size << std::endl;
-            }
-
-            if (pre_storage_size == capacity_) {
-                cond_.notify_all();
-            }
-            return true;
-        }
-
-        void turn_on_producer()
-        {
-            {
-                std::lock_guard<std::mutex> locker{mutex_};
-                has_producer_ = true;
-            }
-            cond_.notify_all();
-        }
-        void turn_off_producer()
-        {
-            {
-                std::lock_guard<std::mutex> locker{mutex_};
-                has_producer_ = false;
-            }
-            cond_.notify_all();
-        }
-        void turn_on_consumer()
-        {
-            {
-                std::lock_guard<std::mutex> locker{mutex_};
-                has_consumer_ = true;
-            }
-            cond_.notify_all();
-        }
-        void turn_off_consumer()
-        {
-            {
-                std::lock_guard<std::mutex> locker{mutex_};
-                has_consumer_ = false;
-            }
-            cond_.notify_all();
-        }
-
-        bool                    has_producer_ = false;
-        bool                    has_consumer_ = false;
-        size_t                  capacity_     = 0;
-        std::mutex              mutex_;
-        std::condition_variable cond_;
-        std::deque<int>         storage_;
-    };
-
-    // support multiple writers one reader
-    // TODO: need more test
-    template <size_t Capacity>
-    struct atomic_storage_t {
-        // TODO: don't need this if storage_ is allocated
-        explicit atomic_storage_t()
-        {
-            capacity_ = Capacity;
-            if ((capacity_ & (capacity_ - 1)) != 0) {
-                throw std::invalid_argument("Capacity must be power of 2");
-            }
-        }
-        explicit atomic_storage_t(size_t capacity) : capacity_{capacity}
-        {
-            if ((capacity_ & (capacity_ - 1)) != 0) {
-                throw std::invalid_argument("Capacity must be power of 2");
-            }
-        }
-        bool block_push(int m)
-        {
-            // update idx_write_ here in order to keep safty for N writers
-            size_t idx_pending_write = 0;
-            while (true) {
-                auto idx_read     = idx_read_.load();
-                idx_pending_write = idx_write_.load();
-                if (idx_pending_write - idx_read >= capacity_) {
-                    std::cout << "\t" << __FUNCTION__ << ": storage is full" << std::endl;
-                    return false;
-                }
-                if (idx_write_.compare_exchange_weak(idx_pending_write, idx_pending_write + 1)) {
-                    break;
-                }
-                __asm__("pause");
-            }
-
-            std::cout << __FUNCTION__ << ": value " << m << ", idx_pending_write=" << idx_pending_write << std::endl;
-
-            const auto pos          = idx_pending_write & (capacity_ - 1);
-            auto&      reserved_obj = storage_[pos];
-            reserved_obj.object     = std::move(m);
-            // index within object is to guarantee reader safty, this is very important
-            reserved_obj.index.store(idx_pending_write);
-
-            return true;
-        }
-        bool block_pop(int& m)
-        {
-            auto       idx_pending_read = idx_read_.load();
-            const auto pos              = idx_pending_read & (capacity_ - 1);
-            auto&      loaded_obj       = storage_[pos];
-            if (loaded_obj.index != idx_pending_read) {
-                std::cout << "\t" << __FUNCTION__ << ": storage is empty" << std::endl;
-                return false;
-            }
-            m = std::move(loaded_obj.object);
-
-            std::cout << __FUNCTION__ << ": value " << m << ", idx_pending_read=" << idx_pending_read << std::endl;
-
-            // don't update idx_read_ until finish reading, also this means we can only support 1 reader!
-            idx_read_.store(idx_pending_read + 1);
-
-            return true;
-        }
-
-        template <typename T>
-        struct internal_obj_t {
-            std::atomic<size_t> index = std::numeric_limits<size_t>::max();
-            T                   object;
-        };
-
-        size_t                                    capacity_  = 0;
-        std::atomic<size_t>                       idx_read_  = 0;
-        std::atomic<size_t>                       idx_write_ = 0;
-        std::array<internal_obj_t<int>, Capacity> storage_;
-    };
-
-    template <typename Storage = storage_t>
-    struct producer_t {
-        explicit producer_t(Storage& storage) : storage_{&storage} {}
-
-        bool produce(int value) { return storage_->block_push(value); }
-
-        Storage* storage_ = nullptr;
-    };
-
-    template <typename Storage = storage_t>
-    struct consumer_t {
-        explicit consumer_t(Storage& storage) : storage_{&storage} {}
-
-        bool consume()
-        {
-            int m = 0;
-            return storage_->block_pop(m);
-        }
-
-        Storage* storage_ = nullptr;
-    };
-
-    static void run()
-    {
-        storage_t storage{5};
-
-        std::thread th_producer{[&]() {
-            producer_t producer{storage};
-            storage.turn_on_producer();
-            int value = 0;
-            while (value++ < 30) {
-                producer.produce(value);
-                std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-            storage.turn_off_producer();
-        }};
-
-        std::thread th_consumer{[&]() {
-            consumer_t consumer{storage};
-            storage.turn_on_consumer();
-            int times = 0;
-            while (times++ < 20) {
-                consumer.consume();
-                std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            }
-            storage.turn_off_consumer();
-        }};
-
-        th_producer.join();
-        th_consumer.join();
-    }
-
-    static void run_atomic()
-    {
-        const size_t        times_produce   = 30;
-        const size_t        times_consume   = 20;
-        size_t              success_produce = 0;
-        size_t              success_consume = 0;
-        atomic_storage_t<4> storage;
-
-        std::thread th_producer{[&]() {
-            producer_t producer{storage};
-            int        times = times_produce;
-            while (times--) {
-                if (producer.produce(success_produce)) {
-                    ++success_produce;
-                }
-                // std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            }
-        }};
-
-        std::thread th_consumer{[&]() {
-            consumer_t consumer{storage};
-            int        times = times_consume;
-            while (times--) {
-                if (consumer.consume()) {
-                    ++success_consume;
-                }
-                // std::this_thread::sleep_for(std::chrono::milliseconds(200));
-            }
-        }};
-
-        th_producer.join();
-        th_consumer.join();
-
-        std::cout << "Done: times_produce=" << times_produce << ", times_consume=" << times_consume
-                  << ", success_produce=" << success_produce << ", success_consume=" << success_consume << std::endl;
-    }
-};
 

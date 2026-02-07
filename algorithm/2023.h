@@ -814,16 +814,198 @@ int max_profit_1_transaction_v2(const std::vector<int>& prices)
 
 void run_max_profit_1_transaction()
 {
-    for (auto prices : {
-             std::vector<int>{8, 1, 5, 2, 6},         // 5
-             std::vector<int>{-5, -3, 2, 2, 9, 1},    // 14
-             std::vector<int>{7, 1, 5, 3, 6, 4},      // 5
-             std::vector<int>{1, 2, 3, 4, 5},         // 4
+    using use_case_t = std::pair<std::vector<int>, int>;
+    for (auto [prices, exp_v] : {
+             use_case_t{{8, 1, 5, 2, 6}, 5},
+             use_case_t{{-5, -3, 2, 2, 9, 1}, 14},
+             use_case_t{{7, 1, 5, 3, 6, 4}, 5},
+             use_case_t{{1, 2, 3, 4, 5}, 4},
          }) {
-        std::cout << "\nprices: " << util::dump_array(prices) << std::endl;
-        std::cout << "max_profit_1_transaction: " << max_profit_1_transaction(prices) << std::endl;
-        std::cout << "max_profit_1_transaction_v2: " << max_profit_1_transaction_v2(prices) << std::endl;
-        std::cout << "max_profit_1_transaction_v3: " << max_profit_1_transaction_v3(prices) << std::endl;
+        const auto v1 = max_profit_1_transaction(prices);
+        const auto v2 = max_profit_1_transaction_v2(prices);
+        const auto v3 = max_profit_1_transaction_v3(prices);
+        std::cout << __FUNCTION__ << ": prices=" << util::dump_array(prices) << ", max_profit_1_transaction=" << v1
+                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_1_transaction_v2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << ", max_profit_1_transaction_v3=" << v3 << ", "
+                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iii/description/
+//
+// You are given an array prices where prices[i] is the price of a given stock on the ith day.
+// Find the maximum profit you can achieve. You may complete at most two transactions.
+// Note: You may not engage in multiple transactions simultaneously (i.e., you must sell the stock before you buy
+// again).
+//
+// Another less optimal solution: loop the array, split into 2 arrays, find max profit in each part and get the max sum
+//
+int max_profit_2_transactions(const std::vector<int>& prices)
+{
+    //
+    // clang-format off
+    //
+    // I can explain following variables in this way -
+    // @port_value_1st_buy:  port value if this is the 1st buy on this day, meaning '-1 * prices[0] (price on this day)'
+    // @port_value_1st_sell: port value if this is the 1st sell, meaning 'port_value_1st_buy + prices[0] (price on this day) = 0'
+    // @port_value_2nd_buy:  port value if this is the 2nd buy, meaning 'port_value_1st_sell - prices[0] (price on this day) = -prices[0]'
+    // @port_value_2nd_sell: port value if this is the 2nd sell, meaning 'port_value_2nd_buy + prices[0] (price on this day) = 0'
+    //
+    // clang-format on
+
+    // starting point, on day 1
+    int port_value_1st_buy  = -1 * prices[0];
+    int port_value_1st_sell = 0;
+    int port_value_2nd_buy  = -1 * prices[0];
+    int port_value_2nd_sell = 0;
+
+    for (size_t i = 1; i < prices.size(); ++i) {
+        const auto curr_prc = prices[i];
+        port_value_1st_buy  = std::max(port_value_1st_buy, -1 * curr_prc);
+        port_value_1st_sell = std::max(port_value_1st_sell, port_value_1st_buy + curr_prc);
+        port_value_2nd_buy  = std::max(port_value_2nd_buy, port_value_1st_sell - curr_prc);
+        port_value_2nd_sell = std::max(port_value_2nd_sell, port_value_2nd_buy + curr_prc);
+    }
+    return port_value_2nd_sell;
+}
+
+///////////////////////////////////////////////////////////////////////////////
+//
+// https://leetcode.com/problems/best-time-to-buy-and-sell-stock-iv/description/
+//
+// You are given an array prices where prices[i] is the price of a given stock on the ith day.
+// Find the maximum profit you can achieve. You may complete at most k transactions.
+//
+// https://www.youtube.com/watch?v=t92vU3NvZ8k
+//
+int max_profit_k_transactions(int k, const std::vector<int>& prices)
+{
+    // represent the max portfolio value with 0-k transactions:
+    // max_port_values[i][0]: max port value with i transactions and hold position;
+    // max_port_values[i][1]: max port value with i transactions but no position;
+    std::vector<std::array<int, 2>> max_port_values(k, {0, 0});
+
+    const auto price_0 = prices[0];
+    for (int i = 0; i < k; ++i) {
+        max_port_values[i] = {
+            -1 * price_0,    // buy on day-1 and hold
+            0,               // sell on day-1, meaning empty portfolio
+        };
+    }
+
+    for (size_t n = 1; n < prices.size(); ++n) {
+        const auto price_n = prices[n];
+        for (int i = 0; i < k; ++i) {
+            const auto max_port_prev_none = (i > 0 ? max_port_values[i - 1][1] : 0);
+            const auto max_port_hold      = std::max(max_port_values[i][0], max_port_prev_none - price_n);
+            const auto max_port_none      = std::max(max_port_values[i][1], max_port_hold + price_n);
+            max_port_values[i]            = {max_port_hold, max_port_none};
+        }
+    }
+
+    return max_port_values.back()[1];
+}
+
+int max_profit_k_transactions_2(int k, const std::vector<int>& prices)
+{
+    // number of days
+    const int n = (int)prices.size();
+
+    // if there are 0 days then answer will be 0.
+    if (n == 0) {
+        return 0;
+    }
+
+    // Declaration and initialization of the dp vector.
+    std::vector<std::vector<int>> dp(k + 1, std::vector<int>(n, 0));
+
+    // Whenever k=0, you cannot make any transaction, so no profit.
+    for (int j = 0; j < n; j++) {
+        dp[0][j] = 0;
+    }
+
+    // Whenever the number of days is 0, the transaction is 0, and thus no profit.
+    for (int i = 0; i <= k; i++) {
+        dp[i][0] = 0;
+    }
+    for (int i = 1; i <= k; i++) {
+        // Set mx initially to -prices[0], the max portfolio value if holding stock
+        int mx = -prices[0];
+        for (int j = 1; j < n; j++) {
+
+            // option 1 -> don't do anything on this day
+            int op1 = dp[i][j - 1];
+
+            // option 2 -> sell the stock on this day if bought on some day t.
+            int op2  = prices[j] + mx;
+            dp[i][j] = std::max(op1, op2);
+
+            // Keep updating mx every time.
+            mx = std::max(mx, dp[i - 1][j - 1] - prices[j]);
+        }
+    }
+    return dp[k][n - 1];
+}
+
+void run_max_profit()
+{
+    using use_case_t = std::pair<std::vector<int>, int>;
+
+    for (const auto& [prices, exp_v] : {
+             use_case_t{{3, 3, 5, 0, 0, 3, 1, 4}, 4},    // k=1, max=4; k=2, max=6; k=3, max=8; k=4, max=8;
+             use_case_t{{1, 2, 3, 4, 5}, 4},             // k=any, max=4;
+             use_case_t{{7, 6, 4, 3, 1}, 0},             // max=0;
+             use_case_t{{2, 4, 1}, 2},                   // k=1, max=2; k=2, max=2;
+             use_case_t{{3, 2, 6, 5, 0, 3}, 4},          // k=1, max=4; k=2, max=7; k=3, max=7;
+         }) {
+        std::cout << "--------------------" << std::endl;
+        std::cout << util::dump_array(prices) << std::endl;
+
+        const auto v1 = max_profit_1_transaction(prices);
+        const auto v2 = max_profit_k_transactions(1, prices);
+        const auto v3 = max_profit_k_transactions_2(1, prices);
+        std::cout << "max transaction 1, prices=" << util::dump_array(prices) << ", max_profit_1_transaction=" << v1
+                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v3 << ", "
+                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+
+    for (const auto& [prices, exp_v] : {
+             use_case_t{{3, 3, 5, 0, 0, 3, 1, 4}, 6},    // k=1, max=4; k=2, max=6; k=3, max=8; k=4, max=8;
+             use_case_t{{1, 2, 3, 4, 5}, 4},             // k=any, max=4;
+             use_case_t{{7, 6, 4, 3, 1}, 0},             // max=0;
+             use_case_t{{2, 4, 1}, 2},                   // k=1, max=2; k=2, max=2;
+             use_case_t{{3, 2, 6, 5, 0, 3}, 7},          // k=1, max=4; k=2, max=7; k=3, max=7;
+         }) {
+        std::cout << "--------------------" << std::endl;
+        std::cout << util::dump_array(prices) << std::endl;
+
+        const auto v1 = max_profit_2_transactions(prices);
+        const auto v2 = max_profit_k_transactions(2, prices);
+        const auto v3 = max_profit_k_transactions_2(2, prices);
+        std::cout << "max transactions 2, prices=" << util::dump_array(prices) << ", max_profit_2_transactions=" << v1
+                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v3 << ", "
+                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+
+    for (const auto& [prices, exp_v] : {
+             use_case_t{{3, 3, 5, 0, 0, 3, 1, 4}, 8},    // k=1, max=4; k=2, max=6; k=3, max=8; k=4, max=8;
+             use_case_t{{1, 2, 3, 4, 5}, 4},             // k=any, max=4;
+             use_case_t{{7, 6, 4, 3, 1}, 0},             // max=0;
+             use_case_t{{2, 4, 1}, 2},                   // k=1, max=2; k=2, max=2;
+             use_case_t{{3, 2, 6, 5, 0, 3}, 7},          // k=1, max=4; k=2, max=7; k=3, max=7;
+         }) {
+        std::cout << "--------------------" << std::endl;
+        std::cout << util::dump_array(prices) << std::endl;
+
+        const auto v1 = max_profit_k_transactions(3, prices);
+        const auto v2 = max_profit_k_transactions_2(3, prices);
+        std::cout << "max transactions 3, prices=" << util::dump_array(prices) << ", max_profit_k_transactions=" << v1
+                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 

@@ -62,12 +62,15 @@ std::string dump_array(const std::vector<T>& arr, const T& ignore = T{})
     return oss.str();
 }
 
-template <class T>
-std::string dump_matrix(const std::vector<std::vector<T>>& vs)
+template <typename ContainerT>
+std::string dump_matrix(const ContainerT& vs, bool one_row_per_line = false)
 {
     std::ostringstream oss;
     oss << "[";
     for (size_t i = 0; i < vs.size(); ++i) {
+        if (one_row_per_line) {
+            oss << "\n ";
+        }
         oss << "[";
         for (size_t j = 0; j < vs[i].size(); ++j) {
             oss << vs[i][j];
@@ -79,6 +82,9 @@ std::string dump_matrix(const std::vector<std::vector<T>>& vs)
         if (i != vs.size() - 1) {
             oss << ",";
         }
+    }
+    if (one_row_per_line) {
+        oss << "\n";
     }
     oss << "]";
     return oss.str();

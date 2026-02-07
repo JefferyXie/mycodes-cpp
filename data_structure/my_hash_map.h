@@ -48,12 +48,15 @@ public:
             bucket_node = bucket_node->next;
         }
 
-        auto new_node = new list_node_t<T>{
-            .data = std::move(obj),
-            .next = bucket_head,
-        };
-        if (!new_node) {
-            throw std::bad_alloc();
+        list_node_t<T>* new_node = nullptr;
+        try {
+            new_node = new list_node_t<T>{
+                .data = std::move(obj),
+                .next = bucket_head,
+            };
+        } catch (const std::bad_alloc& ex) {
+            std::cout << __FUNCTION__ << ": " << ex.what() << std::endl;
+            throw;
         }
 
         buckets_[bucket_idx] = new_node;
@@ -84,8 +87,9 @@ public:
 
     T* erase(T* obj)
     {
-        if (!obj)
+        if (!obj) {
             return nullptr;
+        }
 
         const auto hash_code  = hasher_(*obj);
         const auto bucket_idx = hash_code % buckets_.size();

@@ -16,8 +16,75 @@
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
 
+#include "../thread/producer_consumer.h"
+
+/*
+void bm_memory_access(benchmark::State& state)
+{
+    std::default_random_engine engine;
+    auto bytes = state.range(0) * 1024;
+    std::vector<unsigned> data(bytes / sizeof(unsigned));
+    stdr::generate(data, engine);
+    std::uniform_int_distribution<std::size_t> dist(0, data.size() – 1);
+    for (auto _ : state) {
+        benchmark::DoNotOptimize(++data[dist(engine)]);
+    }
+    state.SetBytesProcessed(state.iterations() * data.size());
+}
+
+
+
+// Random access:
+benchmark::DoNotOptimize(++data[dist(engine)]);
+
+// Sequential forward access:
+for (std::size_t idx = 0; idx < data.size(); ++idx)
+{
+    benchmark::DoNotOptimize(dist(engine));
+    benchmark::DoNotOptimize(++data[idx]);
+}
+
+// Sequential backward access:
+for (std::size_t idx = data.size(); idx > 0; --idx)
+{
+    benchmark::DoNotOptimize(dist(engine));
+    benchmark::DoNotOptimize(++data[idx - 1]);
+}
+
+
+
+std::vector<std::size_t> indices(chunk_size);
+std::iota(indices.begin(), indices.end(), 0);
+std::uniform_int_distribution<std::size_t> dist(0, N - chunk_size - 1);
+for (auto _ : state)
+{
+    state.PauseTiming();
+    std::shuffle(indices.begin(), indices.end(), engine);
+    state.ResumeTiming();
+    auto start = dist(engine);
+    for (auto i : indices) {
+        sum += data[start + i];
+    }
+    benchmark::DoNotOptimize(sum);
+}
+
+*/
+
+
 int main(int argc, char** argv)
 {
+    run_is_palindrome();
+    return 0;
+
+    __event_queue::run_event_queue();
+    return 0;
+
+    run_tree_to_list();
+    return 0;
+
+    run_max_nodes_exclu_neighbors();
+    return 0;
+
     run_type_deduction();
 
     run_meta();
