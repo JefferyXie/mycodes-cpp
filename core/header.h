@@ -1,72 +1,72 @@
 #pragma once
 
-#include <stdlib.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <unistd.h>
 
 // head files for socket
+#include <arpa/inet.h>
+#include <errno.h>
+#include <netinet/in.h>
+#include <strings.h>
 #include <sys/socket.h>
 #include <sys/types.h>
-#include <netinet/in.h>
-#include <errno.h>
-#include <strings.h>
 #include <unistd.h>
-#include <arpa/inet.h>
 
 // head files for posix thread
 #include <pthread.h>
 #include <semaphore.h>
 
 // head files for std
+#include <algorithm>
+#include <array>
+#include <assert.h>
+#include <atomic>
+#include <chrono>
+#include <climits>
+#include <cmath>
+#include <concepts>
+#include <condition_variable>
+#include <cstdint>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <ctime>
+#include <filesystem>
+#include <fstream>
+#include <functional>
+#include <future>
+#include <iomanip>
 #include <ios>
 #include <iostream>
+#include <iterator>
 #include <limits>
-#include <fstream>
-#include <sstream>
+#include <list>
+#include <map>
+#include <memory>
+#include <mutex>
+#include <queue>
+#include <random>
+#include <ratio>
+#include <regex>
 #include <set>
+#include <sstream>
 #include <stack>
 #include <string>
-#include <array>
-#include <vector>
-#include <list>
-#include <queue>
-#include <iterator>
-#include <map>
+#include <thread>
+#include <tuple>
+#include <type_traits>
+#include <typeinfo>
 #include <unordered_map>
 #include <unordered_set>
-#include <memory>
-#include <algorithm>
-#include <typeinfo>
-#include <assert.h>
 #include <utility>
-#include <cstring>
-#include <cstdio>
-#include <cstdint>
-#include <cstdlib>
-#include <type_traits>
-#include <random>
-#include <functional>
-#include <iomanip>
-#include <cmath>
-#include <tuple>
-#include <regex>
-#include <ctime>
-#include <chrono>
-#include <ratio>
-#include <thread>
-#include <atomic>
-#include <mutex>
-#include <future>
-#include <condition_variable>
-#include <climits>
-#include <filesystem>
-#include <concepts>
+#include <vector>
 
 #include <experimental/type_traits>
 
 // boost start
-#include <boost/functional/hash.hpp>
 #include <boost/format.hpp>
+#include <boost/functional/hash.hpp>
 #include <boost/math/special_functions/prime.hpp>
 // boost end
 
@@ -104,8 +104,8 @@
 #include <mach/mach_interface.h>
 #include <mach/mach_types.h>
 #include <pthread.h>
-#include <sys/types.h>
 #include <sys/sysctl.h>
+#include <sys/types.h>
 
 // https://www.hybridkernel.com/2015/01/18/binding_threads_to_cores_osx.html
 #define SYSCTL_CORE_COUNT "machdep.cpu.core_count"

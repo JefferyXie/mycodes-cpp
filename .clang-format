@@ -38,7 +38,8 @@ ColumnLimit: 120
 NamespaceIndentation: None
 ReflowComments: true
 
-SortIncludes: false
+SortIncludes: true
+IncludeBlocks: Preserve
 SpaceAfterTemplateKeyword: true
 
 SpaceBeforeParens: ControlStatements
