@@ -154,16 +154,67 @@ bool equal_container_unordered(auto& a, auto& b)
     return true;
 };
 
+auto trim(std::string_view sv)
+{
+    std::string s(sv);
+    s.erase(s.begin(), std::find_if(s.begin(), s.end(), [](auto v) {
+                return !std::isspace(v);
+            }));
+    s.erase(
+        std::find_if(
+            s.rbegin(), s.rend(),
+            [](auto v) {
+                return !std::isspace(v);
+            })
+            .base(),
+        s.end());
+    return s;
+}
+
 std::vector<std::string> split(char delimiter, std::string_view str)
 {
     size_t                   last = 0;
     size_t                   next = 0;
     std::vector<std::string> tokens;
     while ((next = str.find(delimiter, last)) != std::string::npos) {
+        // TODO: trim and ignore empty??
         tokens.emplace_back(str.substr(last, next - last));
         last = next + 1;
     }
     tokens.emplace_back(str.substr(last));
+    return tokens;
+}
+
+// TODO: split spec by any delimiter from delimiters, need test and improvment...
+std::vector<std::string> split_any(std::string_view delimiters, std::string_view spec)
+{
+    std::vector<std::string> tokens;
+
+    auto addToken = [&tokens](std::string token) {
+        // Trim leading whitespace
+        if (!token.empty()) {
+            size_t start = token.find_first_not_of(" ");
+            token        = start != std::string::npos ? token.substr(start) : "";
+        }
+
+        // Do not add empty tokens
+        if (token.empty()) {
+            return;
+        }
+        tokens.push_back(token);
+    };
+
+    size_t start = 0;
+    for (size_t end = 0; end < spec.size(); ++end) {
+        // If current char is a separator, add the current token AND separator to the tokens list
+        if (delimiters.find(spec[end]) != std::string::npos) {
+            addToken(std::string{spec.substr(start, end - start)});
+            addToken(std::string{spec.substr(end, 1)});
+            start = end + 1;
+        }
+    }
+    // Add the last token to tokens list
+    addToken(std::string{spec.substr(start)});
     return tokens;
 }
 
@@ -188,3 +239,4 @@ struct shm_utils {
 };
 
 }    // namespace util
+

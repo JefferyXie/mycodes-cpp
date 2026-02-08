@@ -9,7 +9,7 @@ struct CRTP {
     template <typename... Args>
     void do_work(Args&&... args)
     {
-        // you many have extra work here before the call ...
+        // you may have extra work here before the call ...
         static_cast<Derived*>(this)->some_fun(std::forward<Args>(args)...);
     }
 };
@@ -25,7 +25,7 @@ struct Mixin : public Impl {
     template <typename... Args>
     void do_work(Args... args)
     {
-        // you many have extra work here before the call ...
+        // you may have extra work here before the call ...
         static_cast<Impl*>(this)->some_fun(args...);
     }
 };

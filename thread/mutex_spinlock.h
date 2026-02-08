@@ -66,88 +66,80 @@ mutex: can multi-process in linux share same mutex?
 //
 // http://www.alexonlinux.com/pthread-mutex-vs-pthread-spinlock
 //
-#include "../core/header.h"
 #include <unistd.h>
 #include <sys/syscall.h>
-#include <errno.h>
 #include <sys/time.h>
 
-#define LOOPS 10000000
+#include "thread_id.h"
 
-std::list<int> the_list;
-
-#ifdef USE_SPINLOCK
-pthread_spinlock_t spinlock;
-#else
-pthread_mutex_t mutex_p;
-#endif
-
-pid_t gettid()
+inline void run_mutex_spinlock()
 {
-#ifdef __APPLE__
-    uint64_t tid;
-    pthread_threadid_np(NULL, &tid);
-    return tid;
-#else
-    return ::syscall(SYS_gettid);
-#endif
-}
-
-void* consumer(void* ptr)
-{
-    printf("Consumer TID %lu\n", (unsigned long)gettid());
-
-    while (1) {
+    // in order to use pthread_xxx in the following
+    struct __local {
 #ifdef USE_SPINLOCK
-        pthread_spin_lock(&spinlock);
+        pthread_spinlock_t spinlock;
 #else
-        pthread_mutex_lock(&mutex_p);
+        pthread_mutex_t mutex_p;
+#endif
+        std::list<int> the_list;
+    };
+
+    __local instance;
+
+    auto func_consumer = []([[maybe_unused]] void* ptr) -> void* {
+        printf("Consumer TID %lu\n", (unsigned long)gettid());
+
+        __local* obj = static_cast<__local*>(ptr);
+
+        while (1) {
+#ifdef USE_SPINLOCK
+            pthread_spin_lock(&obj->spinlock);
+#else
+            pthread_mutex_lock(&obj->mutex_p);
 #endif
 
-        if (the_list.empty()) {
+            if (obj->the_list.empty()) {
 #ifdef USE_SPINLOCK
-            pthread_spin_unlock(&spinlock);
+                pthread_spin_unlock(&obj->spinlock);
 #else
-            pthread_mutex_unlock(&mutex_p);
+                pthread_mutex_unlock(&obj->mutex_p);
 #endif
-            break;
+                break;
+            }
+
+            [[maybe_unused]] auto i = obj->the_list.front();
+            obj->the_list.pop_front();
+
+#ifdef USE_SPINLOCK
+            pthread_spin_unlock(&obj->spinlock);
+#else
+            pthread_mutex_unlock(&obj->mutex_p);
+#endif
         }
 
-        [[maybe_unused]] auto i = the_list.front();
-        the_list.pop_front();
+        return NULL;
+    };
 
-#ifdef USE_SPINLOCK
-        pthread_spin_unlock(&spinlock);
-#else
-        pthread_mutex_unlock(&mutex_p);
-#endif
-    }
-
-    return NULL;
-}
-
-void Run_mutex_spinlock()
-{
     pthread_t      thr1, thr2;
     struct timeval tv1, tv2;
 
 #ifdef USE_SPINLOCK
-    pthread_spin_init(&spinlock, 0);
+    pthread_spin_init(&instance.spinlock, 0);
     printf("[Use spinlock]\n");
 #else
-    pthread_mutex_init(&mutex_p, NULL);
+    pthread_mutex_init(&instance.mutex_p, NULL);
     printf("[Use mutex]\n");
 #endif
 
     // Creating the list content...
-    for (int i = 0; i < LOOPS; i++)
-        the_list.push_back(i);
+    for (int i = 0; i < 10'000'000; i++)
+        instance.the_list.push_back(i);
 
     // Measuring time before starting the threads...
     gettimeofday(&tv1, NULL);
 
-    pthread_create(&thr1, NULL, consumer, NULL);
-    pthread_create(&thr2, NULL, consumer, NULL);
+    pthread_create(&thr1, NULL, func_consumer, &instance);
+    pthread_create(&thr2, NULL, func_consumer, &instance);
 
     pthread_join(thr1, NULL);
     pthread_join(thr2, NULL);
@@ -160,12 +152,12 @@ void Run_mutex_spinlock()
         tv2.tv_usec += 1000000;
     }
 
-    printf("Total time elapsed (seconds): %ld.%ld\n", tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
+    printf("Total time elapsed (seconds): %ld.%d\n", tv2.tv_sec - tv1.tv_sec, tv2.tv_usec - tv1.tv_usec);
 
 #ifdef USE_SPINLOCK
-    pthread_spin_destroy(&spinlock);
+    pthread_spin_destroy(&instance.spinlock);
 #else
-    pthread_mutex_destroy(&mutex_p);
+    pthread_mutex_destroy(&instance.mutex_p);
 #endif
 }
 

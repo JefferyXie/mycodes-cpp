@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core/header.h"
+#include <type_traits>
 
 // requires expression after function signature
 template <typename... Args>
@@ -23,6 +24,14 @@ void try_concept_2(Args... args)
 
 // use concept with keyword auto directly
 void try_concept_3(concept_arithmetic_t auto... args)
+{
+    std::cout << (args + ...) << std::endl;
+}
+
+// use concept after template arguments
+template <typename... Args>
+    requires(concept_arithmetic_t<Args>, ...)
+void try_concept_4(Args... args)
 {
     std::cout << (args + ...) << std::endl;
 }
@@ -85,6 +94,14 @@ void run_template_concept()
     try_concept_2(1, 2);
     try_concept_2(1, 2.5);
     // try_concept_2(1, "a");
+
+    try_concept_3(1, 2);
+    try_concept_3(1, 2.5);
+    // try_concept_3(1, "a");
+
+    try_concept_4(1, 2);
+    try_concept_4(1, 2.5);
+    // try_concept_4(1, "a");
 
     try_concept_class_var(test_concept_1{});
     try_concept_class_var(test_concept_2{});

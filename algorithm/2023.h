@@ -105,25 +105,45 @@ int decode_with_cache(const std::string& code)
 
     return impl(0);
 }
+int decode_no_recursive(const std::string& code)
+{
+    const auto       len = (int)code.size();
+    std::vector<int> cache(len, 0);
+    cache[0] = 1;
+    for (int i = 1; i < len; ++i) {
+        const auto pre_c = code[i - 1];
+        const auto c     = code[i];
+        if (pre_c == '1' || (pre_c == '2' && c <= '6')) {
+            cache[i] = cache[i - 1] + (i >= 2 ? cache[i - 2] : 1);
+        } else {
+            cache[i] = cache[i - 1];
+        }
+    }
+    return cache[len - 1];
+}
 
 void run_decode_num_to_letters()
 {
-    using code_pair_t = std::pair<std::string, int>;
-    for (auto [code, result] : {
-             code_pair_t{"3", 1},
-             code_pair_t{"12", 2},
-             code_pair_t{"1", 1},
-             code_pair_t{"11", 2},
-             code_pair_t{"111", 3},
-             code_pair_t{"1111", 5},
-             code_pair_t{"11111", 8},
-             code_pair_t{"12345", 3},
-             code_pair_t{"27345", 1},
+    using use_case_t = std::pair<std::string, int>;
+    for (auto [code, exp_v] : {
+             use_case_t{"3", 1},
+             use_case_t{"12", 2},
+             use_case_t{"1", 1},
+             use_case_t{"11", 2},
+             use_case_t{"111", 3},
+             use_case_t{"1111", 5},
+             use_case_t{"11111", 8},
+             use_case_t{"12345", 3},
+             use_case_t{"27345", 1},
          }) {
-        std::cout << "decode_num_to_letters: " << code << " -> " << decode_without_cache(code) << std::endl;
-        if (auto v = decode_with_cache(code); v != result) {
-            std::cout << "\terror: expected " << result << " but got " << v << std::endl;
-        }
+        const auto v1 = decode_without_cache(code);
+        const auto v2 = decode_with_cache(code);
+        const auto v3 = decode_no_recursive(code);
+
+        std::cout << __FUNCTION__ << ": code=" << code << ", decode_without_cache=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; decode_with_cache=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << "; decode_no_recursive=" << v3 << ", "
+                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -229,45 +249,6 @@ int generic_num_ways_stairs(const std::vector<int>& steps_per_time, int stairs)
     return num_ways.back();
 }
 
-// https://www.youtube.com/watch?v=Mjy4hd2xgrs&ab_channel=NeetCode
-// https://github.com/doocs/leetcode/tree/main/solution/0500-0599/0518.Coin%20Change%20II/
-//
-// Given a set of coins with different face value, find the number of combinations that sum of coins equal to amount
-//
-// TODO: revisit this question!!
-//
-int coin_change(const std::vector<int>& coins, int amount)
-{
-    const int                     num_coins = coins.size();
-    std::vector<std::vector<int>> matrix(num_coins, std::vector<int>(amount + 1, 0));
-    for (int r = 0; r < num_coins; ++r) {
-        for (int c = 1; c < amount + 1; ++c) {
-            auto& combinations = matrix[r][c];
-            if (r == 0) {
-                combinations = (c % coins[r] == 0);
-                continue;
-            }
-
-            // num of combinations without using coin 'r'
-            combinations = matrix[r - 1][c];
-            if (c > coins[r]) {
-                // num of combinations by using coin 'r'
-                combinations += matrix[r][c - coins[r]];
-            } else {
-                // ??
-                combinations += (c % coins[r] == 0);
-            }
-        }
-        /*
-        std::cout << "r=" << r << ": ";
-        print_array(matrix[r - 1], std::numeric_limits<int>::max());
-        print_array(matrix[r], std::numeric_limits<int>::max());
-        std::cout << std::endl;
-        */
-    }
-    return matrix.back().back();
-}
-
 void run_num_way_stairs()
 {
     for (int stairs : {1, 2, 3, 4, 5, 6, 7}) {
@@ -281,9 +262,6 @@ void run_num_way_stairs()
             std::cout << "\tstairs=" << stairs
                       << ", generic_num_ways_stairs=" << generic_num_ways_stairs(std::vector<int>{1, 2}, stairs)
                       << std::endl;
-
-            std::cout << "\tcoin_amount=" << stairs << ", coin_change=" << coin_change(std::vector<int>{1, 2}, stairs)
-                      << std::endl;
         }
 
         {
@@ -296,9 +274,6 @@ void run_num_way_stairs()
             std::cout << "\tstairs=" << stairs
                       << ", generic_num_ways_stairs=" << generic_num_ways_stairs(std::vector<int>{1, 3, 5}, stairs)
                       << std::endl;
-
-            std::cout << "\tcoin_amount=" << stairs
-                      << ", coin_change=" << coin_change(std::vector<int>{1, 3, 5}, stairs) << std::endl;
         }
 
         {
@@ -311,10 +286,45 @@ void run_num_way_stairs()
             std::cout << "\tstairs=" << stairs
                       << ", generic_num_ways_stairs=" << generic_num_ways_stairs(std::vector<int>{5, 3}, stairs)
                       << std::endl;
-
-            std::cout << "\tcoin_amount=" << stairs << ", coin_change=" << coin_change(std::vector<int>{5, 3}, stairs)
-                      << std::endl;
         }
+    }
+}
+
+// Given a set of coins with different face value, find the number of combinations that sum of coins equal to amount
+// leetcode 518
+int coin_change(const std::vector<int>& coins, int amount)
+{
+    const auto                    count_coins = (int)coins.size();
+    std::vector<std::vector<int>> matrix(count_coins + 1, std::vector<int>(amount + 1, 0));
+
+    // when amount == 0, there is always 1 combination available (take 0 coin)
+    matrix[0][0] = 1;
+    for (int i = 1; i < count_coins + 1; ++i) {
+        const auto coin_amount = coins[i - 1];
+        // NOTICE: start with j == 0, so that matrix[i][0] == 1
+        for (int j = 0; j < amount + 1; ++j) {
+            matrix[i][j] = matrix[i - 1][j];    // dont use new coin
+            if (j >= coin_amount) {
+                matrix[i][j] += matrix[i][j - coin_amount];    // use new coin
+            }
+        }
+    }
+    return matrix[count_coins][amount];
+}
+void run_coin_change()
+{
+    using use_case_t = std::tuple<std::vector<int>, int, int>;
+    for (auto [coins, amount, exp_v] : {
+             use_case_t{{1, 2}, 1, 1},
+             use_case_t{{1, 2}, 2, 2},
+             use_case_t{{1, 2}, 3, 2},
+             use_case_t{{1, 2}, 4, 3},
+             use_case_t{{1, 2, 5}, 5, 4},
+             use_case_t{{2, 5}, 3, 0},
+         }) {
+        const auto v = coin_change(coins, amount);
+        std::cout << __FUNCTION__ << ": coins=" << util::dump_array(coins) << ", amount=" << amount
+                  << ", coin_change=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -371,12 +381,13 @@ void print_all_subsets(int* arr, int len)
 // if it's able to jump out of array at the place/index; then for previous place
 // just check if it's able to reach any place where cache flag is true
 //
-bool tower_hopper(int* arr, int len)
+bool tower_hopper(const std::vector<int>& arr)
 {
-    int   index = len;
-    bool* cache = new bool[len]{false};
+    const auto len   = (int)arr.size();
+    int        index = len;
+    bool*      cache = new bool[len]{false};
     while (index-- > 0) {
-        int steps = *(arr + index);
+        int steps = arr[index];
         while (steps-- > 0) {
             if (steps >= len - index - 1) {
                 *(cache + index) = true;
@@ -398,16 +409,17 @@ bool tower_hopper(int* arr, int len)
 // place: the biggest/farthest place given sum of current value and value at next
 // potential place, traverse array until you jump out of array or finish traverse
 //
-bool tower_hopper_v2(int* arr, int len)
+bool tower_hopper_v2(const std::vector<int>& arr)
 {
-    auto next_optimal_pos = [=](int index) {
+    const auto len              = (int)arr.size();
+    auto       next_optimal_pos = [=](int index) {
         int pos      = -1;
         int farthest = 0;
-        int steps    = *(arr + index);
+        int steps    = arr[index];
         while (steps-- > 0) {
             int next_pos = index + steps + 1;
             if (next_pos < len) {
-                int next_pos_steps = *(arr + next_pos);
+                int next_pos_steps = arr[next_pos];
                 if (next_pos_steps + steps + 1 > farthest) {
                     farthest = next_pos_steps + steps + 1;
                     pos      = next_pos;
@@ -432,76 +444,116 @@ bool tower_hopper_v2(int* arr, int len)
     }
     return false;
 }
+bool tower_hopper_v3(const std::vector<int>& arr)
+{
+    [[maybe_unused]] auto jumps           = 1;         // the number of min jumps
+    auto                  max_pos         = arr[0];    // the max reachable position given the jumps so far
+    auto                  max_pos_if_jump = arr[0];    // the max reachable position if jumping one more time so far
+    for (int i = 1; i < (int)arr.size(); ++i) {
+        max_pos_if_jump = std::max(max_pos_if_jump, i + arr[i]);    // always update max_pos_if_jump if possible
+        if (i == max_pos) {    // given the jumps so far, this is max reachable pos, we have to jump one more time
+            max_pos = max_pos_if_jump;
+            ++jumps;
+
+            if (max_pos >= (int)arr.size()) {
+                return true;
+            }
+        }
+    }
+    return false;
+}
+
 void run_tower_hopper()
 {
     using use_case_t = std::pair<std::vector<int>, bool>;
     for (auto [arr, exp_v] : {
              use_case_t({2, 1, 0, 1}, false),
-             use_case_t({1, 2, 0, 0}, true),
+             use_case_t({1, 2, 0, 0}, false),
              use_case_t({4, 2, 0, 0, 2, 0}, true),
-             use_case_t({4, 2, 0, 0, 1, 0}, true),
+             use_case_t({4, 2, 0, 0, 1, 0}, false),
          }) {
-        const auto v1 = tower_hopper(arr.data(), arr.size());
-        const auto v2 = tower_hopper_v2(arr.data(), arr.size());
-        std::cout << "array=" << util::dump_array(arr) << std::boolalpha << ", tower_hopper=" << v1 << ", "
-                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; tower_hopper_v2=" << v2 << ", "
-                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::noboolalpha << std::endl;
+        const auto v1 = tower_hopper(arr);
+        const auto v2 = tower_hopper_v2(arr);
+        const auto v3 = tower_hopper_v3(arr);
+        std::cout << "array=" << util::dump_array(arr, std::numeric_limits<int>::min()) << std::boolalpha
+                  << ", tower_hopper=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << "; tower_hopper_v2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << "; tower_hopper_v3=" << v3 << ", " << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::noboolalpha
+                  << std::endl;
     }
 }
 
 //
-// https://www.enjoyalgorithms.com/blog/median-of-two-sorted-arrays
-// given two sorted arrays A and B, find the median of combined array
+// https://www.geeksforgeeks.org/dsa/median-of-two-sorted-arrays-of-different-sizes/
 //
-// Input:  A[] = [1, 3], B[] = [0]
-// Output: 1
-//
-// Input:  A[] = [1, 3], B[] = [2]
-// Output: 2
-//
-// Input:  A[] = [2, 4], B[] = [1, 3, 5]
-// Output: 3
-//
-// Input:  A[] = [1, 3, 6], B[] = [2, 8, 12]
-// Output: 4.5
-//
-// Input:  A[] = [1, 3, 4, 6, 9], B[] = [2, 5, 7, 8, 10]
-// Output: 5.5
-//
-double find_median_two_sorted_arrays(int* A, int m, int* B, int n)
+// 0) do binary serach in the smaller array;
+// 1) from smaller array, find middle point midA;
+// 2) in the other array, find posB=(nA + nB + 1) / 2 - midA, this ensures (midA + posB) is the median point!!
+// 3) check the elements around points midA and posB, they are the target if leftMidA <= rightPosB && rightMidA >=
+// leftPosB; 4) otherwise, if leftMidA > rightPosB, should search the left side of midA, so high = midA - 1; 5) if
+// rightMidA < leftPosB, should search the right side of midA, so low = midA + 1;
+int find_median_two_sorted_arrays(const std::vector<int>& A, const std::vector<int>& B)
 {
-    auto median = [](int* arr, int len) {
-        if (len % 2 == 0) {
-            auto x = (double)(*(arr + len / 2 - 1) + *(arr + len / 2)) / 2;
-            std::cout << "x=" << x << ", " << *(arr + len / 2 - 1) << ", " << *(arr + len / 2) << std::endl;
-            return x;
-        } else
-            return (double)*(arr + len / 2);
-    };
-    if (m <= 0)
-        return median(B, n);
-    if (n <= 0)
-        return median(A, m);
-    if (m == 1 && n == 1)
-        return (double)(*A + *B) / 2;
+    const auto nA = (int)A.size();
+    const auto nB = (int)B.size();
+    if (nA > nB) {
+        return find_median_two_sorted_arrays(B, A);
+    }
 
-    // TODO: miss some cornor cases like [1, 3], [0]...
+    int low  = 0;
+    int high = nA;
+    while (low <= high) {
+        int midA = (low + high) / 2;
+        int posB = (nA + nB + 1) / 2 - midA;
 
-    double mA = median(A, m);
-    double mB = median(B, n);
-    if (mA < mB)
-        return find_median_two_sorted_arrays(A + m / 2, m - (m / 2), B, n - (n / 2 + (n % 2 == 0 ? 0 : 1)));
-    else if (mA > mB)
-        return find_median_two_sorted_arrays(A, m - (m / 2), B + n / 2, n - (n / 2));
-    else
-        return mA;
+        int leftMidA  = (midA > 0 ? A[midA - 1] : std::numeric_limits<int>::min());
+        int rightMidA = (midA < nA ? A[midA] : std::numeric_limits<int>::max());
+
+        int leftPosB  = (posB > 0 ? B[posB - 1] : std::numeric_limits<int>::min());
+        int rightPosB = (posB < nB ? B[posB] : std::numeric_limits<int>::max());
+
+        if (leftMidA <= rightPosB && rightMidA >= leftPosB) {
+            if ((nA + nB) % 2 == 0) {
+                return (std::max(leftMidA, leftPosB) + std::min(rightMidA, rightPosB)) / 2;
+            } else {
+                return std::max(leftMidA, leftPosB);
+            }
+        }
+
+        if (leftMidA > rightPosB) {
+            high = midA - 1;
+        } else {
+            low = midA + 1;
+        }
+    }
+    // How do we get here????
+    return -1;
+}
+
+void run_find_median_two_sorted_arrays()
+{
+    using use_case_t = std::tuple<std::vector<int>, std::vector<int>, int>;
+    for (auto [A, B, exp_v] : {
+             use_case_t{{1, 3}, {}, 2},
+             use_case_t{{1, 3}, {2}, 2},
+             use_case_t{{2, 4}, {1, 3, 5}, 3},
+             use_case_t{{1, 3, 6}, {2, 8, 12}, 4},
+             use_case_t{{1, 3, 4, 6, 9}, {2, 5, 7, 8, 10}, 5},
+             use_case_t{{1, 3, 4, 6, 9, 11}, {2, 5, 7, 8, 10}, 6},
+             use_case_t{{-5, 3, 6, 12, 15}, {-12, -10, -6, -3, 4, 10}, 3},
+         }) {
+        const auto v = find_median_two_sorted_arrays(A, B);
+        std::cout << __FUNCTION__ << ": A=" << util::dump_array(A) << ", B=" << util::dump_array(B)
+                  << ", find_median_two_sorted_arrays=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
 }
 
 //
 // given an array that contains n + 1 integers that range is [1, n]
 // there is only one repeated number, find the number
 //
-// [3, 1, 3, 4, 3]
+// [3, 1, 2, 4, 3]
 //
 // 1) brute force:      O(n^2),         space O(1)
 // 2) hashtable:        O(n),           space O(n)
@@ -512,16 +564,16 @@ double find_median_two_sorted_arrays(int* A, int m, int* B, int n)
 //
 
 // binary search solution
-int find_duplicate(int* arr, int len)
+int find_duplicate(const std::vector<int>& arr)
 {
     // find the smallest number m that satisfies count(num <= m) > m
     int left  = 1;
-    int right = len;
+    int right = (int)arr.size();
     while (left < right) {
         const int m     = left + (right - left) / 2;
         int       count = 0;
-        for (int i = 0; i < len; ++i) {
-            if (*(arr + i) <= m)
+        for (int i = 0; i < (int)arr.size(); ++i) {
+            if (arr[i] <= m)
                 ++count;
         }
 
@@ -542,8 +594,9 @@ int find_duplicate(int* arr, int len)
 //
 int tree_count_complete_tree_nodes(tree_node_int_t* root)
 {
-    if (!root)
+    if (!root) {
         return 0;
+    }
 
     std::function<int(tree_node_int_t*)> get_depth = [&](tree_node_int_t* node) {
         return node ? (1 + get_depth(node->left)) : 0;
@@ -577,8 +630,9 @@ int tree_count_complete_tree_leaves(tree_node_int_t* root)
 // TODO: need test
 int get_any_tree_depth(tree_node_int_t* node)
 {
-    if (!node)
+    if (!node) {
         return 0;
+    }
 
     int left_depth  = 1 + get_any_tree_depth(node->left);
     int right_depth = 1 + get_any_tree_depth(node->right);
@@ -600,6 +654,22 @@ bool check_if_balanced_tree(tree_node_int_t* node)
         return 1 + std::max(lh, rh);
     };
     return impl(node) >= 0;
+}
+bool check_if_balanced_tree2(tree_node_int_t* root)
+{
+    std::function<int(tree_node_int_t*)> get_depth = [&](tree_node_int_t* node) {
+        if (!node) {
+            return 0;
+        }
+        const auto lh = 1 + get_depth(node->left);
+        const auto rh = 1 + get_depth(node->right);
+        if (lh < 0 || rh < 0 || std::abs(lh - rh) > 1) {
+            return -1;
+        }
+        return std::max(lh, rh);
+    };
+
+    return get_depth(root) >= 0;
 }
 void run_check_if_balanced_tree()
 {
@@ -671,9 +741,11 @@ void run_check_if_balanced_tree()
              use_case_t(&n8, true),
              use_case_t(&n9, true),
          }) {
-        const auto v = check_if_balanced_tree(node);
-        std::cout << "node=" << node->data << ", check_if_balanced_tree=" << v << ", "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        const auto v1 = check_if_balanced_tree(node);
+        const auto v2 = check_if_balanced_tree2(node);
+        std::cout << "node=" << node->data << ", check_if_balanced_tree=" << v1 << ", "
+                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; check_if_balanced_tree2=" << v2 << ", "
+                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -685,46 +757,44 @@ void run_check_if_balanced_tree()
 
 // solution 1), dynamic programming
 //
-int array_max_pair_score(int* arr, int len)
+int array_max_pair_score(const std::vector<int>& arr)
 {
-    using lambda_t = std::function<std::pair<int, int>(int*, int)>;
-    lambda_t impl  = [&](int* arr, int idx) {
-        if (idx == 0)
-            return std::make_pair(std::numeric_limits<int>::min(), *arr);
+    std::function<std::pair<int, int>(int)> impl = [&](int idx) {
+        if (idx == 0) {
+            return std::make_pair(std::numeric_limits<int>::min(), arr[idx]);
+        }
 
-        auto [max_pair_score, max_elem_n_idx] = impl(arr, idx - 1);
+        auto [max_pair_score, max_elem_n_idx] = impl(idx - 1);
 
         // first:  max score up to idx, so the max score at position (idx+1) is either -
-        //          a) max score at position idx; or
-        //          b) max_elem_n_idx + (arr[idx+1] - (idx + 1))
+        //         a) max score at position idx; or,
+        //         b) max_elem_n_idx + (arr[idx+1] - (idx + 1))
         // second: max (arr[i] + i)  up to position idx
         return std::make_pair(
-            std::max(max_pair_score, max_elem_n_idx + (*(arr + idx) - idx)),
-            std::max(max_elem_n_idx, *(arr + idx) + idx));
+            std::max(max_pair_score, max_elem_n_idx + (arr[idx] - idx)), std::max(max_elem_n_idx, arr[idx] + idx));
     };
-
-    return impl(arr, len - 1).first;
+    return impl((int)arr.size() - 1).first;
 }
 
 //
-// solution 2), no recursion, track the max score so far and its right element's
-// index, and find new possible max score in terms of -
-// a) new element is bigger than max score's right element - more than index distance
-// b) new element and the prior element form the max score
+// solution 2), no recursion, track the max score so far and its right element's index, and find new possible max score
+//              in terms of -
+//              a) new element is bigger than max score's right element - more than index distance;
+//              b) new element and the prior element form the max score;
 //
-int array_max_pair_score_v2(int* arr, int len)
+int array_max_pair_score_v2(const std::vector<int>& arr)
 {
     int idx_pair_left  = 0;
     int idx_pair_right = 1;
-    int max_pair_score = (*(arr + idx_pair_left)) + (*(arr + idx_pair_right)) + (idx_pair_left - idx_pair_right);
-    for (int i = 2; i < len; ++i) {
-        int value            = *(arr + i);
-        int value_pair_right = *(arr + idx_pair_right);
+    int max_pair_score = arr[idx_pair_left] + arr[idx_pair_right] + (idx_pair_left - idx_pair_right);
+    for (int i = 2; i < (int)arr.size(); ++i) {
+        int value            = arr[i];
+        int value_pair_right = arr[idx_pair_right];
         if (value - i > value_pair_right - idx_pair_right) {
             idx_pair_right = i;
-            max_pair_score = (*(arr + idx_pair_left)) + value + (idx_pair_left - idx_pair_right);
+            max_pair_score = arr[idx_pair_left] + value + (idx_pair_left - idx_pair_right);
         }
-        int value_prior = *(arr + i - 1);
+        int value_prior = arr[i - 1];
         if (value + value_prior - 1 > max_pair_score) {
             max_pair_score = value + value_prior - 1;
             idx_pair_left  = i - 1;
@@ -739,9 +809,43 @@ int array_max_pair_score_v2(int* arr, int len)
 // then sum;
 // NOTICE: if two different elements are required, we need to track two biggest numbers along with index
 // on each side, finally sum the two of them with different index
-int array_max_pair_score_v3([[maybe_unused]] int* arr, [[maybe_unused]] int len)
+int array_max_pair_score_v3(const std::vector<int>& arr)
 {
-    return 0;
+    int max_sum[2]     = {std::numeric_limits<int>::min()};
+    int max_sum_idx[2] = {std::numeric_limits<int>::min()};
+    int max_sub[2]     = {std::numeric_limits<int>::min()};
+    int max_sub_idx[2] = {std::numeric_limits<int>::min()};
+
+    for (int i = 0; i < (int)arr.size(); ++i) {
+        const auto sum = arr[i] + i;
+        if (sum > max_sum[0]) {
+            max_sum[1]     = max_sum[0];
+            max_sum_idx[1] = max_sum_idx[0];
+
+            max_sum[0]     = sum;
+            max_sum_idx[0] = i;
+        } else if (sum > max_sum[1]) {
+            max_sum[1]     = sum;
+            max_sum_idx[1] = i;
+        }
+
+        const auto sub = arr[i] - i;
+        if (sub > max_sub[0]) {
+            max_sub[1]     = max_sub[0];
+            max_sub_idx[1] = max_sub_idx[0];
+
+            max_sub[0]     = sub;
+            max_sub_idx[0] = i;
+        } else if (sub > max_sub[1]) {
+            max_sub[1]     = sub;
+            max_sub_idx[1] = i;
+        }
+    }
+
+    // TODO: it is tricky to find desired max_sub & max_sum that satisfy index sum_i < sub_j
+    // ...
+
+    return std::max(max_sum[0] + max_sub[1], max_sum[1] + max_sub[0]);
 }
 
 void run_array_max_pair_score()
@@ -754,8 +858,9 @@ void run_array_max_pair_score()
              use_case_t({1, 2, 3, 4, 5}, 8),
          }) {
 
-        const auto v1 = array_max_pair_score(arr.data(), arr.size());
-        const auto v2 = array_max_pair_score_v2(arr.data(), arr.size());
+        const auto v1 = array_max_pair_score(arr);
+        const auto v2 = array_max_pair_score_v2(arr);
+        // const auto v3 = array_max_pair_score_v3(arr);
 
         std::cout << "array=" << util::dump_array(arr) << ", array_max_pair_score=" << v1 << ", "
                   << (exp_v == v1 ? "SUCCESS" : "FAILED") << "; array_max_pair_score_v2=" << v2 << ", "
@@ -961,15 +1066,15 @@ void run_max_profit()
              use_case_t{{3, 2, 6, 5, 0, 3}, 4},          // k=1, max=4; k=2, max=7; k=3, max=7;
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << util::dump_array(prices) << std::endl;
 
         const auto v1 = max_profit_1_transaction(prices);
         const auto v2 = max_profit_k_transactions(1, prices);
         const auto v3 = max_profit_k_transactions_2(1, prices);
-        std::cout << "max transaction 1, prices=" << util::dump_array(prices) << ", max_profit_1_transaction=" << v1
-                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions=" << v2 << ", "
-                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v3 << ", "
-                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": max transaction 1, prices=" << util::dump_array(prices)
+                  << ", max_profit_1_transaction=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << ", max_profit_k_transactions=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << ", max_profit_k_transactions_2=" << v3 << ", " << (exp_v == v3 ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 
     for (const auto& [prices, exp_v] : {
@@ -980,15 +1085,15 @@ void run_max_profit()
              use_case_t{{3, 2, 6, 5, 0, 3}, 7},          // k=1, max=4; k=2, max=7; k=3, max=7;
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << util::dump_array(prices) << std::endl;
 
         const auto v1 = max_profit_2_transactions(prices);
         const auto v2 = max_profit_k_transactions(2, prices);
         const auto v3 = max_profit_k_transactions_2(2, prices);
-        std::cout << "max transactions 2, prices=" << util::dump_array(prices) << ", max_profit_2_transactions=" << v1
-                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions=" << v2 << ", "
-                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v3 << ", "
-                  << (exp_v == v3 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": max transactions 2, prices=" << util::dump_array(prices)
+                  << ", max_profit_2_transactions=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << ", max_profit_k_transactions=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << ", max_profit_k_transactions_2=" << v3 << ", " << (exp_v == v3 ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 
     for (const auto& [prices, exp_v] : {
@@ -999,13 +1104,13 @@ void run_max_profit()
              use_case_t{{3, 2, 6, 5, 0, 3}, 7},          // k=1, max=4; k=2, max=7; k=3, max=7;
          }) {
         std::cout << "--------------------" << std::endl;
-        std::cout << util::dump_array(prices) << std::endl;
 
         const auto v1 = max_profit_k_transactions(3, prices);
         const auto v2 = max_profit_k_transactions_2(3, prices);
-        std::cout << "max transactions 3, prices=" << util::dump_array(prices) << ", max_profit_k_transactions=" << v1
-                  << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", max_profit_k_transactions_2=" << v2 << ", "
-                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": max transactions 3, prices=" << util::dump_array(prices)
+                  << ", max_profit_k_transactions=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED")
+                  << ", max_profit_k_transactions_2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -1018,18 +1123,18 @@ void run_max_profit()
 // besides of below solution, you may use dynamic programming as described here -
 // https://www.youtube.com/watch?v=gwZm6mIYDfk&list=RDCMUC5xDNEcvb1vgw3lE21Ack2Q&index=31&ab_channel=HuaHua
 //
-int array_max_product_subarray(int* arr, int len)
+int array_max_product_subarray(const std::vector<int>& arr)
 {
-    int max_product_incl = (*arr) * (*(arr + 1));
-    int min_product_incl = (*arr) * (*(arr + 1));
-    int max_product_excl = *arr;
-    int min_product_excl = *arr;
-    for (int i = 2; i < len; ++i) {
+    int max_product_incl = arr[0] * arr[1];
+    int min_product_incl = arr[0] * arr[1];
+    int max_product_excl = arr[0];
+    int min_product_excl = arr[0];
+    for (int i = 2; i < (int)arr.size(); ++i) {
         int prior_max_incl = max_product_incl;
         int prior_min_incl = min_product_incl;
 
-        int value        = *(arr + i);
-        int prior_value  = *(arr + i - 1);
+        int value        = arr[i];
+        int prior_value  = arr[i - 1];
         max_product_incl = std::max({max_product_incl * value, min_product_incl * value, prior_value * value, value});
         min_product_incl = std::min({max_product_incl * value, min_product_incl * value, prior_value * value, value});
         max_product_excl = std::max({max_product_excl, prior_max_incl});
@@ -1045,7 +1150,7 @@ void run_array_max_product_subarray()
              use_case_t({-2, 0, -1}, 0),
              use_case_t({-2, 3, -4}, 24),
          }) {
-        const auto v = array_max_product_subarray(arr.data(), arr.size());
+        const auto v = array_max_product_subarray(arr);
         std::cout << "array=" << util::dump_array(arr) << ", array_max_product_subarray=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
@@ -1071,529 +1176,4 @@ int array_max_circular_subarray([[maybe_unused]] int* arr, [[maybe_unused]] int 
 {
     return 0;
 }
-
-///////////////////////////////////////////////////////////////////////////////
-struct Bid {
-    ~Bid() { std::cout << "~Bid()" << std::endl; }
-    static inline Bid& self()
-    {
-        static Bid o;
-        return o;
-    }
-    static inline bool        isBuy() { return true; }
-    static inline const char* sideString() { return "Bid"; }
-
-private:
-    Bid() { std::cout << "Bid()" << std::endl; }
-};
-struct Ask {
-    ~Ask() { std::cout << "~Ask()" << std::endl; }
-    static inline Ask& self()
-    {
-        static Ask o;
-        return o;
-    }
-    static inline bool        isBuy() { return false; }
-    static inline const char* sideString() { return "Ask"; }
-
-private:
-    Ask() { std::cout << "Ask()" << std::endl; }
-};
-
-struct Pricing {
-    template <typename Side>
-    void getRaw(Side, int n)
-    {
-        std::cout << "Pricing::getRaw: " << Side::sideString() << ", n=" << n << std::endl;
-    }
-
-    template <typename Side>
-    void getTop(int n)
-    {
-        std::cout << "Pricing::getTop: " << Side::sideString() << ", n=" << n << std::endl;
-    }
-};
-struct Pricing2 {
-    template <typename Side>
-    void getRaw(Side, int n)
-    {
-        std::cout << "Pricing2::getRaw: " << Side::sideString() << ", n=" << n << std::endl;
-    }
-
-    template <typename Side>
-    void getTop(int n)
-    {
-        std::cout << "Pricing2::getTop: " << Side::sideString() << ", n=" << n << std::endl;
-    }
-};
-
-void run_lambda_template()
-{
-    {
-        auto lambda = []<typename Side>(Side, int n) {
-            std::cout << n << ": " << Side::sideString() << ", " << Side::isBuy() << std::endl;
-        };
-
-        lambda(Bid::self(), 5);
-        lambda(Ask::self(), 7);
-
-        // std::bind with template lambda works great!!!
-        auto func = std::bind(lambda, std::placeholders::_1, std::placeholders::_2);
-        func(Bid::self(), 10);
-        func(Ask::self(), 13);
-    }
-
-    {
-        Pricing p;
-        p.getRaw(Bid::self(), 2);
-
-        // std::bind with class member template function doesn't work well :(((
-        // auto ff = std::bind(&Pricing::getRaw, &p, std::placeholders::_1, std::placeholders::_2);
-        // auto ff = std::bind(&Pricing::getRaw, &p, Bid{}, std::placeholders::_1);
-        // ff(2);
-        // ff(3);
-
-        // ugly, has to explicitly tell the type
-        // TODO: why this bind doesn't work in macbook????
-        // auto gg = std::bind(&Pricing::template getRaw<Bid>, &p, Bid::self(), std::placeholders::_1);
-        // gg(2);
-        // gg(3);
-
-        //
-        // so what we can do is bind with lambda template, pass non-inherited object along with side type
-        auto lambda = []<typename P, typename Side>(Side&, P&& pricing, int n) {
-            // std::cout << n << ": " << Side::sideString() << ", " << Side::isBuy() << std::endl;
-            pricing.template getTop<Side>(n + 1);
-        };
-
-        // std::bind with template lambda works great!!!
-        auto func = std::bind(lambda, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-
-        func(Bid::self(), p, 10);
-        func(Ask::self(), p, 13);
-
-        Pricing2 p2;
-        func(Bid::self(), p2, 10);
-        func(Ask::self(), p2, 13);
-    }
-}
-
-namespace jump {
-
-void addToken(std::string token, std::vector<std::string>& tokens)
-{
-    // Trim leading whitespace
-    if (!token.empty()) {
-        size_t start = token.find_first_not_of(" ");
-        token        = start != std::string::npos ? token.substr(start) : "";
-    }
-
-    // Do not add empty tokens
-    if (token.empty()) {
-        return;
-    }
-    tokens.push_back(token);
-}
-
-void tokenize(const std::string& spec, const std::string& sep, std::vector<std::string>& tokens)
-{
-    // Split specification into tokens
-
-    // Loop over every char in specification.
-    size_t start = 0;
-    for (size_t end = 0; end < spec.size(); ++end) {
-        // If current char is a separator, then add the
-        // current token and separator to the tokens list
-        if (sep.find(spec[end]) != std::string::npos) {
-            addToken(spec.substr(start, end - start), tokens);
-            addToken(spec.substr(end, 1), tokens);
-            start = end + 1;
-        }
-    }
-    // Add the last token to tokens list
-    addToken(spec.substr(start), tokens);
-}
-
-struct FuncArgs {
-    std::string func;
-    std::string args;
-};
-typedef std::vector<FuncArgs> Frame;
-
-void parse(const std::vector<std::string>& tokens, std::vector<Frame>& stack)
-{
-    // Parse tokens into a useful stack structure.
-    // All parallel tasks should live in the same stack Frame
-
-    // TODO: I am not sure what the issue is, but I know
-    // that this stack is not being populated entirely as intended
-
-    // Initial stack frame
-    stack.push_back(Frame());
-
-    for (size_t i = 0; i < tokens.size(); ++i) {
-        const std::string& tok = tokens[i];
-        // New stack frame
-        // if (tok == "," || tok == ";") { // Jeffery: don't add new Frame for ";"
-        if (tok == ",") {
-            stack.push_back(Frame());
-        }
-        // Jeffery: case 2.b
-        else if (tok == "}") {
-            const auto& prevTok = tokens[i - 1];
-            if (prevTok == ";") {
-                // add empty function to the frame
-                Frame&   frame = stack.back();
-                FuncArgs fa;
-                frame.push_back(fa);
-            }
-        }
-        // Tokens within (...) are args that should be kept together
-        else if (tok == "(") {
-            std::string args;
-            while (tokens[++i] != ")") {
-                args += tokens[i];
-            }
-            Frame&    frame = stack.back();
-            FuncArgs& fa    = frame.back();
-            fa.args         = args;
-        }
-        // Every other non separator token is a func
-        // else if (tok != "{" && tok != "}" && tok != ")") {
-        else if (tok != "{" && tok != "}" && tok != ")" && tok != ";") {    // Jeffery: ignore ";"
-            Frame&   frame = stack.back();
-            FuncArgs fa;
-            fa.func = tok;
-            frame.push_back(fa);
-        }
-    }
-}
-
-void eval(const std::vector<Frame>& stack, const std::string& partial, size_t index, std::vector<std::string>& expanded)
-{
-    // Evaluate the stack to expand all function compositions
-
-    // Base case: done building expansion, save result and return
-    if (index == stack.size()) {
-        expanded.push_back(partial);
-        return;
-    }
-
-    // Recursive case: build each current FuncArgs around partial
-    // and recurse
-    const Frame& frame = stack[index];
-    for (const FuncArgs& fa : frame) {
-        // TODO: Hmmm, I am not sure how to handle args here
-        std::string newPartial = fa.func + "(" + partial + ")";
-
-        // Jeffery: case 2.b
-        if (fa.func.empty()) {
-            newPartial = partial;
-        } else {
-            // regular args case
-            newPartial = fa.func + "(" + partial;
-            if (!fa.args.empty()) {
-                newPartial += ",";
-                newPartial += fa.args;
-            }
-            newPartial += ")";
-        }
-
-        eval(stack, newPartial, index + 1, expanded);
-    }
-}
-
-std::string solution(std::string& spec)
-{
-    // Split specification into tokens
-    std::vector<std::string> tokens;
-    tokenize(spec, ",;(){}", tokens);
-
-    // Parse tokens into a useful stack structure.
-    std::vector<Frame> stack;
-    parse(tokens, stack);
-
-    // Evaluate the stack to expand all function compositions
-    std::vector<std::string> expanded;
-    eval(stack, "input", 0, expanded);
-
-    // Combine results into single new line delimited string
-    std::string result;
-    for (const auto& e : expanded)
-        result += "\n" + e;
-
-    return result;
-}
-
-void run_task_parser()
-{
-    for (std::string spec : {
-             "task1,task2,task3",                      // task3(task2(task1(input)))
-             "task1,{task2;task3}",                    // task2(task1(input)), task3(task1(input))
-             "task1,task2,{task3;}",                   // task3(task2(task1(input))), task2(task1(input))
-             "task1('b',kw=1),task2(1,2,var1='a')",    // task2(task1(input,'b',kw=1),1,2,var1='a')
-             "{func1;func2},{func3;func4}"             // func3(func1(input)), func4(func1(input)), func3(func2(input)),
-                                                       // func4(func2(input))
-         }) {
-        std::cout << "\n--------------------------" << std::endl;
-        std::cout << "Spec: " << spec;
-        std::cout << solution(spec) << std::endl;
-    }
-}
-
-struct repo_recovery_t {
-
-    using commit_id_t       = int;
-    using timestamp_t       = int;
-    using file_path_t       = std::string;
-    using opaque_id_t       = std::string;
-    using unique_file_key_t = std::string;    // globally unique, file path + " " + opaque id
-
-    struct repo_t {
-        std::map<timestamp_t, std::set<commit_id_t>> ts_to_commit_map;
-        std::unordered_map<file_path_t, opaque_id_t> file_to_opaque_map;
-        std::unordered_map<opaque_id_t, file_path_t> opaque_to_file_map;
-    };
-    std::unordered_map<unique_file_key_t, std::shared_ptr<repo_t>> global_file_to_repo_map_;
-
-    unique_file_key_t make_unique_file_key(const file_path_t& file_path, const opaque_id_t& opaque_id)
-    {
-        return file_path + " " + opaque_id;
-    }
-
-    bool push_commit(const std::vector<std::string>& commit_tokens)
-    {
-        const auto num_tokens = commit_tokens.size();
-        if (num_tokens < 5 || num_tokens % 2 != 0) {
-            return false;
-        }
-
-        commit_id_t commit_id = std::stoi(commit_tokens[1]);
-        timestamp_t timestamp = std::stoi(commit_tokens[3]);
-
-        std::shared_ptr<repo_t>                          repo;
-        std::vector<std::pair<file_path_t, opaque_id_t>> unknown_repo_files;
-
-        auto add_commit_to_repo = [](auto& repo, const auto& ts, const auto& id) {
-            repo->ts_to_commit_map[ts].emplace(id);
-        };
-
-        auto add_file_to_repo = [commit_id, timestamp](auto& repo, const auto& file_path, const auto& opaque_id) {
-            auto report_ambiguous = [&]() {
-                std::cout << "Ambiguous: commit=" << commit_id << ", timestamp=" << timestamp << ", file=" << file_path
-                          << ", opaque=" << opaque_id << std::endl;
-            };
-
-            if (auto [it_file, added] = repo->file_to_opaque_map.emplace(file_path, opaque_id);
-                !added && it_file->second != opaque_id) {
-                report_ambiguous();
-                return false;
-            }
-            if (auto [it_opaque, added] = repo->opaque_to_file_map.emplace(opaque_id, file_path);
-                !added && it_opaque->second != file_path) {
-                report_ambiguous();
-                return false;
-            }
-            return true;
-        };
-
-        auto add_file_to_global = [this, &add_commit_to_repo,
-                                   &add_file_to_repo](auto& repo, const auto& file_path, const auto& opaque_id) {
-            const auto file_key = make_unique_file_key(file_path, opaque_id);
-
-            // the file along with opaque_id must be unique globally, and we need this check to ensure this file belongs
-            // to 'repo' only
-            //
-            // it is possible when we are adding a file but the file has already been in some different repo, in this
-            // case, we should consolidate it into 'repo' - commit 1: f1.h ab12 f2.h cd12    -> repo1 is created after
-            // this step commit 2: f3.h xx12 f4.h yy12    -> repo2 is created after this step commit 3: f1.h ab12 f3.h
-            // xx12    -> with 'f1.h ab12', we find repo1; when handling 'f3.h xx12', we find repo2; obviously we should
-            // consolidate repo2 into repo1.
-
-            if (auto [it_global, added] = global_file_to_repo_map_.emplace(file_key, repo);
-                !added && repo != it_global->second) {
-                int  other_repo_commits = 0;
-                auto other_repo         = it_global->second;
-                for (auto& [ts, ids] : other_repo->ts_to_commit_map) {
-                    for (auto id : ids) {
-                        add_commit_to_repo(repo, ts, id);
-                        ++other_repo_commits;
-                    }
-                }
-
-                std::cout << "Trying to consolidate repos (#commits=" << other_repo_commits
-                          << ", #files=" << other_repo->file_to_opaque_map.size() << ") for file=" << file_key
-                          << ", other_repo=" << other_repo.get() << std::endl;
-
-                for (auto& [f_path, o_id] : other_repo->file_to_opaque_map) {
-                    add_file_to_repo(repo, f_path, o_id);
-
-                    const auto f_key = make_unique_file_key(f_path, o_id);
-                    if (auto it = global_file_to_repo_map_.find(f_key); it != global_file_to_repo_map_.end()) {
-                        if (it->second != other_repo) {
-                            std::cout << "Impossible, file belongs to different repo, file key=" << f_key << std::endl;
-                        }
-
-                        // switch to desired 'repo', 'other_repo' will destroy by itself since none reference after this
-                        // loop
-                        it->second = repo;
-                    } else {
-                        // this is impossible, this file must have existed in the map for a while
-                        std::cout << "Impossible, file must have existed in the global map for a while, file key="
-                                  << f_key << std::endl;
-                        return false;
-                    }
-
-                    // NOTICE: do we need to recursively check if 'f_key' is owned by another repo? i don't think so.
-                }
-            }
-            return true;
-        };
-
-        auto add_file = [&](auto& file_path, auto& opaque_id) {
-            if (!repo)
-                return false;
-            return add_file_to_repo(repo, file_path, opaque_id) && add_file_to_global(repo, file_path, opaque_id);
-        };
-
-        for (size_t i = 4; i < num_tokens; i += 2) {
-            const file_path_t file_path = commit_tokens[i];
-            const opaque_id_t opaque_id = commit_tokens[i + 1];
-
-            if (!repo) {
-                const auto file_key = make_unique_file_key(file_path, opaque_id);
-                auto       iter     = global_file_to_repo_map_.find(file_key);
-                if (iter == global_file_to_repo_map_.end()) {
-                    unknown_repo_files.emplace_back(file_path, opaque_id);
-                    continue;
-                }
-                repo = iter->second;
-
-                add_commit_to_repo(repo, timestamp, commit_id);
-            }
-
-            if (!add_file(file_path, opaque_id)) {
-                return false;
-            }
-        }
-
-        // two cases if unknown_repo_files is not empty:
-        // 1) the beginning file entries in the commit are new even though repo exists;
-        // 2) none of the entries in the commit match any existing repo, we shall create a repo and reconcile later:
-        //    a) this commit belongs to a new repo; or,
-        //    b) this commit belongs to one of existing repo but we are in lack of information to find it;
-        if (unknown_repo_files.empty())
-            return true;
-
-        if (!repo) {
-            repo = std::make_shared<repo_t>();
-
-            add_commit_to_repo(repo, timestamp, commit_id);
-        }
-
-        for (auto& [f_path, o_id] : unknown_repo_files) {
-            if (!add_file(f_path, o_id)) {
-                return false;
-            }
-        }
-        return true;
-    }
-
-    bool query(const std::vector<std::string>& query_tokens)
-    {
-        const auto num_tokens = query_tokens.size();
-        if (num_tokens != 4) {
-            return false;
-        }
-
-        const timestamp_t ts_start  = std::stoi(query_tokens[0]);
-        const timestamp_t ts_end    = std::stoi(query_tokens[1]);
-        const file_path_t file_path = query_tokens[2];
-        const opaque_id_t opaque_id = query_tokens[3];
-        const auto        file_key  = make_unique_file_key(file_path, opaque_id);
-
-        auto iter = global_file_to_repo_map_.find(file_key);
-        if (iter == global_file_to_repo_map_.end()) {
-            std::cout << std::endl;
-            return false;
-        }
-
-        auto repo           = iter->second;
-        auto it_commits     = repo->ts_to_commit_map.lower_bound(ts_start);
-        auto it_commits_end = repo->ts_to_commit_map.upper_bound(ts_end);
-        while (it_commits != it_commits_end) {
-            for (auto commit : it_commits->second) {
-                std::cout << commit << " ";
-            }
-            ++it_commits;
-        }
-        std::cout << std::endl;
-        return true;
-    }
-};
-void run_repo_recovery()
-{
-    {
-        repo_recovery_t recovery;
-        for (const auto& commit : {
-                 "id 8 timestamp 200 quicksort.cpp 839ad0 mergesort.cpp 0cdde1 bubblesort.cpp 248dd1",
-                 "id 0 timestamp 500 array.h 163111 sequence.h 294d3f",
-                 "id 6 timestamp 200 mergesort.cpp 0cdde1 bogosort.cpp 4213ff",
-                 "id 4 timestamp 1000 array.h 163111 vector.h fcc2af",
-                 "id 2 timestamp 300 bubblesort.cpp 248dd1 bogosort.cpp 4213ff",
-                 "id 3 timestamp 300 bubblesort.cpp eaf88a bogosort.cpp 4f11aa",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(commit, " ", tokens);
-
-            std::cout << commit << std::endl;
-            if (!recovery.push_commit(tokens)) {
-                std::cout << "Failed to push commit: " << commit << std::endl;
-            }
-        }
-
-        for (const auto& query : {
-                 "0 10000 quicksort.cpp 839ad0",
-                 "0 500 vector.h fcc2af",
-                 "0 100000 no_found.h empty_response",
-                 "100 200 bogosort.cpp 4213ff",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(query, " ", tokens);
-
-            recovery.query(tokens);
-        }
-    }
-
-    {
-        repo_recovery_t recovery;
-        for (const auto& commit : {
-                 "id 38024 timestamp 74820 foo.py ac819f bar.py 0d82b9",
-                 "id 49283 timestamp 19837 bar.py 0d82b9 baz.py f28dc2",
-                 "id 20391 timestamp 23488 baz.py f28dc2 foo.py f918ca",
-                 "id 2938 timestamp 101 qux.h d139af qux.cpp 718bc3",
-                 "id 2939 timestamp 102 qux.h d139af",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(commit, " ", tokens);
-
-            std::cout << commit << std::endl;
-            if (!recovery.push_commit(tokens)) {
-                std::cout << "Failed to push commit: " << commit << std::endl;
-            }
-        }
-
-        for (const auto& query : {
-                 "0 1000000 bar.py 0d82b9",
-                 "0 1000000 qux.h d139af",
-             }) {
-            std::vector<std::string> tokens;
-            tokenize(query, " ", tokens);
-
-            recovery.query(tokens);
-        }
-    }
-}
-
-}    // namespace jump
 

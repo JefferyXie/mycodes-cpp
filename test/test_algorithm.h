@@ -943,53 +943,17 @@ TEST(algorithm, substring_longest_palindrome)
 
 TEST(DISABLED_algorithm, find_median_two_sorted_arrays)
 {
-    ////////////////////////////////////////////////////////////////////////////
-    // Input:  A[] = [1, 3], B[] = [2]
-    // Output: 2
-    //
-    // Input:  A[] = [2, 4], B[] = [1, 3, 5]
-    // Output: 3
-    //
-    /// Input:  A[] = [1, 3, 6], B[] = [2, 8, 12]
-    // Output: 4.5
-    //
-    // Input:  A[] = [1, 3, 4, 6, 9], B[] = [2, 5, 7, 8, 10]
-    // Output: 5.5
-    {
-        int A[] = {1, 3};
-        int B[] = {2};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({1, 3}, {2}) << std::endl;    // 2
 
-    {
-        int A[] = {2, 4};
-        int B[] = {1, 3, 5};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({2, 4}, {1, 3, 5}) << std::endl;    // 3
 
-    {
-        int A[] = {2};
-        int B[] = {0};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({2}, {0}) << std::endl;    // 1
 
-    {
-        int A[] = {1, 3};
-        int B[] = {0};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({1, 3}, {0}) << std::endl;    // 1
 
-    {
-        int A[] = {1, 3, 6};
-        int B[] = {2, 8, 12};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({1, 3, 6}, {2, 8, 12}) << std::endl;    // 4.5
 
-    {
-        int A[] = {1, 3, 4, 6, 9};
-        int B[] = {2, 5, 7, 8, 10};
-        std::cout << find_median_two_sorted_arrays(A, ARRAY_SIZE(A), B, ARRAY_SIZE(B)) << std::endl;
-    }
+    std::cout << find_median_two_sorted_arrays({1, 3, 4, 6, 9}, {2, 5, 7, 8, 10}) << std::endl;    // 5.5
 }
 
 TEST(algorithm, bitwise_multiplication)

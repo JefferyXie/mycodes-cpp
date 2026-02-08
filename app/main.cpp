@@ -3,6 +3,9 @@
 #include "../algorithm/2025.h"
 #include "../algorithm/2026.h"
 
+#include "../interview/jump/repo.h"
+#include "../interview/jump/task_parser.h"
+
 #include "../language/c++11.h"
 #include "../language/meta.h"
 #include "../language/movement.h"
@@ -16,6 +19,9 @@
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
 
+#include "../thread/lock_rw.h"
+#include "../thread/lock_rw_priority.h"
+#include "../thread/mutex_spinlock.h"
 #include "../thread/producer_consumer.h"
 
 /*
@@ -70,7 +76,6 @@ for (auto _ : state)
 
 */
 
-
 int main(int argc, char** argv)
 {
     run_is_palindrome();
@@ -84,6 +89,15 @@ int main(int argc, char** argv)
 
     run_max_nodes_exclu_neighbors();
     return 0;
+
+    run_task_parser();
+    return 0;
+
+    run_mutex_spinlock();
+    return 0;
+
+    run_lock_reader_writer();
+    run_lock_reader_writer_priority();
 
     run_type_deduction();
 

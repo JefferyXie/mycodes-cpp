@@ -31,13 +31,19 @@
  * */
 
 #include <pthread.h>
-#include <linux/unistd.h>
+//#include <linux/unistd.h>
 #include <sys/syscall.h>
 
-#ifndef gettid
-// same as syscall(__NR_gettid))
-#define gettid() syscall(SYS_gettid)
+pid_t gettid()
+{
+#ifdef __APPLE__
+    uint64_t tid;
+    pthread_threadid_np(NULL, &tid);
+    return tid;
+#else
+    return ::syscall(SYS_gettid);
 #endif
+}
 
 /*
 output:
@@ -59,8 +65,8 @@ in the for loop..and the ID assigned by the kernel is unique one...
 */
 void* printid(void* ptr)
 {
-    printf("The id of %s is %lu\n", (char*)ptr, gettid());
-    printf("The id of %s is %u\n", (char*)ptr, (unsigned int)pthread_self());
+    printf("The TID of %s is %lu\n", (char*)ptr, (unsigned long)gettid());
+    printf("The PID of %s is %p\n", (char*)ptr, pthread_self());
     return 0;
 }
 

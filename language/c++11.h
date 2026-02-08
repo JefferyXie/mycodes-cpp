@@ -504,6 +504,99 @@ public:
         std::cin >> num_negative;
     }
 
+    ///////////////////////////////////////////////////////////////////////////////
+    struct Pricing {
+        template <typename Side>
+        void getRaw(Side, int n)
+        {
+            std::cout << "Pricing::getRaw: " << Side::sideString() << ", n=" << n << std::endl;
+        }
+
+        template <typename Side>
+        void getTop(int n)
+        {
+            std::cout << "Pricing::getTop: " << Side::sideString() << ", n=" << n << std::endl;
+        }
+    };
+
+    static void Run_lambda_template()
+    {
+        struct Bid {
+            ~Bid() { std::cout << "~Bid()" << std::endl; }
+            static inline Bid& self()
+            {
+                static Bid o;
+                return o;
+            }
+            static inline bool        isBuy() { return true; }
+            static inline const char* sideString() { return "Bid"; }
+
+        private:
+            Bid() { std::cout << "Bid()" << std::endl; }
+        };
+        struct Ask {
+            ~Ask() { std::cout << "~Ask()" << std::endl; }
+            static inline Ask& self()
+            {
+                static Ask o;
+                return o;
+            }
+            static inline bool        isBuy() { return false; }
+            static inline const char* sideString() { return "Ask"; }
+
+        private:
+            Ask() { std::cout << "Ask()" << std::endl; }
+        };
+
+        {
+            auto lambda = []<typename Side>(Side, int n) {
+                std::cout << n << ": " << Side::sideString() << ", " << Side::isBuy() << std::endl;
+            };
+
+            lambda(Bid::self(), 5);
+            lambda(Ask::self(), 7);
+
+            // std::bind with template lambda works great!!!
+            auto func = std::bind(lambda, std::placeholders::_1, std::placeholders::_2);
+            func(Bid::self(), 10);
+            func(Ask::self(), 13);
+        }
+
+        {
+            Pricing p;
+            p.getRaw(Bid::self(), 2);
+
+            // std::bind with class member template function doesn't work well :(((
+            // auto ff = std::bind(&Pricing::getRaw, &p, std::placeholders::_1, std::placeholders::_2);
+            // auto ff = std::bind(&Pricing::getRaw, &p, Bid{}, std::placeholders::_1);
+            // ff(2);
+            // ff(3);
+
+            // ugly, has to explicitly tell the type
+            // TODO: why this bind doesn't work in macbook????
+            // auto gg = std::bind(&Pricing::template getRaw<Bid>, &p, Bid::self(), std::placeholders::_1);
+            // gg(2);
+            // gg(3);
+
+            //
+            // so what we can do is bind with lambda template, pass non-inherited object along with side type
+            auto lambda = []<typename P, typename Side>(Side&, P&& pricing, int n) {
+                // std::cout << n << ": " << Side::sideString() << ", " << Side::isBuy() << std::endl;
+                pricing.template getTop<Side>(n + 1);
+            };
+
+            // std::bind with template lambda works great!!!
+            auto func = std::bind(lambda, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+
+            func(Bid::self(), p, 10);
+            func(Ask::self(), p, 13);
+
+            Pricing p2;
+            func(Bid::self(), p2, 10);
+            func(Ask::self(), p2, 13);
+        }
+    }
+
     // 008: non-member begin() and end()
     template <class T>
     static void bar(T begin, T end)
