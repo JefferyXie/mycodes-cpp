@@ -19,8 +19,8 @@
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
 
-#include "../thread/lock_rw.h"
-#include "../thread/lock_rw_priority.h"
+#include "../misc/__draft.h"
+
 #include "../thread/mutex_spinlock.h"
 #include "../thread/producer_consumer.h"
 
@@ -78,6 +78,12 @@ for (auto _ : state)
 
 int main(int argc, char** argv)
 {
+    run_triangle_min_sum_path();
+    return 0;
+
+    run_merge_arrays();
+    return 0;
+
     run_is_palindrome();
     return 0;
 
@@ -95,9 +101,6 @@ int main(int argc, char** argv)
 
     run_mutex_spinlock();
     return 0;
-
-    run_lock_reader_writer();
-    run_lock_reader_writer_priority();
 
     run_type_deduction();
 

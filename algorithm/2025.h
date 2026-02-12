@@ -524,7 +524,6 @@ void tree_to_list_3(tree_node_int_t* root)
         // after each cycle, the current 1) root node has its left & right nodes in the desired places
     }
 }
-
 void run_tree_to_list()
 {
     auto create_tree = []() {
@@ -1702,14 +1701,39 @@ std::vector<int> merge_arrays_k(const std::vector<std::vector<int>>& arrs)
 }
 void run_merge_arrays()
 {
-    auto arr1 = std::vector<int>{1, 2, 3, 3, 4};
-    auto arr2 = std::vector<int>{-1, 2, 3, 5};
-    auto arr3 = std::vector<int>{4, 5, 6, 7, 8, 9};
-    auto r1   = merge_arrays(arr1, arr2, arr3);
-    auto r2   = merge_arrays_k({std::vector<int>{arr1}, std::vector<int>{arr2}, std::vector<int>{arr3}});
-    std::cout << __FUNCTION__ << ": arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
-              << ", arr3=" << util::dump_array(arr3) << ", merge_arrays=" << util::dump_array(r1)
-              << ", merge_arrays_k=" << util::dump_array(r2) << std::endl;
+    {
+
+        const auto arr1  = std::vector<int>{1, 2, 3, 3, 4};
+        const auto arr2  = std::vector<int>{-1, 2, 3, 5};
+        const auto arr3  = std::vector<int>{4, 5, 6, 7, 8, 9};
+        const auto exp_v = std::vector<int>{-1, 1, 2, 3, 4, 5, 6, 7, 8, 9};
+        const auto r1    = merge_arrays(arr1, arr2, arr3);
+        const auto r2    = merge_arrays_k({arr1, arr2, arr3});
+        std::cout << __FUNCTION__ << ": k=3, arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
+                  << ", arr3=" << util::dump_array(arr3) << ", merge_arrays=" << util::dump_array(r1) << ", "
+                  << (exp_v == r1 ? "SUCCESS" : "FAILED") << ", merge_arrays_k=" << util::dump_array(r2) << ", "
+                  << (exp_v == r2 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+
+    {
+        const auto arr1  = std::vector<int>{1, 2, 3, 3, 4};
+        const auto arr2  = std::vector<int>{-1, 2, 3, 5};
+        const auto exp_v = std::vector<int>{-1, 1, 2, 3, 4, 5};
+        const auto v     = merge_arrays_k({arr1, arr2});
+        std::cout << __FUNCTION__ << ": k=2, arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
+                  << ", merge_arrays_k=" << util::dump_array(v) << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
+
+    {
+        const auto arr1  = std::vector<int>{1, 2, 3, 3, 4};
+        const auto arr2  = std::vector<int>{4, 5, 6, 7, 8, 9};
+        const auto exp_v = std::vector<int>{1, 2, 3, 4, 5, 6, 7, 8, 9};
+        const auto v     = merge_arrays_k({arr1, arr2});
+        std::cout << __FUNCTION__ << ": k=2, arr1=" << util::dump_array(arr1) << ", arr2=" << util::dump_array(arr2)
+                  << ", merge_arrays_k=" << util::dump_array(v) << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
+                  << std::endl;
+    }
 }
 
 // https://www.geeksforgeeks.org/dsa/check-if-a-given-graph-is-bipartite-using-dfs/

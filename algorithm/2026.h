@@ -1272,6 +1272,8 @@ void run_min_candy_distributed()
              use_case_t({9, 9, 9, 9}, 4),
              use_case_t({15, 40, 32, 12, 17, 23}, 12),
          }) {
+        std::cout << __FUNCTION__ << ": ratings=" << util::dump_array(ratings) << std::endl;
+
         const auto v1 = min_candy_distributed(ratings);
         const auto v2 = min_candy_distributed_2(ratings);
         std::cout << "min_candy_distributed=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
@@ -1337,8 +1339,9 @@ void run_max_profile_job_sequence()
              use_case_t({3, 1, 2, 2}, {50, 10, 20, 30}, {3, 100}),
          }) {
         const auto v = max_profile_job_sequence(deadlines, profits);
-        std::cout << "max_profile_job_sequence=[" << v.first << ", " << v.second << "], "
-                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": deadlines=" << util::dump_array(deadlines)
+                  << ", profits=" << util::dump_array(profits) << "; max_profile_job_sequence=[" << v.first << ", "
+                  << v.second << "], " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1373,8 +1376,8 @@ void run_largest_number_by_one_swap()
              use_case_t("333", "333"),
          }) {
         const auto v = largest_number_by_one_swap(s);
-        std::cout << "s=" << s << ", largest_number_by_one_swap=" << v << ", " << (v == exp_s ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": str=" << s << ", largest_number_by_one_swap=" << v << ", "
+                  << (v == exp_s ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1460,6 +1463,9 @@ void run_gas_station()
              use_case_t({1, 2, 3, 4, 5}, {3, 4, 5, 1, 2}, 3),
              use_case_t{{3, 9}, {7, 6}, -1},
          }) {
+        std::cout << __FUNCTION__ << ": refills=" << util::dump_array(refills) << ", costs=" << util::dump_array(costs)
+                  << std::endl;
+
         const auto v1 = gas_station(refills, costs);
         const auto v2 = gas_station_2(refills, costs);
         const auto v3 = gas_station_3(refills, costs);
@@ -1542,7 +1548,7 @@ void run_switch_neighbors_list()
              use_case_t(create_list(9), "[7->8->5->6->3->4->1->2->0]"),
              use_case_t(create_list(10), "[8->9->6->7->4->5->2->3->0->1]"),
          }) {
-        std::cout << "input=" << util::dump_list(head);
+        std::cout << __FUNCTION__ << ": input=" << util::dump_list(head);
 
         // auto new_head = switch_neighbors_list(head);
         auto new_head = switch_neighbors_list_2(head);
@@ -1627,7 +1633,7 @@ void run_reverse_every_k_list()
              use_case_t(create_list(9), 5, "[4->5->6->7->8->3->2->1->0]"),
              use_case_t(create_list(9), 10, "[8->7->6->5->4->3->2->1->0]"),
          }) {
-        std::cout << "input=" << util::dump_list(head) << ", k=" << k;
+        std::cout << __FUNCTION__ << ": input=" << util::dump_list(head) << ", k=" << k;
 
         auto new_head = reverse_every_k_list(head, k);
 
@@ -1639,15 +1645,15 @@ void run_reverse_every_k_list()
 // leetcode 32, the longest valid parentheses
 int longest_valid_parentheses(std::string str)
 {
-    int                             result = 0;
-    int                             start  = INT_MAX;
-    std::stack<std::pair<int, int>> st;
+    int             result = 0;
+    int             start  = INT_MAX;
+    std::stack<int> st;
     for (int i = 0; i < (int)str.size(); ++i) {
         if (str[i] == '(') {
-            st.push({str[i], i});
-        } else if (!st.empty() && st.top().first == '(') {
+            st.push(i);
+        } else if (!st.empty() && str[st.top()] == '(') {
             // start should be the leftmost index and won't change until mismatch happens
-            start  = std::min(start, st.top().second);
+            start  = std::min(start, st.top());
             result = std::max(result, i - start + 1);
             st.pop();
         } else {
@@ -1688,6 +1694,7 @@ int longest_valid_parentheses_2(std::string str)
     }
     return result_len;
 }
+
 void run_longest_valid_parentheses()
 {
     using use_case_t = std::pair<std::string, int>;
@@ -1700,12 +1707,13 @@ void run_longest_valid_parentheses()
              use_case_t("((()())))", 8),
              use_case_t("((((())()))))", 12),
          }) {
+        std::cout << __FUNCTION__ << ": input=\"" << str;
+
         const auto v1 = longest_valid_parentheses(str);
         const auto v2 = longest_valid_parentheses_2(str);
-        std::cout << "Input=\"" << str << "\", longest_valid_parentheses=" << v1 << ", "
-                  << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
-        std::cout << "Input=\"" << str << "\", longest_valid_parentheses_2=" << v2 << ", "
-                  << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << ", longest_valid_parentheses=" << v1 << ", " << (exp_v == v1 ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << ", longest_valid_parentheses_2=" << v2 << ", " << (exp_v == v2 ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -1751,7 +1759,8 @@ void run_count_and_say()
              use_case_t(10, "13211311123113112211"),
          }) {
         const auto v = count_and_say(n);
-        std::cout << "n=" << n << ", count_and_say=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": n=" << n << ", count_and_say=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1789,7 +1798,7 @@ void run_find_first_missing_integer()
              use_case_t({7, 8, 9, 11, 12}, 1),
          }) {
         const auto v = find_first_missing_integer(arr);
-        std::cout << "array=" << util::dump_array(arr) << ", find_first_missing_integer=" << v << ", "
+        std::cout << __FUNCTION__ << ": array=" << util::dump_array(arr) << ", find_first_missing_integer=" << v << ", "
                   << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1899,8 +1908,8 @@ void run_generate_spiral_matrix()
              use_case_t(4, "[[1,2,3,4],[12,13,14,5],[11,16,15,6],[10,9,8,7]]"),
          }) {
         const auto v = util::dump_matrix(generate_spiral_matrix(n));
-        std::cout << "n=" << n << ", generate_spiral_matrix=" << v << ", " << (exp_v == v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << ": n=" << n << ", generate_spiral_matrix=" << v << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -1930,7 +1939,7 @@ void run_remove_more_than_2_dup()
              use_case_t({0, 0, 1, 1, 1, 1, 2, 3, 3}, 7),       // [0,0,1,1,2,3,3]
          }) {
         const auto v = remove_more_than_2_dup(arr);
-        std::cout << "array=" << util::dump_array(arr) << ", remove_more_than_2_dup=" << v << ", "
+        std::cout << __FUNCTION__ << ": array=" << util::dump_array(arr) << ", remove_more_than_2_dup=" << v << ", "
                   << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -1995,8 +2004,8 @@ void run_largest_area_histogram()
              use_case_t({60, 20, 50, 40, 10, 50, 60}, 100),
          }) {
         const auto v = largest_area_histogram(heights);
-        std::cout << "heights=" << util::dump_array(heights) << ", largest_area_histogram=" << v << ", "
-                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": heights=" << util::dump_array(heights) << ", largest_area_histogram=" << v
+                  << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2061,7 +2070,7 @@ void run_find_all_possible_ips()
              use_case_t("25525511135", {"255.255.11.135", "255.255.111.35"}),
          }) {
         const auto ss = find_all_possible_ips(s);
-        std::cout << "s=" << s << ", find_all_possible_ips=" << util::dump_array(ss) << ", "
+        std::cout << __FUNCTION__ << ": s=\"" << s << "\", find_all_possible_ips=" << util::dump_array(ss) << ", "
                   << (util::equal_container_unordered(exp_v, ss) ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -2215,11 +2224,14 @@ void run_validate_binary_search_tree()
              use_case_t(gen_r6, true),
              use_case_t(gen_r7, false),
          }) {
+        std::cout << __FUNCTION__ << ": root=" << root->data << std::endl;
+
         const auto v1 = validate_binary_search_tree(root);
-        std::cout << std::boolalpha << "root=" << root->data << ", validate_binary_search_tree=" << v1 << ", "
+        std::cout << std::boolalpha << "validate_binary_search_tree=" << v1 << ", "
                   << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+
         const auto v2 = validate_binary_search_tree(root);
-        std::cout << std::boolalpha << "root=" << root->data << ", validate_binary_search_tree_2=" << v2 << ", "
+        std::cout << std::boolalpha << "validate_binary_search_tree_2=" << v2 << ", "
                   << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
@@ -2300,58 +2312,9 @@ void run_symmetric_tree()
              use_case_t(gen_r4, false),
          }) {
         const auto v = symmetric_tree(root);
-        std::cout << std::boolalpha << "symmetric_tree=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED")
-                  << std::endl;
+        std::cout << __FUNCTION__ << std::boolalpha << ": symmetric_tree=" << v << ", "
+                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
-}
-
-// leetcode 114
-tree_node_int_t* binary_tree_to_inorder_list(tree_node_int_t* root)
-{
-    // inorder: root-left-right
-    auto node = root;
-    while (node) {
-        if (node->left) {
-            auto cur = node->left;
-            // this is desired, make sure the right-most node of cur is connected to node->right
-            // the next round of outer loop will keep updating the list until all fit
-            while (cur->right) {
-                cur = cur->right;
-            }
-
-            cur->right  = node->right;
-            node->right = node->left;
-            node->left  = nullptr;
-        }
-        node = node->right;
-    }
-    return root;
-}
-// https://www.geeksforgeeks.org/dsa/flatten-a-binary-tree-into-linked-list/
-tree_node_int_t* binary_tree_to_inorder_list_2(tree_node_int_t* root)
-{
-    // do nothing if root is null or it is a leaf node
-    if (!root || (!root->left && !root->right)) {
-        return nullptr;
-    }
-
-    if (root->left) {
-        binary_tree_to_inorder_list_2(root->left);
-
-        // at this point root is a non-leaf node
-        auto tmpRight = root->right;
-        root->right   = root->left;
-        root->left    = nullptr;
-
-        // since we do recusively, bottom-up, this must hold: cur->left == nullptr
-        auto cur = root->right;
-        while (cur->right) {
-            cur = cur->right;
-        }
-        cur->right = tmpRight;
-    }
-
-    return binary_tree_to_inorder_list_2(root->right);
 }
 
 // leetcode 120
@@ -2372,35 +2335,65 @@ int triangle_min_sum_path(const std::vector<std::vector<int>>& triangle)
             } else if (col == row) {
                 cur_row_results[col] = v + pre_row_results[col - 1];
             } else {
-                cur_row_results[col] = std::min(v + pre_row_results[col], v + pre_row_results[col - 1]);
+                cur_row_results[col] = v + std::min(pre_row_results[col], pre_row_results[col - 1]);
             }
         }
         std::swap(pre_row_results, cur_row_results);
     }
-
     return *std::min_element(pre_row_results.begin(), pre_row_results.end());
 }
+int triangle_min_sum_path_2(const std::vector<std::vector<int>>& triangle)
+{
+    std::function<int(int, int)> impl = [&](int r, int c) {
+        auto v1 = triangle[r][c];
+        if (r + 1 < (int)triangle.size()) {
+            v1 += impl(r + 1, c);
+        }
+
+        auto v2 = triangle[r][c];
+        if (r + 1 < (int)triangle.size() && c + 1 < (int)triangle[r + 1].size()) {
+            v2 += impl(r + 1, c + 1);
+        }
+
+        return std::min(v1, v2);
+    };
+    return impl(0, 0);
+}
+
 void run_triangle_min_sum_path()
 {
-    using row_t      = std::vector<int>;
-    using use_case_t = std::pair<std::vector<row_t>, int>;
-    for (auto& [triangle, exp_v] :
-         {use_case_t(
-              {
-                  row_t{2},
-                  row_t{3, 4},
-                  row_t{6, 5, 7},
-                  row_t{4, 1, 8, 3},
-              },
-              11),
-          use_case_t(
-              {
-                  row_t{-10},
-              },
-              -10)}) {
-        const auto v = triangle_min_sum_path(triangle);
-        std::cout << "triangle=" << util::dump_matrix(triangle) << ", triangle_min_sum_path=" << v << ", "
-                  << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+    using use_case_t = std::pair<std::vector<std::vector<int>>, int>;
+    for (auto& [triangle, exp_v] : {
+             use_case_t{
+                 {
+                     {2},
+                     {3, 4},
+                     {6, 5, 7},
+                     {4, 1, 8, 3},
+                 },
+                 11},
+             use_case_t{
+                 {
+                     {1},
+                     {3, 2},
+                     {6, 5, 4},
+                     {10, 9, 8, 7},
+                     {14, 13, 12, 11},
+                 },
+                 25},
+             use_case_t(
+                 {
+                     {-10},
+                 },
+                 -10),
+         }) {
+        std::cout << __FUNCTION__ << ": triangle=" << util::dump_matrix(triangle) << std::endl;
+
+        const auto v1 = triangle_min_sum_path(triangle);
+        std::cout << "triangle_min_sum_path=" << v1 << ", " << (v1 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+
+        const auto v2 = triangle_min_sum_path_2(triangle);
+        std::cout << "triangle_min_sum_path_2=" << v2 << ", " << (v2 == exp_v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 
@@ -2414,7 +2407,7 @@ int binary_tree_max_path(tree_node_int_t* root)
         }
 
         // the returned max_left & max_right is the path that contains node->left & node->right respectively but also
-        // they can be used for formed another path
+        // they can be used to form another path
         const auto max_left  = std::max(0, impl(node->left));
         const auto max_right = std::max(0, impl(node->right));
 
@@ -2493,7 +2486,8 @@ void run_binary_tree_max_path()
              use_case_t(gen_r4, 42),
          }) {
         const auto v = binary_tree_max_path(root);
-        std::cout << "binary_tree_max_path=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": binary_tree_max_path=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -2561,7 +2555,8 @@ void run_binary_tree_sum_paths()
              use_case_t(gen_r3, 25),
          }) {
         const auto v = binary_tree_sum_paths(root);
-        std::cout << "binary_tree_sum_paths=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED") << std::endl;
+        std::cout << __FUNCTION__ << ": binary_tree_sum_paths=" << v << ", " << (v == exp_v ? "SUCCESS" : "FAILED")
+                  << std::endl;
     }
 }
 
@@ -2788,12 +2783,12 @@ void run_graph_undirected_clone()
     }();
 
     for (auto node : {gen_g1, gen_g2, gen_g3}) {
+        std::cout << __FUNCTION__ << ": graph=" << util::dump_graph(node) << std::endl;
+
         const auto clone_node   = graph_undirected_clone(node);
         const auto clone_node_2 = graph_undirected_clone_2(node);
-        std::cout << __FUNCTION__ << ": graph=" << util::dump_graph(node)
-                  << ", graph_undirected_clone=" << util::dump_graph(clone_node) << std::endl;
-        std::cout << __FUNCTION__ << ": graph=" << util::dump_graph(node)
-                  << ", graph_undirected_clone_2=" << util::dump_graph(clone_node_2) << std::endl;
+        std::cout << "graph_undirected_clone=" << util::dump_graph(clone_node) << std::endl;
+        std::cout << "graph_undirected_clone_2=" << util::dump_graph(clone_node_2) << std::endl;
     }
 }
 
@@ -3250,205 +3245,4 @@ void run_find_log_n()
     std::cout << "log(1024): " << find_log_n(1024) << std::endl;
     std::cout << "log(1024*1024): " << find_log_n(1024 * 1024) << std::endl;
 }
-
-namespace __event_queue {
-
-class EventQueue
-{
-private:
-    struct Event {
-        using TriggerTime = std::chrono::system_clock::time_point;
-        using Callback    = std::function<void()>;
-        TriggerTime triggerTime{};
-        Callback    callback;
-
-        bool operator>(const Event& other) { return triggerTime > other.triggerTime; }
-    };
-
-    bool                    stopped_{};
-    std::mutex              mu_;
-    std::condition_variable cv_;
-
-    // TODO:
-    // - real time high priority event
-    // - real time low priority event
-    // - delayed event
-
-    // - pre-allocated Event pool
-    // - lock free queue than mutex
-    std::priority_queue<Event, std::vector<Event>, std::greater<>> events_;
-
-public:
-    explicit EventQueue() = default;
-    ~EventQueue()
-    {
-        // ...
-    }
-
-    void Run()
-    {
-        while (true) {
-            std::unique_lock<std::mutex> lk{mu_};
-            if (events_.empty()) {
-                cv_.wait(lk, [&]() {
-                    return !events_.empty() || stopped_;
-                });
-            }
-            if (stopped_) {
-                break;
-            }
-
-            if (events_.top().triggerTime > std::chrono::system_clock::now()) {
-                continue;
-            }
-
-            // TODO: extract multiple or all events than one by one
-            auto ev = std::move(events_.top());
-            events_.pop();
-            lk.unlock();
-
-            ev.callback();
-        }
-    }
-    void Stop()
-    {
-        std::unique_lock<std::mutex> lk{mu_};
-        stopped_ = true;
-        cv_.notify_all();
-    }
-
-    void Add(Event::Callback callback)
-    {
-        static constexpr auto kEpochTimepoint = std::chrono::system_clock::time_point{};
-
-        Add(kEpochTimepoint, std::move(callback));
-    }
-
-    // TODO: in place creation of Event::Callback than created in client thread stack
-    void Add(Event::TriggerTime triggerTime, Event::Callback callback)
-    {
-        std::lock_guard<std::mutex> lk{mu_};
-        events_.push(Event{
-            .triggerTime = triggerTime,
-            .callback    = callback,
-        });
-        cv_.notify_all();
-    }
-};
-
-void run_event_queue()
-{
-    EventQueue evtQ;
-
-    // may have multiple workers
-    std::thread eventWorkerThread1{[&]() {
-        evtQ.Run();
-    }};
-
-    std::thread eventWorkerThread2{[&]() {
-        evtQ.Run();
-    }};
-
-    auto now = std::chrono::system_clock::now();
-    for (int i = 0; i < 10; ++i) {
-        evtQ.Add(now + std::chrono::seconds{2 + i}, [i /* capture any variable you want */]() {
-            // your code here, keep in mind this is running in EventQueue thread!
-            // ...
-            std::cout << std::this_thread::get_id() << ": client event handler, in " << 2 + i << " seconds..."
-                      << std::endl;
-        });
-
-        evtQ.Add([/* capture any variable you want */]() {
-            // your code here, keep in mind this is running in EventQueue thread!
-            // ...
-            std::cout << std::this_thread::get_id() << ": client event handler, run now..." << std::endl;
-        });
-    }
-
-    std::this_thread::sleep_for(std::chrono::seconds(6));
-
-    evtQ.Stop();
-
-    eventWorkerThread1.join();
-    eventWorkerThread2.join();
-}
-
-}    // namespace __event_queue
-
-namespace __bandwidth {
-
-/*
-            dist switch 1    <----------------->    dist switch 2
-          /               \                        /
-       switch1         switch2                 switch3     ...
-      /       \       /       \               /       \
-    host1   host2   host3   host4           host5   host6  ...
-*/
-
-struct Switch;
-struct DistSwitch;
-
-struct Host {
-    uint32_t    bandwidth{};
-    std::string name;    // unique
-    Switch*     localSwitch{};
-    DistSwitch* distSwitch{};
-};
-
-struct Switch {
-    uint32_t           bandwidth{};
-    std::string        name;    // unique
-    DistSwitch*        distSwitch{};
-    std::vector<Host*> hosts;
-};
-
-struct DistSwitch {
-    uint32_t                 bandwidth{};
-    std::string              name;    // unique
-    std::vector<Switch*>     localSwitches;
-    std::vector<DistSwitch*> neighbors;
-};
-
-uint32_t get_max_bandwidth(Host* host1, Host* host2)
-{
-    if (!host1 || !host2 || host1 == host2) {
-        return 0;
-    }
-
-    uint32_t result =
-        std::min({host1->bandwidth, host2->bandwidth, host1->localSwitch->bandwidth, host2->localSwitch->bandwidth});
-    if (host1->localSwitch == host2->localSwitch) {
-        return result;
-    }
-
-    if (host1->distSwitch == host2->distSwitch) {
-        result = std::min(result, host1->distSwitch->bandwidth);
-        return result;
-    }
-
-    const auto                           targetNode = host2->distSwitch;
-    std::unordered_set<DistSwitch*>      visited;
-    std::function<uint32_t(DistSwitch*)> impl = [&](DistSwitch* node) {
-        if (node == targetNode) {
-            return node->bandwidth;
-        }
-
-        visited.emplace(node);
-
-        uint32_t bandwidth = node->bandwidth;
-        for (auto neighbor : node->neighbors) {
-            if (visited.count(neighbor) == 0) {
-                bandwidth = std::min(bandwidth, impl(neighbor));
-            }
-        }
-
-        visited.erase(node);
-
-        return bandwidth;
-    };
-
-    return std::min(result, impl(host1->distSwitch));
-}
-
-}    // namespace __bandwidth
 
