@@ -2,6 +2,7 @@
 #include "../algorithm/2024.h"
 #include "../algorithm/2025.h"
 #include "../algorithm/2026.h"
+#include "../algorithm/find_min_packet_length.h"
 
 #include "../interview/jump/repo.h"
 #include "../interview/jump/task_parser.h"
@@ -14,7 +15,7 @@
 #include "../language/template_constraints.h"
 #include "../language/template_crtp_mixin.h"
 #include "../language/template_fold.h"
-#include "../language/template_generic_factory.h"
+// #include "../language/template_generic_factory.h"
 #include "../language/template_special.h"
 #include "../language/template_special2.h"
 #include "../language/type_deduction.h"
@@ -78,6 +79,9 @@ for (auto _ : state)
 
 int main(int argc, char** argv)
 {
+    run_find_min_packet_length();
+    return 0;
+
     run_triangle_min_sum_path();
     return 0;
 
@@ -110,7 +114,7 @@ int main(int argc, char** argv)
     run_template_constraints_1();
     run_template_constraints_2();
     run_template_fold();
-    run_template_generic_factory();
+    // run_template_generic_factory();
     run_template_SFINAE_1();
     run_template_SFINAE_2();
     run_template_SFINAE_3();

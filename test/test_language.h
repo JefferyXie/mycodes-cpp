@@ -1,27 +1,17 @@
+#pragma once
+
 #include <gtest/gtest.h>
+
+#include "../data_structure/matrix.h"
 #include "../language/auto.h"
 #include "../language/circular_buf.h"
 #include "../language/circular_buf_async.h"
 #include "../language/classtest.h"
 #include "../language/copy_elision.h"
-#include "../language/matrix.h"
 #include "../language/memory_leak_detector.h"
 #include "../language/new_delete.h"
 #include "../language/template_constraints.h"
 #include "../language/thread.h"
-
-TEST(DISABLED_language, constructorOrder)
-{
-    // always call base constructor no matter how the object is created
-    A* a = new A();
-    B* b = new B();
-    A* c = new B();
-    // since c is A* and destructor is not virtual, only base destructor is called!
-    // ~B() won't be called here!
-    delete c;
-    delete b;
-    delete a;
-}
 
 TEST(DISABLED_language, auto)
 {
@@ -29,10 +19,10 @@ TEST(DISABLED_language, auto)
     const int  ci  = 0;
     const int* pci = &i;
 
-    auto& b1 = i;       // b1 is of type int&
-    auto& b2 = ci;      // b2 is of type const int&
-    auto& b3 = *pci;    // b3 is also of type const int&
-    auto& b4 = pci;     // b4 is of type const int&, too
+    [[maybe_unused]] auto& b1 = i;       // b1 is of type int&
+    [[maybe_unused]] auto& b2 = ci;      // b2 is of type const int&
+    [[maybe_unused]] auto& b3 = *pci;    // b3 is also of type const int&
+    [[maybe_unused]] auto& b4 = pci;     // b4 is of type const int&, too
 
     int& r = i;
 
@@ -101,13 +91,46 @@ TEST(DISABLED_language, copy_elision)
     std::cout << "==============================" << std::endl;
 }
 
-TEST(DISABLED_language, matrix)
+TEST(language, matrix)
 {
-    Matrix<int> m(2, 3);
-    m(0, 0) = 1;
-    m(1, 1) = 3;
+    using use_case_t = std::tuple<matrix_t<int>, matrix_t<int>, matrix_t<int>>;
+    for (auto& [m1, m2, exp_v] : {
+             use_case_t{
+                 {
+                     {1, 2},
+                     {3, 4},
+                 },
+                 {
+                     {5, 6},
+                     {7, 8},
+                 },
+                 {
+                     {19, 22},
+                     {43, 50},
+                 }},
+             use_case_t{
+                 {
+                     {1, 1},
+                     {2, 2},
+                     {3, 3},
+                 },
+                 {
+                     {1, 1, 1},
+                     {2, 2, 2},
+                 },
+                 {
+                     {3, 3, 3},
+                     {6, 6, 6},
+                     {9, 9, 9},
+                 }},
 
-    std::cout << m[0][0] << "," << m[1][1] << std::endl;
+         }) {
+        const auto result1 = m1.multiply(m2);
+        const auto result2 = m1.multiply_2(m2);
+
+        EXPECT_EQ(result1, result2);
+        EXPECT_EQ(result1, exp_v);
+    }
 }
 
 TEST(DISABLED_language, lib)

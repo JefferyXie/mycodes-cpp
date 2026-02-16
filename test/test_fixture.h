@@ -1,4 +1,7 @@
+#pragma once
+
 #include <gtest/gtest.h>
+
 #include "../core/header.h"
 
 // It is typical to do some custom initialization work before executing a unit test.

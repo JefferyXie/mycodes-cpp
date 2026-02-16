@@ -1,6 +1,9 @@
+#pragma once
+
 #include <gtest/gtest.h>
 #include <utility>
 
+#include "../algorithm/2023.h"
 #include "../algorithm/array_bus_station.h"
 #include "../algorithm/array_kth_biggest.h"
 #include "../algorithm/array_largest_perm.h"
@@ -18,17 +21,15 @@
 #include "../algorithm/gridsearch.h"
 #include "../algorithm/interpolate.h"
 #include "../algorithm/matrix_rotation.h"
-#include "../algorithm/max_points_on_line.h"
 #include "../algorithm/max_increasing_subsequence.h"
+#include "../algorithm/max_points_on_line.h"
 #include "../algorithm/num_days_between.h"
+#include "../algorithm/remove_duplicates.h"
 #include "../algorithm/similarpair.h"
 #include "../algorithm/sort_k_diff_pairs.h"
-#include "../algorithm/subarray_max_mod.h"
-#include "../algorithm/remove_duplicates.h"
 #include "../algorithm/str_palindrome.h"
+#include "../algorithm/subarray_max_mod.h"
 #include "../algorithm/traversetree.h"
-
-#include "../algorithm/2023.h"
 
 #include "../interview/optiver/judgebitree.h"
 #include "../interview/worldquant/orderbook.h"

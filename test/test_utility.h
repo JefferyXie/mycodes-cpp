@@ -1,3 +1,5 @@
+#pragma once
+
 #include <gtest/gtest.h>
 
 #include "../core/util_math.h"
@@ -6,8 +8,8 @@
 #include "../data_structure/my_heap.h"
 #include "../data_structure/my_list.h"
 #include "../data_structure/my_queue.h"
-#include "../data_structure/my_sort.h"
 #include "../data_structure/my_smartpointer.h"
+#include "../data_structure/my_sort.h"
 #include "../data_structure/my_tuple.h"
 
 #include "../language/classtest.h"
