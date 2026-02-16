@@ -1,6 +1,8 @@
 #include <benchmark/benchmark.h>
 #include <gtest/gtest.h>
 
+#include "bm_matrix.h"
+
 #include "test_algorithm.h"
 #include "test_fixture.h"
 #include "test_language.h"
