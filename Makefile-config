@@ -32,8 +32,8 @@ C20 = -std=c++2a
 CFLAGS = $(C11) -v -w -I$(BOOST_ROOT) -L/usr/local/lib -lgtest -lgtest_main -lpthread -lssl -lcrypto -lcurl -pedantic # disable warning
 CFLAGS = $(C20) -w -L/usr/local/lib -lgtest -lgtest_main -lbenchmark -lpthread -lssl -lcrypto -lcurl -pedantic -ltinyxml # disable warning
 CFLAGS_DEBUG = -g $(CFLAGS)
-#CFLAGS_DEBUG = -g -O2 -pg $(CFLAGS) # optimized code with debug symbols, -pg for gprof profile (overhead, slow, user space only)
 #CFLAGS_DEBUG = $(CFLAGS) -O3
+#CFLAGS_DEBUG = -g -O2 -pg $(CFLAGS) # optimized code with debug symbols, -pg for gprof profile (overhead, slow, user space only)
 
 
 # To print variable - 

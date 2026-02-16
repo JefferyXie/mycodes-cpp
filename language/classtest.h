@@ -17,6 +17,7 @@ public:
         _n    = ref._n;
         _name = std::move(ref._name);
     }
+    virtual ~A()                           = default;
     A&                  operator=(A&& obj) = delete;
     virtual void        Fo() {}
     virtual std::string Process(const std::string&, const std::string&)
