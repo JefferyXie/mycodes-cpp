@@ -3233,6 +3233,12 @@ constexpr int find_log_n(uint64_t x)
 void run_find_log_n()
 {
     static_assert(find_log_n(1) == 0);
+    static_assert(find_log_n(2) == 1);
+    static_assert(find_log_n(3) == 1);
+    static_assert(find_log_n(4) == 2);
+    static_assert(find_log_n(5) == 2);
+    static_assert(find_log_n(6) == 2);
+    static_assert(find_log_n(7) == 2);
     static_assert(find_log_n(8) == 3);
     static_assert(find_log_n(32) == 5);
     static_assert(find_log_n(1024) == 10);
@@ -3245,4 +3251,31 @@ void run_find_log_n()
     std::cout << "log(1024): " << find_log_n(1024) << std::endl;
     std::cout << "log(1024*1024): " << find_log_n(1024 * 1024) << std::endl;
 }
+constexpr int find_lower_power_of_2(uint64_t x)
+{
+    if ((x & (x - 1)) == 0) {
+        return x;
+    }
 
+    int align = 1;
+    while (x) {
+        align *= 2;
+        x = x >> 1;
+    }
+    return align;
+}
+void run_find_lower_power_of_2()
+{
+    static_assert(find_lower_power_of_2(1) == 1);
+    static_assert(find_lower_power_of_2(2) == 2);
+    static_assert(find_lower_power_of_2(3) == 4);
+    static_assert(find_lower_power_of_2(4) == 4);
+    static_assert(find_lower_power_of_2(5) == 8);
+    static_assert(find_lower_power_of_2(6) == 8);
+    static_assert(find_lower_power_of_2(7) == 8);
+    static_assert(find_lower_power_of_2(8) == 8);
+    static_assert(find_lower_power_of_2(32) == 32);
+    static_assert(find_lower_power_of_2(1024 - 1) == 1024);
+    static_assert(find_lower_power_of_2(1024) == 1024);
+    static_assert(find_lower_power_of_2(1024 + 1) == 2048);
+}
