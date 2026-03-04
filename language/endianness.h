@@ -50,7 +50,7 @@ void checkEndianness()
     else
         printf("Big endian");
 }
-void Run_show_mem_rep()
+void run_show_mem_rep()
 {
     checkEndianness();
     int i = 0x01234567;
@@ -106,6 +106,7 @@ uint64_t swap_uint64(uint64_t val)
 // @param[in/out] *object : memory to swap in-place
 // @param[in]     _size   : length in bytes
 //
+// TODO: use template along with concept to constrain T
 void swap_bytes(void* _object, size_t _size)
 {
     unsigned char *start, *end;

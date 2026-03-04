@@ -4,6 +4,7 @@
 #include <iostream>
 #include <mutex>
 #include <queue>
+#include <thread>
 #include <unordered_set>
 
 namespace __event_queue {
@@ -83,10 +84,11 @@ public:
     void Add(Event::TriggerTime triggerTime, Event::Callback callback)
     {
         std::lock_guard<std::mutex> lk{mu_};
-        events_.push(Event{
-            .triggerTime = triggerTime,
-            .callback    = callback,
-        });
+        events_.push(
+            Event{
+                .triggerTime = triggerTime,
+                .callback    = callback,
+            });
         cv_.notify_all();
     }
 };
@@ -144,22 +146,21 @@ struct Switch;
 struct DistSwitch;
 
 struct Host {
-    uint32_t    bandwidth{};
     std::string name;    // unique
+    uint32_t    bandwidth{};
     Switch*     localSwitch{};
-    DistSwitch* distSwitch{};
 };
 
 struct Switch {
-    uint32_t           bandwidth{};
     std::string        name;    // unique
+    uint32_t           bandwidth{};
     DistSwitch*        distSwitch{};
     std::vector<Host*> hosts;
 };
 
 struct DistSwitch {
-    uint32_t                 bandwidth{};
     std::string              name;    // unique
+    uint32_t                 bandwidth{};
     std::vector<Switch*>     localSwitches;
     std::vector<DistSwitch*> neighbors;
 };
@@ -176,12 +177,12 @@ uint32_t get_max_bandwidth(Host* host1, Host* host2)
         return result;
     }
 
-    if (host1->distSwitch == host2->distSwitch) {
-        result = std::min(result, host1->distSwitch->bandwidth);
+    if (host1->localSwitch->distSwitch == host2->localSwitch->distSwitch) {
+        result = std::min(result, host1->localSwitch->distSwitch->bandwidth);
         return result;
     }
 
-    const auto                           targetNode = host2->distSwitch;
+    const auto                           targetNode = host2->localSwitch->distSwitch;
     std::unordered_set<DistSwitch*>      visited;
     std::function<uint32_t(DistSwitch*)> impl = [&](DistSwitch* node) {
         if (node == targetNode) {
@@ -202,7 +203,7 @@ uint32_t get_max_bandwidth(Host* host1, Host* host2)
         return bandwidth;
     };
 
-    return std::min(result, impl(host1->distSwitch));
+    return std::min(result, impl(host1->localSwitch->distSwitch));
 }
 
 }    // namespace __bandwidth

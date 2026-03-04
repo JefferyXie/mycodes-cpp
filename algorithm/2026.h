@@ -228,48 +228,51 @@ void run_validity_pyramid_dominoes()
     using dominoes_t = std::vector<std::array<int, 2>>;
     using use_case_t = std::tuple<dominoes_t, bool>;
     for (const auto& [arr, exp_v] : {
-             use_case_t{/*
-                                [1, 1]
-                             [1, 1][1, 1]
-                          [1, 1][1, 1][1, 1]
-                        */
-                        {
-                            {1, 1},
-                            {1, 1},
-                            {1, 1},
-                            {1, 1},
-                            {1, 1},
-                            {1, 1},
-                        },
-                        true},
-             use_case_t{/*
-                                [1, 1]
-                             [1, 1][1, 1]
-                          [5, 1][1, 1][1, 5]
-                        */
-                        {
-                            {1, 1},
-                            {1, 1},
-                            {1, 1},
-                            {1, 5},
-                            {1, 1},
-                            {1, 5},
-                        },
-                        true},
-             use_case_t{/*
-                                [3, 4]
-                             [2, 3][4, 5]
-                          [1, 2][3, 4][5, 6]
-                        */
-                        {
-                            {3, 4},
-                            {2, 3},
-                            {4, 5},
-                            {1, 2},
-                            {3, 4},
-                            {5, 6},
-                        },
-                        true},
+             use_case_t{
+                 /*
+                         [1, 1]
+                      [1, 1][1, 1]
+                   [1, 1][1, 1][1, 1]
+                 */
+                 {
+                     {1, 1},
+                     {1, 1},
+                     {1, 1},
+                     {1, 1},
+                     {1, 1},
+                     {1, 1},
+                 },
+                 true},
+             use_case_t{
+                 /*
+                         [1, 1]
+                      [1, 1][1, 1]
+                   [5, 1][1, 1][1, 5]
+                 */
+                 {
+                     {1, 1},
+                     {1, 1},
+                     {1, 1},
+                     {1, 5},
+                     {1, 1},
+                     {1, 5},
+                 },
+                 true},
+             use_case_t{
+                 /*
+                         [3, 4]
+                      [2, 3][4, 5]
+                   [1, 2][3, 4][5, 6]
+                 */
+                 {
+                     {3, 4},
+                     {2, 3},
+                     {4, 5},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                 },
+                 true},
              use_case_t{
                  {
                      {2, 3},
@@ -300,20 +303,21 @@ void run_validity_pyramid_dominoes()
                      {4, 5},
                  },
                  true},
-             use_case_t{/*
-                                [3, 4]
-                             [5, 3][4, 2]
-                          [6, 5][3, 4][2, 1]
-                        */
-                        {
-                            {3, 4},
-                            {2, 4},
-                            {3, 5},
-                            {1, 2},
-                            {3, 4},
-                            {5, 6},
-                        },
-                        true},
+             use_case_t{
+                 /*
+                         [3, 4]
+                      [5, 3][4, 2]
+                   [6, 5][3, 4][2, 1]
+                 */
+                 {
+                     {3, 4},
+                     {2, 4},
+                     {3, 5},
+                     {1, 2},
+                     {3, 4},
+                     {5, 6},
+                 },
+                 true},
              use_case_t{
                  {
                      {3, 5},
@@ -529,19 +533,21 @@ void run_transform_str_zigzag()
 {
     using use_case_t = std::tuple<std::string, int, std::string>;
     for (auto& [str, rows, exp_v] : {
-             use_case_t{/*
-                        P   A   H   N
-                        A P L S I I G
-                        Y   I   R
-                        */
-                        "PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"},
-             use_case_t{/*
-                        P     I    N
-                        A   L S  I G
-                        Y A   H R
-                        P     I
-                        */
-                        "PAYPALISHIRING", 4, "PINALSIGYAHRPI"},
+             use_case_t{
+                 /*
+                 P   A   H   N
+                 A P L S I I G
+                 Y   I   R
+                 */
+                 "PAYPALISHIRING", 3, "PAHNAPLSIIGYIR"},
+             use_case_t{
+                 /*
+                 P     I    N
+                 A   L S  I G
+                 Y A   H R
+                 P     I
+                 */
+                 "PAYPALISHIRING", 4, "PINALSIGYAHRPI"},
              use_case_t{"A", 1, "A"},
          }) {
         const auto v1 = transform_str_zigzag(str, rows);
@@ -3141,6 +3147,99 @@ void run_is_palindrome()
         std::cout << __FUNCTION__ << ": s=" << s << ", is_palindrome=" << v1 << ", "
                   << (exp_v == v1 ? "SUCCESS" : "FAILED") << ", is_palindrome_v2=" << v2 << ", "
                   << (exp_v == v2 ? "SUCCESS" : "FAILED") << std::endl;
+    }
+}
+
+std::vector<std::vector<std::string>> string_group_by_anagram_freq(const std::vector<std::string>& arr)
+{
+    auto get_anagram_key = [](const auto& s) -> std::string {
+        std::array<int, 26> m{0};
+        for (auto c : s) {
+            const auto offset = c - 'a';
+            if (offset < 0 || offset >= m.size()) {
+                throw std::invalid_argument("input string must be all lower case letters");
+            }
+            ++m[offset];
+        }
+        std::string key;
+        for (size_t i = 0; i < m.size(); ++i) {
+            key.append(m[i], i + 'a').append(1, '#');
+        }
+        return key;
+    };
+
+    std::unordered_map<std::string, std::vector<std::string>> str_by_anagram_key_map;
+    for (const auto& str : arr) {
+        const auto key = get_anagram_key(str);
+        str_by_anagram_key_map[key].push_back(str);
+    }
+
+    std::vector<std::vector<std::string>> result;
+    result.reserve(str_by_anagram_key_map.size());
+    std::transform(
+        str_by_anagram_key_map.begin(), str_by_anagram_key_map.end(), std::back_inserter(result), [](auto& kv) {
+            return kv.second;
+        });
+
+    std::sort(result.begin(), result.end(), [](auto& v1, auto& v2) {
+        return v1.size() > v2.size();
+    });
+    return result;
+}
+
+void run_string_group_by_anagram_freq()
+{
+    using use_case_t = std::tuple<std::vector<std::string>, std::vector<std::vector<std::string>>>;
+    for (auto& [arr, exp_v] : {
+             use_case_t{
+                 {
+                     "act",
+                     "god",
+                     "cat",
+                     "dog",
+                     "tac",
+                 },
+                 {
+                     {"act", "cat", "tac"},
+                     {"god", "dog"},
+                 },
+             },
+             use_case_t{
+                 {
+                     "listen",
+                     "silent",
+                     "enlist",
+                     "cab",
+                     "rat",
+                     "art",
+                 },
+                 {
+                     {"listen", "silent", "enlist"},
+                     {"rat", "art"},
+                     {"cab"},
+                 },
+             },
+             use_case_t{
+                 {
+                     "eat",
+                     "tea",
+                     "tan",
+                     "ate",
+                     "nat",
+                     "bat",
+                 },
+                 {
+                     {"eat", "tea", "ate"},
+                     {"tan", "nat"},
+                     {"bat"},
+                 },
+             },
+
+         }) {
+        const auto v = string_group_by_anagram_freq(arr);
+        std::cout << __FUNCTION__ << ": arr=" << util::dump_array(arr)
+                  << ", string_group_by_anagram_freq=" << util::dump_matrix(v, true) << ", "
+                  << (exp_v == v ? "SUCCESS" : "FAILED") << std::endl;
     }
 }
 

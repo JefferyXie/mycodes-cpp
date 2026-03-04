@@ -2,7 +2,6 @@
 
 #include <benchmark/benchmark.h>
 
-#include "../core/header.h"
 #include "../data_structure/matrix.h"
 
 static void BM_matrix_multiply(benchmark::State& state)

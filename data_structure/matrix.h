@@ -1,6 +1,7 @@
 #pragma once
 
 #include "../core/header.h"
+#include <new>
 
 template <typename T>
 class matrix_t final
@@ -23,7 +24,16 @@ public:
             return align;
         }();
 
+#ifdef __APPLE__
+        data_ = static_cast<T*>(::operator new(sizeof(T) * rows_ * cols_, std::align_val_t(alignment)));
+#else
         data_ = static_cast<T*>(std::aligned_alloc(alignment, sizeof(T) * rows_ * cols_));
+#endif
+        if (!data_) {
+            std::cout << __FUNCTION__ << ": Failed to allocate, alignment=" << alignment
+                      << ", size=" << (sizeof(T) * rows_ * cols_) << std::endl;
+            throw std::bad_alloc();
+        }
         std::fill_n(data_, rows_ * cols_, 0);
     }
 
@@ -55,7 +65,14 @@ public:
         }
     }
 
-    ~matrix_t() { std::free(data_); }
+    ~matrix_t()
+    {
+#ifdef __APPLE__
+        ::operator delete(data_);
+#else
+        std::free(data_);
+#endif
+    }
     matrix_t(const matrix_t& other)
     {
         // ...

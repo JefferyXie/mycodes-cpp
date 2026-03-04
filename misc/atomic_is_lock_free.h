@@ -21,8 +21,9 @@ void run_atomic_is_lock_free()
     // using ATOM = std::atomic<M>;
     //
     // 1) by default, i.e. without explicit 'alignas(N)', std::alignment_of<M>() == biggest alignment of individual
-    // member; 2) sizeof(M) must be times of alignas(N) which is same as std::alignment_of<M>(); 3) if sizeof(M) <= 16,
-    // the sizeof(ATOM) == the least exponential of 2 that is >= sizeof(M); and,
+    //    member;
+    // 2) sizeof(M) must be times of alignas(N) which is same as std::alignment_of<M>();
+    // 3) if sizeof(M) <= 16, the sizeof(ATOM) == the least exponential of 2 that is >= sizeof(M); and,
     //    std::alignment_of<ATOM>() == sizeof(ATOM);
     //    ATOM::is_always_lock_free == true.
     // 4) if sizeof(M) > 16, the sizeof(ATOM) == sizeof(M); and,

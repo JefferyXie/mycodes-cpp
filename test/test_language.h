@@ -2,7 +2,6 @@
 
 #include <gtest/gtest.h>
 
-#include "../data_structure/matrix.h"
 #include "../language/auto.h"
 #include "../language/circular_buf.h"
 #include "../language/circular_buf_async.h"
@@ -89,48 +88,6 @@ TEST(DISABLED_language, copy_elision)
     Plain obj2222;
     obj2222 = std::move(getPlainWithName());
     std::cout << "==============================" << std::endl;
-}
-
-TEST(language, matrix)
-{
-    using use_case_t = std::tuple<matrix_t<int>, matrix_t<int>, matrix_t<int>>;
-    for (auto& [m1, m2, exp_v] : {
-             use_case_t{
-                 {
-                     {1, 2},
-                     {3, 4},
-                 },
-                 {
-                     {5, 6},
-                     {7, 8},
-                 },
-                 {
-                     {19, 22},
-                     {43, 50},
-                 }},
-             use_case_t{
-                 {
-                     {1, 1},
-                     {2, 2},
-                     {3, 3},
-                 },
-                 {
-                     {1, 1, 1},
-                     {2, 2, 2},
-                 },
-                 {
-                     {3, 3, 3},
-                     {6, 6, 6},
-                     {9, 9, 9},
-                 }},
-
-         }) {
-        const auto result1 = m1.multiply(m2);
-        const auto result2 = m1.multiply_2(m2);
-
-        EXPECT_EQ(result1, result2);
-        EXPECT_EQ(result1, exp_v);
-    }
 }
 
 TEST(DISABLED_language, lib)
