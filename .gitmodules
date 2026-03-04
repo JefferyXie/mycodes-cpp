@@ -16,3 +16,12 @@
 [submodule "__learn/allocator"]
 	path = __learn/allocator
 	url = https://github.com/moya-lang/Allocator.git
+[submodule "__learn/concurrentqueue"]
+	path = __learn/concurrentqueue
+	url = https://github.com/cameron314/concurrentqueue.git
+[submodule "__learn/SPSCQueue"]
+	path = __learn/SPSCQueue
+	url = https://github.com/rigtorp/SPSCQueue.git
+[submodule "__learn/MPMCQueue"]
+	path = __learn/MPMCQueue
+	url = https://github.com/rigtorp/MPMCQueue.git
