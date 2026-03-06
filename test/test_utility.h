@@ -89,11 +89,15 @@ TEST(utility, matrix)
                  }},
 
          }) {
-        const auto result1 = m1.multiply(m2);
-        const auto result2 = m1.multiply_2(m2);
+        const auto result1 = m1.multiply_basic(m2);
+        const auto result2 = m1.multiply_order(m2);
+        const auto result3 = m1.multiply_tiling(m2);
+        const auto result4 = m1.multiply_cache(m2);
 
-        EXPECT_EQ(result1, result2);
         EXPECT_EQ(result1, exp_v);
+        EXPECT_EQ(result2, exp_v);
+        EXPECT_EQ(result3, exp_v);
+        EXPECT_EQ(result4, exp_v);
     }
 }
 

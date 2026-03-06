@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../core/header.h"
-#include <new>
 
 template <typename T>
 class matrix_t final
@@ -114,33 +113,9 @@ public:
     matrix_t<T> operator*(const matrix_t<T>& other) const { return multiply(other); }
     matrix_t<T> operator+(const matrix_t<T>& other) const { return add(other); }
     matrix_t<T> operator-(const matrix_t<T>& other) const { return minus(other); }
-    matrix_t<T> multiply(const matrix_t<T>& other) const
-    {
-        matrix_t<T> result(rows(), other.cols());
 
-        // 1) this matrix_t's row is fixed
-        for (size_t r = 0; r < rows_; ++r) {
-            // 2) loop this matrix_t's col
-            for (size_t c = 0; c < cols_; ++c) {
-
-                // this_cell is fixed at this point
-                const auto this_cell = data_[r * cols_ + c];
-
-                // 3) loop other matrix_t's col
-                for (size_t other_c = 0; other_c < other.cols_; ++other_c) {
-                    // other_cell keeps changing, but memory is continuous
-                    const auto other_cell = other.data_[c * other.cols_ + other_c];
-
-                    // result_cell keeps changing, but memory is continuous
-                    auto& result_cell = result.data_[r * other.cols_ + other_c];
-
-                    result_cell += this_cell * other_cell;
-                }
-            }
-        }
-        return result;
-    }
-    matrix_t<T> multiply_2(const matrix_t<T>& other) const
+    // NOTICE: check below video for 10+ optimizations: https://www.youtube.com/watch?v=GHctcSBd6Z4&t=3363s
+    matrix_t<T> multiply_basic(const matrix_t<T>& other) const
     {
         matrix_t<T> result(rows(), other.cols());
 
@@ -167,6 +142,138 @@ public:
                 }
             }
         }
+        return result;
+    }
+
+    matrix_t<T> multiply_order(const matrix_t<T>& other) const
+    {
+        matrix_t<T> result(rows(), other.cols());
+
+        // 1) this matrix_t's row is fixed
+        for (size_t r = 0; r < rows_; ++r) {
+            // 2) loop this matrix_t's col
+            for (size_t c = 0; c < cols_; ++c) {
+
+                // this_cell is fixed at this point
+                const auto this_cell = data_[r * cols_ + c];
+
+                // 3) loop other matrix_t's col
+                for (size_t other_c = 0; other_c < other.cols_; ++other_c) {
+                    // other_cell keeps changing, but memory is continuous
+                    const auto other_cell = other.data_[c * other.cols_ + other_c];
+
+                    // result_cell keeps changing, but memory is continuous
+                    auto& result_cell = result.data_[r * other.cols_ + other_c];
+
+                    result_cell += this_cell * other_cell;
+                }
+            }
+        }
+        return result;
+    }
+
+    // https://alvinwan.com/how-to-tile-matrix-multiplication/
+    // Tiling enhances matrix multiplication performance by partitioning large matrices into smaller blocks that fit
+    // into the CPU cache, thereby maximizing data reuse and reducing memory bandwidth bottlenecks.
+    matrix_t<T> multiply_tiling(const matrix_t<T>& other) const
+    {
+        matrix_t<T> result(rows(), other.cols());
+
+        const auto cols_this  = (int)cols_;
+        const auto cols_other = (int)other.cols();
+
+        auto impl = [cols_this, cols_other](auto rows, auto cols, auto* p_this, auto* p_other, auto* p_result) {
+            for (size_t r = 0; r < rows; ++r, p_this += cols_this, p_result += cols_other) {    // Mr
+                const auto* p_other_cur = p_other;
+                for (size_t c = 0; c < cols; ++c, p_other_cur += cols_other) {    // Kc
+                    for (size_t other_c = 0; other_c < cols; ++other_c) {         // Nr
+                        p_result[other_c] += p_this[c] * p_other_cur[other_c];
+                    }
+                }
+            }
+        };
+
+        // TODO: rough estimation, may not be acurate, sqrt(L1 cache / sizeof(T)) / total 3 arrays
+        // constexpr size_t BLOCK = std::sqrt(1024 * 256 / sizeof(T)) / 3;
+        constexpr size_t BLOCK = 32;
+
+        for (size_t r = 0; r < rows_; r += BLOCK) {
+            for (size_t c = 0; c < cols_; c += BLOCK) {
+                for (size_t other_c = 0; other_c < other.cols_; other_c += BLOCK) {
+                    auto* p_this   = &data_[r * cols_ + c];
+                    auto* p_other  = &other.data_[c * other.cols_ + other_c];
+                    auto* p_result = &result.data_[r * other.cols_ + other_c];
+
+                    const auto impl_rows = std::min(BLOCK, rows_ - r);
+                    const auto impl_cols = std::min(BLOCK, cols_ - c);
+
+                    impl(impl_rows, impl_cols, p_this, p_other, p_result);
+                }
+            }
+        }
+
+        return result;
+    }
+
+    // cache aware implementation: consider both L1 cache and registers
+    matrix_t<T> multiply_cache(const matrix_t<T>& other) const
+    {
+        matrix_t<T> result(rows(), other.cols());
+
+        const size_t cols_this  = cols_;
+        const size_t cols_other = other.cols();
+
+        // size of L1 cache blocks
+        constexpr size_t CACHE_rows       = 32;    // 180;
+        constexpr size_t CACHE_cols       = 32;    // 240;
+        constexpr size_t CACHE_cols_other = 16;    // 96;
+
+        // size of register blocks
+        constexpr size_t REG_cols_other = 4;    // 12;
+        constexpr size_t REG_rows       = 2;    // 4
+
+        auto impl = [cols_this, cols_other](
+                        auto impl_rows, auto impl_cols, auto impl_cols_other, auto* p_this, auto* p_other,
+                        auto* p_result) {
+            for (size_t r = 0; r < impl_rows; ++r, p_this += cols_this, p_result += cols_other) {    // REG_rows
+                const auto* p_other_cur = p_other;
+                for (size_t c = 0; c < impl_cols; ++c, p_other_cur += cols_other) {     // CACHE_cols
+                    for (size_t other_c = 0; other_c < impl_cols_other; ++other_c) {    // REG_cols_other
+                        p_result[other_c] += p_this[c] * p_other_cur[other_c];
+                    }
+                }
+            }
+        };
+
+        for (size_t r = 0; r < rows_; r += CACHE_rows) {                                          // CACHE_rows
+            for (size_t c = 0; c < cols_; c += CACHE_cols) {                                      // CACHE_cols
+                for (size_t other_c = 0; other_c < other.cols_; other_c += CACHE_cols_other) {    // CACHE_cols_other
+                    auto* p_this   = &data_[r * cols_ + c];
+                    auto* p_other  = &other.data_[c * other.cols_ + other_c];
+                    auto* p_result = &result.data_[r * other.cols_ + other_c];
+
+                    const auto rows2       = std::min(CACHE_rows, rows_ - r);
+                    const auto cols2       = std::min(CACHE_cols, cols_ - c);
+                    const auto cols_other2 = std::min(CACHE_cols_other, cols_other - other_c);
+
+                    // extra layer that consider registers
+                    for (size_t r2 = 0; r2 < rows2; r2 += REG_rows) {
+                        for (size_t other_c2 = 0; other_c2 < cols_other2; other_c2 += REG_cols_other) {
+                            auto* p_this2   = &p_this[r2 * cols_];
+                            auto* p_other2  = &p_other[other_c2];
+                            auto* p_result2 = &p_result[r2 * cols_other + other_c2];
+
+                            const auto impl_rows       = std::min(REG_rows, rows2 - r2);
+                            const auto impl_cols       = cols2;
+                            const auto impl_cols_other = std::min(REG_cols_other, cols_other2 - other_c2);
+
+                            impl(impl_rows, impl_cols, impl_cols_other, p_this, p_other, p_result);
+                        }
+                    }
+                }
+            }
+        }
+
         return result;
     }
 

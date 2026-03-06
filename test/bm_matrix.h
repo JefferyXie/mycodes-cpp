@@ -4,7 +4,31 @@
 
 #include "../data_structure/matrix.h"
 
-static void BM_matrix_multiply(benchmark::State& state)
+/*
+
+A FLOP (Floating-point OPeration) is a single, fundamental calculation—such as addition, subtraction, multiplication, or
+division—involving numbers with decimal points, crucial for scientific computing and AI. FLOPS (Floating-point
+Operations Per Second) measures the rate at which hardware can perform these calculations, indicating computational
+speed.
+
+- Usage: They define the speed of CPUs and GPUs. For example, modern AI training relies on high Teraflop capacities to
+  process large language models (LLMs).
+
+- Definition Variation: While one operation typically equals one FLOP, some definitions (like Fused Multiply-Add) count
+  multiplication followed by addition as a single, more efficient operation.
+
+- Significance: Higher FLOPS generally mean faster, more capable hardware, though they do not solely determine
+  efficiency (memory bandwidth also matters)
+
+
+Peak performance Definition
+- FLOPS = cores * (cycles / seconds) * (FLOPs / cycles)
+- FLOPS = 4 * 2.8GHz * (8 * 2) = 179.2G FLOPS
+  where 8 stands for vectorization, 2 stands for instruction throughput
+
+*/
+
+static void impl_matrix_multiply(benchmark::State& state, auto&& callback)
 {
     auto gen_matrix = [](size_t R, size_t C) {
         matrix_t<int>                      m{R, C};
@@ -26,7 +50,7 @@ static void BM_matrix_multiply(benchmark::State& state)
     for (auto _ : state) {
         auto start = std::chrono::high_resolution_clock::now();
 
-        [[maybe_unused]] auto v = m1.multiply(m2);
+        [[maybe_unused]] auto v = callback(m1, m2);    // m1.multiply_order(m2);
         // benchmark::DoNotOptimize(v);
 
         auto stop = std::chrono::high_resolution_clock::now();
@@ -39,42 +63,73 @@ static void BM_matrix_multiply(benchmark::State& state)
     state.SetItemsProcessed(state.iterations());
 }
 
-static void BM_matrix_multiply_2(benchmark::State& state)
+static void BM_matrix_multiply_basic(benchmark::State& state)
 {
-    auto gen_matrix = [](size_t R, size_t C) {
-        matrix_t<int>                      m{R, C};
-        std::mt19937                       gen(42);
-        std::uniform_int_distribution<int> dist{-100, 100};
-        for (size_t r = 0; r < R; ++r) {
-            for (size_t c = 0; c < C; ++c) {
-                m(r, c) = dist(gen);
-            }
-        }
-        return m;
-    };
-
-    const auto R = state.range(0);
-    const auto C = state.range(1);
-
-    auto m1 = gen_matrix(R, C);
-    auto m2 = gen_matrix(C, R);
-    for (auto _ : state) {
-        auto start = std::chrono::high_resolution_clock::now();
-
-        [[maybe_unused]] auto v = m1.multiply_2(m2);
-        // benchmark::DoNotOptimize(v);
-
-        auto stop = std::chrono::high_resolution_clock::now();
-        auto secs = std::chrono::duration<double>(stop - start).count();
-        state.SetIterationTime(secs);
-    }
-
-    state.SetComplexityN(R * C);
-
-    state.SetItemsProcessed(state.iterations());
+    impl_matrix_multiply(state, [](auto& m1, auto& m2) {
+        return m1.multiply_basic(m2);
+    });
 }
 
-BENCHMARK(BM_matrix_multiply)
+static void BM_matrix_multiply_order(benchmark::State& state)
+{
+    impl_matrix_multiply(state, [](auto& m1, auto& m2) {
+        return m1.multiply_order(m2);
+    });
+}
+
+static void BM_matrix_multiply_tiling(benchmark::State& state)
+{
+    impl_matrix_multiply(state, [](auto& m1, auto& m2) {
+        return m1.multiply_tiling(m2);
+    });
+}
+
+static void BM_matrix_multiply_cache(benchmark::State& state)
+{
+    impl_matrix_multiply(state, [](auto& m1, auto& m2) {
+        return m1.multiply_cache(m2);
+    });
+}
+
+BENCHMARK(BM_matrix_multiply_basic)
+    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 10, 2 << 10})
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond);
+
+BENCHMARK(BM_matrix_multiply_order)
+    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 10, 2 << 10})
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond)
+    ->Iterations(5);
+
+BENCHMARK(BM_matrix_multiply_tiling)
+    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 10, 2 << 10})
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond)
+    ->Iterations(5);
+
+BENCHMARK(BM_matrix_multiply_cache)
+    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 10, 2 << 10})
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond)
+    ->Iterations(5);
+
+/*
+BENCHMARK(BM_matrix_multiply_basic)
+    ->RangeMultiplier(8)
+    ->Ranges({
+        {2 << 3, 2 << 10},    // 4 * 1024 * 1024 = 4M is bigger than L2
+        {2 << 3, 2 << 10},
+    })
+    ->Complexity(benchmark::oNSquared)
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond);
+
+BENCHMARK(BM_matrix_multiply_order)
     ->RangeMultiplier(8)
     ->Ranges({
         {2 << 3, 2 << 10},
@@ -84,15 +139,26 @@ BENCHMARK(BM_matrix_multiply)
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond);
 
-BENCHMARK(BM_matrix_multiply_2)
+BENCHMARK(BM_matrix_multiply_tiling)
     ->RangeMultiplier(8)
     ->Ranges({
         {2 << 3, 2 << 10},
         {2 << 3, 2 << 10},
     })
-    ->Complexity(benchmark::oNSquared)
+    ->Complexity(benchmark::oN)
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond);
+
+BENCHMARK(BM_matrix_multiply_cache)
+    ->RangeMultiplier(8)
+    ->Ranges({
+        {2 << 3, 2 << 10},
+        {2 << 3, 2 << 10},
+    })
+    ->Complexity(benchmark::oN)
+    ->UseManualTime()
+    ->Unit(benchmark::kMillisecond);
+*/
 
 /*
 
@@ -125,8 +191,8 @@ BM_matrix_multiply/16/2048/manual_time          0.119 ms        0.119 ms        
 BM_matrix_multiply/64/2048/manual_time           1.68 ms         1.68 ms          417 items_per_second=594.427/s
 BM_matrix_multiply/512/2048/manual_time           110 ms          110 ms            6 items_per_second=9.10053/s
 BM_matrix_multiply/2048/2048/manual_time         2034 ms         2034 ms            1 items_per_second=0.491665/s
-BM_matrix_multiply/manual_time_BigO            457.83 N        457.83 N    
-BM_matrix_multiply/manual_time_RMS                 61 %            61 %    
+BM_matrix_multiply/manual_time_BigO            457.83 N        457.83 N
+BM_matrix_multiply/manual_time_RMS                 61 %            61 %
 
 BM_matrix_multiply_2/16/16/manual_time          0.002 ms        0.002 ms       346231 items_per_second=498.957k/s
 BM_matrix_multiply_2/64/16/manual_time          0.030 ms        0.030 ms        23103 items_per_second=32.9359k/s
@@ -144,7 +210,7 @@ BM_matrix_multiply_2/16/2048/manual_time        0.252 ms        0.253 ms        
 BM_matrix_multiply_2/64/2048/manual_time         12.4 ms         12.4 ms           57 items_per_second=80.8613/s
 BM_matrix_multiply_2/512/2048/manual_time         849 ms          849 ms            1 items_per_second=1.17784/s
 BM_matrix_multiply_2/2048/2048/manual_time      49435 ms        49434 ms            1 items_per_second=0.0202285/s
-BM_matrix_multiply_2/manual_time_BigO            0.00 N^2        0.00 N^2  
-BM_matrix_multiply_2/manual_time_RMS               17 %            17 %    
+BM_matrix_multiply_2/manual_time_BigO            0.00 N^2        0.00 N^2
+BM_matrix_multiply_2/manual_time_RMS               17 %            17 %
 
 */
