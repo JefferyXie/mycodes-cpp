@@ -1,16 +1,16 @@
-#ifndef WORLDQUANT_H
-#define WORLDQUANT_H
+#pragma once
 
-#include <assert.h>
-#include <sstream>
-#include <iostream>
-#include <string>
-#include <vector>
-#include <map>
-#include <list>
 #include <array>
+#include <assert.h>
+#include <cstdint>
+#include <iostream>
+#include <list>
+#include <map>
+#include <sstream>
+#include <string>
 #include <unordered_map>
 #include <utility>
+#include <vector>
 
 using price_t         = uint64_t;
 using quantity_t      = uint64_t;
@@ -99,7 +99,8 @@ using side_order_book_t = std::map<price_t, order_level_t, Comp>;
 //
 // __learn/allocator/Allocator.h does it better: MemoryPool
 // 1) MemoryPool::Buffer is linked data block/chunk, new object is allocated from this chunk without changing the chunk;
-// 2) MemoryPool::Block behaves as linked node for deallocated/freed objects; it's reinterpret_cast from target object pointer - very smart idea!
+// 2) MemoryPool::Block behaves as linked node for deallocated/freed objects; it's reinterpret_cast from target object
+// pointer - very smart idea!
 //
 template <typename T>
 class data_pool_t
@@ -110,7 +111,8 @@ public:
         chunk_size_ = chunk_size;
         allocate_more(init_size);
     }
-    ~data_pool_t() {
+    ~data_pool_t()
+    {
         for (auto chunk : all_chunks_) {
             // TODO: make sure this work even if std::vector<T*>
             delete[] chunk;
@@ -181,6 +183,14 @@ class order_book_t
 public:
     auto& side_book_bid() const { return bids_; }
     auto& side_book_ask() const { return asks_; }
+
+    ~order_book_t()
+    {
+        for (auto [_, order] : orders_) {
+            order_pool_.release_order(order);
+        }
+        orders_.clear();
+    }
 
     void add_order(side_t side, order_id_t id, price_t price, quantity_t quantity)
     {
@@ -283,38 +293,24 @@ public:
         std::cout << "modify_order: id=" << id << ", new_price=" << new_price << ", new_quantity=" << new_quantity
                   << ", existing=" << *existing_order << std::endl;
 
-        auto cancel_order = [this, id]() {
-            // optimization
-            remove_order(id);
-        };
-
         if (new_quantity == 0) {
-            return cancel_order();
-        }
-
-        auto change_price = [this, existing_order, id, new_price, new_quantity]() {
             // optimization
             remove_order(id);
-            add_order(existing_order->side, id, new_price, new_quantity);
-        };
-        if (new_price != existing_order->price) {
-            return change_price();
+            return;
         }
 
-        auto increase_qty = [this, existing_order, id, new_price, new_quantity]() {
+        const auto existing_order_side = existing_order->side;
+
+        if (new_price != existing_order->price || new_quantity > existing_order->quantity) {
             // optimization
             remove_order(id);
-            add_order(existing_order->side, id, new_price, new_quantity);
-        };
-        if (new_quantity > existing_order->quantity) {
-            return increase_qty();
+            add_order(existing_order_side, id, new_price, new_quantity);
+            return;
         }
 
-        auto decrease_qty = [new_quantity, existing_order]() {
-            existing_order->quantity = new_quantity;
-        };
         if (new_quantity < existing_order->quantity) {
-            return decrease_qty();
+            existing_order->quantity = new_quantity;
+            return;
         }
 
         std::cout << "modify_order: unknown modification, id=" << id << ", new_price=" << new_price
@@ -334,9 +330,7 @@ public:
         oss << "Ask:\n";
         for (auto iter = asks_.rbegin(); iter != asks_.rend(); ++iter) {
             if (iter != asks_.rbegin()) {
-                oss << "\t\t"
-                    << "--- --- --- ---"
-                    << "\n";
+                oss << "\t\t" << "--- --- --- ---" << "\n";
             }
 
             auto order = iter->second.tail_order;
@@ -346,16 +340,12 @@ public:
             }
         }
 
-        oss << "\t"
-            << "--- --- --- --- --- --- --- ---"
-            << "\n";
+        oss << "\t" << "--- --- --- --- --- --- --- ---" << "\n";
 
         oss << "Bid:\n";
         for (auto iter = bids_.begin(); iter != bids_.end(); ++iter) {
             if (iter != bids_.begin()) {
-                oss << "\t\t"
-                    << "--- --- --- ---"
-                    << "\n";
+                oss << "\t\t" << "--- --- --- ---" << "\n";
             }
 
             auto order = iter->second.head_order;
@@ -365,8 +355,7 @@ public:
             }
         }
 
-        oss << "--- --- --- --- --- --- --- ---"
-            << "\n";
+        oss << "--- --- --- --- --- --- --- ---" << "\n";
         oss << "All orders:\n";
         for (auto& [id, order] : orders_) {
             oss << "\t" << (order->side == side_t::Bid ? "Bid" : "Ask") << "\t" << order->id << "\t" << order->quantity
@@ -811,6 +800,4 @@ void run_matching_engine_FIFO()
 void run_matching_engine_ProRata()
 {
 }
-
-#endif
 

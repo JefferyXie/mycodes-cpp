@@ -568,16 +568,16 @@ TEST(algorithm, matrixrotation)
 
 TEST(algorithm, deque_maxk)
 {
-    int  arr1[] = {3, 4, 6, 3, 4};
-    auto r1     = print_k_max_1(arr1, sizeof(arr1) / sizeof(arr1[0]), 2);
+    const auto arr1 = {3, 4, 6, 3, 4};
+    auto       r1   = print_k_max_1(arr1, 2);
     EXPECT_EQ(r1, "4 6 6 4");
-    auto r21 = print_k_max_2(arr1, sizeof(arr1) / sizeof(arr1[0]), 2);
+    auto r21 = print_k_max_2(arr1, 2);
     EXPECT_EQ(r21, "4 6 6 4");
 
-    int  arr2[] = {3, 4, 5, 8, 1, 4, 10};
-    auto r2     = print_k_max_1(arr2, sizeof(arr2) / sizeof(arr2[0]), 4);
+    const auto arr2 = {3, 4, 5, 8, 1, 4, 10};
+    auto       r2   = print_k_max_1(arr2, 4);
     EXPECT_EQ(r2, "8 8 8 10");
-    auto r22 = print_k_max_2(arr2, sizeof(arr2) / sizeof(arr2[0]), 4);
+    auto r22 = print_k_max_2(arr2, 4);
     EXPECT_EQ(r22, "8 8 8 10");
 }
 

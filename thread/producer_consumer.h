@@ -180,6 +180,25 @@ struct atomic_storage_t {
     std::array<internal_obj_t<int>, Capacity> storage_;
 };
 
+/*
+
+NOTICE: revisit how the doNotOptimize impacts, comparing to above __asm__("pause")
+
+template<typename T>
+inline __attribute__((always_inline)) void doNotOptimize(T const& value) {
+    asm volatile("" : : "r,m" (value) : "memory");
+}
+
+void waitForEmpty() {
+    SomeQueue q{};
+    // ...
+    while (auto again = not q.empty()) {
+        doNotOptimize(again);
+    }
+};
+
+*/
+
 template <typename Storage = storage_t>
 struct producer_t {
     explicit producer_t(Storage& storage) : storage_{&storage} {}
