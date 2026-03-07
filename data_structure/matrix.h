@@ -66,30 +66,37 @@ public:
 
     ~matrix_t()
     {
+        if (data_) {
 #ifdef __APPLE__
-        ::operator delete(data_);
+            ::operator delete(data_);
 #else
-        std::free(data_);
+            std::free(data_);
 #endif
+        }
     }
-    matrix_t(const matrix_t& other)
+    matrix_t(const matrix_t& other) : matrix_t{other.rows(), other.cols()}
     {
-        // ...
+        for (size_t i = 0; i < rows_ * cols_; ++i) {
+            data_[i] = other.data_[i];
+        }
     }
     matrix_t& operator=(const matrix_t& other)
     {
-        // ...
+        if (this == &other) {
+            return *this;
+        }
+
+        if (rows_ == other.rows() && cols_ == other.cols()) {
+            for (size_t i = 0; i < rows_ * cols_; ++i) {
+                data_[i] = other.data_[i];
+            }
+        } else {
+            swap(matrix_t{other});
+        }
         return *this;
     }
-    matrix_t(const matrix_t&& other)
-    {
-        // ...
-    }
-    matrix_t& operator=(const matrix_t&& other)
-    {
-        // ...
-        return *this;
-    }
+    matrix_t(matrix_t&& other) { swap(other); }
+    matrix_t& operator=(matrix_t&& other) { swap(other); }
 
     bool operator==(const matrix_t& other) const
     {
@@ -182,11 +189,13 @@ public:
         const auto cols_this  = (int)cols_;
         const auto cols_other = (int)other.cols();
 
-        auto impl = [cols_this, cols_other](auto rows, auto cols, auto* p_this, auto* p_other, auto* p_result) {
-            for (size_t r = 0; r < rows; ++r, p_this += cols_this, p_result += cols_other) {    // Mr
+        auto impl = [cols_this, cols_other](
+                        auto impl_rows, auto impl_cols, auto impl_cols_other, auto* p_this, auto* p_other,
+                        auto* p_result) {
+            for (size_t r = 0; r < impl_rows; ++r, p_this += cols_this, p_result += cols_other) {
                 const auto* p_other_cur = p_other;
-                for (size_t c = 0; c < cols; ++c, p_other_cur += cols_other) {    // Kc
-                    for (size_t other_c = 0; other_c < cols; ++other_c) {         // Nr
+                for (size_t c = 0; c < impl_cols; ++c, p_other_cur += cols_other) {
+                    for (size_t other_c = 0; other_c < impl_cols_other; ++other_c) {
                         p_result[other_c] += p_this[c] * p_other_cur[other_c];
                     }
                 }
@@ -204,10 +213,11 @@ public:
                     auto* p_other  = &other.data_[c * other.cols_ + other_c];
                     auto* p_result = &result.data_[r * other.cols_ + other_c];
 
-                    const auto impl_rows = std::min(BLOCK, rows_ - r);
-                    const auto impl_cols = std::min(BLOCK, cols_ - c);
+                    const auto impl_rows       = std::min(BLOCK, rows_ - r);
+                    const auto impl_cols       = std::min(BLOCK, cols_ - c);
+                    const auto impl_cols_other = std::min(BLOCK, cols_other - other_c);
 
-                    impl(impl_rows, impl_cols, p_this, p_other, p_result);
+                    impl(impl_rows, impl_cols, impl_cols_other, p_this, p_other, p_result);
                 }
             }
         }
@@ -224,13 +234,13 @@ public:
         const size_t cols_other = other.cols();
 
         // size of L1 cache blocks
-        constexpr size_t CACHE_rows       = 32;    // 180;
-        constexpr size_t CACHE_cols       = 32;    // 240;
-        constexpr size_t CACHE_cols_other = 16;    // 96;
+        constexpr size_t CACHE_rows       = 64;    // 180;
+        constexpr size_t CACHE_cols       = 96;    // 240;
+        constexpr size_t CACHE_cols_other = 32;    // 96;
 
         // size of register blocks
-        constexpr size_t REG_cols_other = 4;    // 12;
-        constexpr size_t REG_rows       = 2;    // 4
+        constexpr size_t REG_cols_other = 8;    // 12;
+        constexpr size_t REG_rows       = 4;    // 4
 
         auto impl = [cols_this, cols_other](
                         auto impl_rows, auto impl_cols, auto impl_cols_other, auto* p_this, auto* p_other,
@@ -267,7 +277,7 @@ public:
                             const auto impl_cols       = cols2;
                             const auto impl_cols_other = std::min(REG_cols_other, cols_other2 - other_c2);
 
-                            impl(impl_rows, impl_cols, impl_cols_other, p_this, p_other, p_result);
+                            impl(impl_rows, impl_cols, impl_cols_other, p_this2, p_other2, p_result2);
                         }
                     }
                 }
@@ -300,9 +310,46 @@ public:
     T&       operator()(size_t row, size_t col) { return get(row, col); }
     const T& operator()(size_t row, size_t col) const { return get(row, col); }
 
+    matrix_t& swap(matrix_t& other)
+    {
+        if (this != &other) {
+            std::swap(rows_, other.rows_);
+            std::swap(cols_, other.cols_);
+            std::swap(data_, other.data_);
+        }
+        return *this;
+    }
+
+    std::string to_string(bool one_row_per_line = false) const
+    {
+        std::ostringstream oss;
+        oss << "[";
+        for (size_t i = 0; i < rows_; ++i) {
+            if (one_row_per_line) {
+                oss << "\n ";
+            }
+            oss << "[";
+            for (size_t j = 0; j < cols_; ++j) {
+                oss << get(i, j);
+                if (j != cols_ - 1) {
+                    oss << ",";
+                }
+            }
+            oss << "]";
+            if (i != rows_ - 1) {
+                oss << ",";
+            }
+        }
+        if (one_row_per_line) {
+            oss << "\n";
+        }
+        oss << "]";
+        return oss.str();
+    }
+
 private:
-    const size_t rows_ = 0;
-    const size_t cols_ = 0;
-    T*           data_ = nullptr;
+    size_t rows_ = 0;
+    size_t cols_ = 0;
+    T*     data_ = nullptr;
 };
 

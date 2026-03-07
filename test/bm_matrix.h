@@ -47,11 +47,16 @@ static void impl_matrix_multiply(benchmark::State& state, auto&& callback)
 
     auto m1 = gen_matrix(R, C);
     auto m2 = gen_matrix(C, R);
+
+    // std::cout << "R=" << R << ", C=" << C << ", m1=(" << m1.rows() << ", " << m1.cols() << "), m2=(" << m2.rows() <<
+    // ", " << m2.cols() << ",)" << std::endl;
+
     for (auto _ : state) {
         auto start = std::chrono::high_resolution_clock::now();
 
         [[maybe_unused]] auto v = callback(m1, m2);    // m1.multiply_order(m2);
-        // benchmark::DoNotOptimize(v);
+        // benchmark::DoNotOptimize(std::move(v));
+        // std::cout << v.rows() << "," << v.cols() << std::endl;
 
         auto stop = std::chrono::high_resolution_clock::now();
         auto secs = std::chrono::duration<double>(stop - start).count();
@@ -59,7 +64,6 @@ static void impl_matrix_multiply(benchmark::State& state, auto&& callback)
     }
 
     state.SetComplexityN(R * C);
-
     state.SetItemsProcessed(state.iterations());
 }
 
@@ -92,28 +96,36 @@ static void BM_matrix_multiply_cache(benchmark::State& state)
 }
 
 BENCHMARK(BM_matrix_multiply_basic)
-    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 5, 2 << 5})
+    ->Args({2 << 10, 2 << 8})
     ->Args({2 << 10, 2 << 10})
+    ->Args({2 << 11, 2 << 11})
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond);
 
 BENCHMARK(BM_matrix_multiply_order)
-    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 5, 2 << 5})
+    ->Args({2 << 10, 2 << 8})
     ->Args({2 << 10, 2 << 10})
+    ->Args({2 << 11, 2 << 11})
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond)
     ->Iterations(5);
 
 BENCHMARK(BM_matrix_multiply_tiling)
-    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 5, 2 << 5})
+    ->Args({2 << 10, 2 << 8})
     ->Args({2 << 10, 2 << 10})
+    ->Args({2 << 11, 2 << 11})
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond)
     ->Iterations(5);
 
 BENCHMARK(BM_matrix_multiply_cache)
-    ->Args({2 << 3, 2 << 3})
+    ->Args({2 << 5, 2 << 5})
+    ->Args({2 << 10, 2 << 8})
     ->Args({2 << 10, 2 << 10})
+    ->Args({2 << 11, 2 << 11})
     ->UseManualTime()
     ->Unit(benchmark::kMillisecond)
     ->Iterations(5);
